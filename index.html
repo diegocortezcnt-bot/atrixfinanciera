@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="ATRIX Financiera: arrendamiento financiero, arrendamiento puro y crédito con garantía inmobiliaria para empresas en Nuevo León. Ayudamos a su empresa a no descapitalizarse.">
+<meta name="description" content="ATRIX Financiera: arrendamiento financiero, arrendamiento puro, crédito con garantía inmobiliaria y crédito estructurado para empresas en Nuevo León. Ayudamos a su empresa a no descapitalizarse.">
 <title>ATRIX Financiera</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,6 +30,7 @@ a{color:inherit}
 button,input,select,textarea{font:inherit;color:inherit}
 svg{display:block;max-width:100%}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
 .tab{font-variant-numeric:tabular-nums}
 .reg{font-size:.5em;vertical-align:top;position:relative;top:.15em;font-weight:400}
 .wrap{max-width:var(--wide);margin:0 auto;padding-left:var(--gl);padding-right:var(--gr)}
@@ -183,9 +184,8 @@ svg{display:block;max-width:100%}
 .a-sweep{animation:sweep 3.6s ease-in-out infinite}
 .a-ecg{stroke-dasharray:200 200;animation:ecg 3s linear infinite}
 .a-rise{animation:rise 5s ease-in-out infinite}
-.lineup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--line)}
-.lu{padding:36px 22px 30px;display:grid;gap:14px;align-content:start;justify-items:center;text-align:center;border-right:1px solid var(--line);min-width:0}
-.lu:last-child{border-right:0}
+.lineup{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:1px solid var(--line);overflow:hidden}
+.lu{padding:36px 18px 30px;display:grid;gap:14px;align-content:start;justify-items:center;text-align:center;box-shadow:1px 0 0 var(--line),0 1px 0 var(--line);min-width:0}
 .lu .ico{width:88px;height:88px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(150deg,#ffffff,#e9edf5);border:1px solid #fff;box-shadow:0 18px 40px -22px rgba(7,29,61,.45),inset 0 1px 0 #fff;transition:transform .6s var(--ease)}
 .lu:hover .ico{transform:translateY(-6px) rotate(-3deg)}
 .lu .ico svg{width:40px;height:40px}
@@ -197,8 +197,9 @@ svg{display:block;max-width:100%}
 .lu dl div{padding:14px 0;border-bottom:1px solid var(--line);display:grid;gap:2px}
 .lu dt{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .lu dd{margin:0;font-size:.94rem;font-weight:500}
-@media (max-width:980px){.lineup{grid-template-columns:1fr 1fr}.lu:nth-child(2){border-right:0}.lu:nth-child(-n+2){border-bottom:1px solid var(--line)}}
-@media (max-width:560px){.lineup{grid-template-columns:1fr}.lu{border-right:0;border-bottom:1px solid var(--line)}.lu .desc{min-height:0}}
+@media (max-width:1100px){.lineup{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.lineup{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.lineup{grid-template-columns:1fr}.lu .desc{min-height:0}}
 .nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
 .num{display:grid;gap:8px;min-width:0;padding-top:22px;border-top:1px solid #2a2a2d}
 .num b{font-size:clamp(2.6rem,5vw,4.4rem);font-weight:600;letter-spacing:-.04em;line-height:1;background:linear-gradient(180deg,#fff,#9fb8e6);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -231,7 +232,7 @@ svg{display:block;max-width:100%}
 .simwrap .blob.c{width:220px;height:220px;right:30%;top:40px;background:#f6c1c3;opacity:.35}
 .sim{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
 .panel{border-radius:28px;padding:30px;min-width:0}
-.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:rgba(118,118,128,.12)}
+.seg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:rgba(118,118,128,.12)}
 .seg button{border:0;background:transparent;padding:9px 6px;border-radius:10px;font-size:.82rem;font-weight:500;cursor:pointer;color:var(--ink);transition:background .3s,box-shadow .3s}
 .seg button[aria-pressed="true"]{background:#fff;box-shadow:0 3px 10px -2px rgba(0,0,0,.18),0 0 0 .5px rgba(0,0,0,.04)}
 .fields{display:grid;gap:22px;margin-top:26px}
@@ -270,13 +271,14 @@ svg{display:block;max-width:100%}
 .sim-acts{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .fine{font-size:.76rem;color:var(--ink-3);line-height:1.5}
 @media (max-width:960px){.sim{grid-template-columns:1fr}}
+@media (max-width:620px){.seg{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:520px){.panel,.res{padding:22px}.seg button{font-size:.74rem}.kv{grid-template-columns:1fr}.kv div:nth-child(odd){padding-right:0}}
 .cmp{overflow-x:auto;border-top:1px solid var(--line)}
-.cmp table{width:100%;border-collapse:collapse;min-width:860px}
+.cmp table{width:100%;border-collapse:collapse;min-width:1020px}
 .cmp th,.cmp td{padding:20px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:.92rem}
 .cmp thead th{font-size:1.05rem;font-weight:600;padding-top:26px}
 .cmp thead th small{display:block;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:4px}
-.cmp tbody th{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);width:16%}
+.cmp tbody th{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);width:13%}
 .cmp td{color:var(--ink)}
 .portal-g{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.75fr);gap:24px;align-items:center}
 .mac{border-radius:16px;overflow:hidden;background:rgba(28,28,32,.75);border:1px solid rgba(255,255,255,.14);box-shadow:0 60px 120px -50px rgba(28,95,196,.55),0 40px 80px -40px rgba(0,0,0,.9);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);transform:perspective(1600px) rotateX(var(--tilt,10deg)) scale(var(--sc,.94));transform-origin:center bottom;transition:transform .2s linear;min-width:0}
@@ -458,14 +460,14 @@ html{scroll-behavior:auto}
 <div class="final" id="heroFinal">
 <div class="wrap">
 <h2>Financiamos el activo. Usted conserva su capital.</h2>
-<p>Arrendamiento financiero, arrendamiento puro y crédito con garantía inmobiliaria en Nuevo León.</p>
+<p>Arrendamiento financiero, arrendamiento puro, crédito con garantía inmobiliaria y crédito estructurado en Nuevo León.</p>
 </div>
 </div>
 <div class="facts" id="heroFacts">
 <div class="wrap">
 <div class="f lg-d"><b class="tab">2 días</b><span>Preaprobación</span></div>
 <div class="f lg-d"><b class="tab">5 días</b><span>Aprobación</span></div>
-<div class="f lg-d"><b class="tab">4</b><span>Productos de financiamiento</span></div>
+<div class="f lg-d"><b class="tab">5</b><span>Productos de financiamiento</span></div>
 <div class="f lg-d"><b>Nuevo León</b><span>Cobertura exclusiva</span></div>
 </div>
 </div>
@@ -567,7 +569,7 @@ html{scroll-behavior:auto}
 <g class="a-rise" style="animation-delay:-2s"><circle cx="320" cy="210" r="16" fill="none" stroke="#fff" stroke-width="5"/><path d="M336 210h40v10M362 210v8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/></g>
 </svg></div>
 <button class="plus" type="button" aria-label="Más información sobre crédito con garantía inmobiliaria"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-<div class="detail"><h3>Crédito con garantía inmobiliaria</h3><p class="meta">Crédito simple o revolvente · Nuevo León</p><p>Liquidez estructurada respaldada por un inmueble ubicado en Nuevo León. Es la única modalidad en la que otorgamos crédito simple o revolvente.</p><h4>Cómo se estructura</h4><ul><li>Avalúo del inmueble y verificación de libertad de gravamen.</li><li>Hipoteca en primer lugar a favor de COLIUM, S.A. de C.V.</li><li>Crédito simple: pagos fijos de 12 a 48 meses.</li><li>Crédito revolvente: línea anual con disposiciones de 1 a 12 meses.</li></ul></div>
+<div class="detail"><h3>Crédito con garantía inmobiliaria</h3><p class="meta">Crédito simple o revolvente · Nuevo León</p><p>Liquidez estructurada respaldada por un inmueble ubicado en Nuevo León. Es la única modalidad en la que otorgamos crédito simple o revolvente.</p><h4>Cómo se estructura</h4><ul><li>Avalúo del inmueble y verificación de libertad de gravamen.</li><li>Hipoteca en primer lugar a favor de COLIUM, S.A. de C.V.</li><li>Crédito simple: pagos fijos de 12 a 48 meses.</li><li>Crédito revolvente: línea anual con disposiciones de 1 a 12 meses.</li><li>Si su flujo requiere un esquema distinto, lo resolvemos con un Crédito Estructurado.</li></ul></div>
 </article>
 </div>
 <div class="rail-ctl" data-for="railKnow">
@@ -589,7 +591,7 @@ html{scroll-behavior:auto}
 <div class="pill">Arrendamiento</div><h3>Financiero</h3>
 <p class="desc">Usted usa el activo, paga rentas fijas y al término lo adquiere por un valor simbólico.</p>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="fin">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Plazo</dt><dd>12 a 48 meses</dd></div><div><dt>Propiedad al término</dt><dd>Pasa a su nombre</dd></div><div><dt>Valor residual</dt><dd>No aplica</dd></div><div><dt>Garantía</dt><dd>El activo, pagaré y aval</dd></div></dl>
+<dl><div><dt>Plazo</dt><dd>12 a 48 meses</dd></div><div><dt>Propiedad al término</dt><dd>Pasa a su nombre</dd></div><div><dt>Pagos</dt><dd>Rentas fijas mensuales</dd></div><div><dt>Garantía</dt><dd>El activo, pagaré y aval</dd></div></dl>
 </div>
 <div class="lu rv d1">
 <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg></div>
@@ -611,6 +613,13 @@ html{scroll-behavior:auto}
 <p class="desc">Una línea autorizada de la que dispone cuando la necesita. Paga intereses solo sobre lo dispuesto.</p>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="rev">Simular</a><a class="more" href="#comparar">Comparar</a></div>
 <dl><div><dt>Vigencia de la línea</dt><dd>12 meses, renovable</dd></div><div><dt>Disposiciones</dt><dd>De 1 a 12 meses</dd></div><div><dt>Intereses</dt><dd>Solo sobre lo dispuesto</dd></div><div><dt>Garantía</dt><dd>Inmobiliaria en Nuevo León</dd></div></dl>
+</div>
+<div class="lu rv d3">
+<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>
+<div class="pill">Crédito</div><h3>Estructurado</h3>
+<p class="desc">Un esquema diseñado a la medida de su flujo: periodo de gracia, calendario de pagos propio y garantías combinadas.</p>
+<div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="est">Simular</a><a class="more" href="#comparar">Comparar</a></div>
+<dl><div><dt>Plazo</dt><dd>12 a 60 meses</dd></div><div><dt>Pagos</dt><dd>Adaptados a su flujo</dd></div><div><dt>Periodo de gracia</dt><dd>Hasta 6 meses</dd></div><div><dt>Garantía</dt><dd>Definida en la estructura</dd></div></dl>
 </div>
 </div>
 </div>
@@ -673,6 +682,7 @@ html{scroll-behavior:auto}
 <button type="button" data-prod="puro" aria-pressed="false">Puro</button>
 <button type="button" data-prod="simple" aria-pressed="false">Simple</button>
 <button type="button" data-prod="rev" aria-pressed="false">Revolvente</button>
+<button type="button" data-prod="est" aria-pressed="false">Estructurado</button>
 </div>
 <div class="fields">
 <div class="fld">
@@ -695,6 +705,11 @@ html{scroll-behavior:auto}
 <div class="lab"><label for="res">Valor residual</label><output class="tab" id="resOut">20%</output></div>
 <input type="range" id="res" min="10" max="40" step="1" value="20">
 <div class="hint">Valor pactado al que puede adquirir el activo al término del plazo.</div>
+</div>
+<div class="fld" id="f-gra">
+<div class="lab"><label for="gra">Periodo de gracia</label><output class="tab" id="graOut">3 meses</output></div>
+<input type="range" id="gra" min="0" max="6" step="1" value="3">
+<div class="hint">Meses iniciales en los que solo paga intereses; después, pagos fijos de capital e intereses.</div>
 </div>
 <div class="fld">
 <div class="lab"><label for="plazo" id="plazoLabel">Plazo</label><output class="tab" id="plazoOut">36 meses</output></div>
@@ -730,19 +745,19 @@ html{scroll-behavior:auto}
 <div class="wrap">
 <div class="head">
 <div class="kicker rv">Comparar</div>
-<h2 class="t-1 rv d1">Las cuatro figuras, lado a lado.</h2>
+<h2 class="t-1 rv d1">Las cinco figuras, lado a lado.</h2>
 </div>
 <div class="cmp rv">
 <table>
-<thead><tr><th></th><th><small>Arrendamiento</small>Financiero</th><th><small>Arrendamiento</small>Puro</th><th><small>Crédito</small>Simple</th><th><small>Crédito</small>Revolvente</th></tr></thead>
+<thead><tr><th></th><th><small>Arrendamiento</small>Financiero</th><th><small>Arrendamiento</small>Puro</th><th><small>Crédito</small>Simple</th><th><small>Crédito</small>Revolvente</th><th><small>Crédito</small>Estructurado</th></tr></thead>
 <tbody>
-<tr><th>Propiedad</th><td>ATRIX durante el plazo; suya al ejercer la opción de compra</td><td>ATRIX durante y después del plazo, salvo compra al residual</td><td>Suya desde el inicio</td><td>Suya desde el inicio</td></tr>
-<tr><th>Qué se paga</th><td>100% del valor más intereses</td><td>El uso: valor menos residual</td><td>Capital e intereses en pagos fijos</td><td>Intereses sobre lo dispuesto; capital al vencimiento</td></tr>
-<tr><th>Fiscal</th><td>Deduce depreciación e intereses</td><td>Renta 100% deducible</td><td>Intereses deducibles</td><td>Intereses deducibles</td></tr>
-<tr><th>IVA del activo</th><td>Diferido en las rentas</td><td>Sobre cada renta</td><td>No aplica</td><td>No aplica</td></tr>
-<tr><th>Garantía</th><td>El activo, pagaré y aval</td><td>El activo, pagaré y aval</td><td>Inmueble en Nuevo León</td><td>Inmueble en Nuevo León</td></tr>
-<tr><th>Al término</th><td>El activo pasa a su nombre</td><td>Renovar, devolver o comprar</td><td>Crédito liquidado</td><td>Línea disponible de nuevo</td></tr>
-<tr><th>Indicado para</th><td>Activos de larga vida útil</td><td>Equipo que se renueva con frecuencia</td><td>Liquidez estructurada con patrimonio</td><td>Flujos estacionales y proyectos por etapas</td></tr>
+<tr><th>Propiedad</th><td>ATRIX durante el plazo; suya al ejercer la opción de compra</td><td>ATRIX durante y después del plazo, salvo compra al residual</td><td>Suya desde el inicio</td><td>Suya desde el inicio</td><td>Suya desde el inicio</td></tr>
+<tr><th>Qué se paga</th><td>100% del valor más intereses</td><td>El uso: valor menos residual</td><td>Capital e intereses en pagos fijos</td><td>Intereses sobre lo dispuesto; capital al vencimiento</td><td>Capital e intereses según el calendario pactado</td></tr>
+<tr><th>Fiscal</th><td>Deduce depreciación e intereses</td><td>Renta 100% deducible</td><td>Intereses deducibles</td><td>Intereses deducibles</td><td>Intereses deducibles</td></tr>
+<tr><th>IVA del activo</th><td>Diferido en las rentas</td><td>Sobre cada renta</td><td>No aplica</td><td>No aplica</td><td>No aplica</td></tr>
+<tr><th>Garantía</th><td>El activo, pagaré y aval</td><td>El activo, pagaré y aval</td><td>Inmueble en Nuevo León</td><td>Inmueble en Nuevo León</td><td>Definida en la estructura</td></tr>
+<tr><th>Al término</th><td>El activo pasa a su nombre</td><td>Renovar, devolver o comprar</td><td>Crédito liquidado</td><td>Línea disponible de nuevo</td><td>Crédito liquidado</td></tr>
+<tr><th>Indicado para</th><td>Activos de larga vida útil</td><td>Equipo que se renueva con frecuencia</td><td>Liquidez estructurada con patrimonio</td><td>Flujos estacionales y proyectos por etapas</td><td>Proyectos con flujos irregulares o en arranque</td></tr>
 </tbody>
 </table>
 </div>
@@ -854,6 +869,7 @@ html{scroll-behavior:auto}
 <div class="faq rv">
 <details><summary>¿Otorgan crédito simple o revolvente sin garantía inmobiliaria?<i></i></summary><div class="a"><b>No.</b> El crédito simple y el revolvente se otorgan exclusivamente con garantía inmobiliaria ubicada en Nuevo León. Si no cuenta con un inmueble, la alternativa es el arrendamiento financiero o puro, donde el propio activo respalda la operación.</div></details>
 <details><summary>¿Pueden estructurar la operación a la medida?<i></i></summary><div class="a"><b>Sí.</b> Ajustamos plazo, enganche, valor residual, fechas de pago y la combinación de figuras según su flujo, su régimen fiscal y el uso del activo. Toda estructura pasa por el mismo análisis de riesgo.</div></details>
+<details><summary>¿Qué es el Crédito Estructurado?<i></i></summary><div class="a">Es un crédito diseñado a la medida de su operación cuando un esquema estándar no se ajusta a su flujo: puede incluir <b>periodo de gracia</b>, un calendario de pagos acorde a sus ingresos y una combinación de garantías definida en la estructura. Se otorga en Nuevo León y pasa por el mismo estudio del área de Riesgos.</div></details>
 <details><summary>¿En qué zona operan?<i></i></summary><div class="a">Únicamente en <b>Nuevo León</b>. El cliente, el activo y, en su caso, el inmueble en garantía deben ubicarse en el estado.</div></details>
 <details><summary>¿Cómo se determina mi tasa?<i></i></summary><div class="a">Las tasas varían conforme a lo que arroja el <b>estudio del área de Riesgos</b>: capacidad de pago, historial crediticio, tipo y antigüedad del activo, plazo, enganche y garantías. El simulador usa una tasa de referencia de 25% a 45% anual fija; la tasa definitiva se le comunica por escrito en la carta de aprobación, antes de firmar.</div></details>
 <details><summary>¿Cuánto tarda la aprobación?<i></i></summary><div class="a"><b>Dos días hábiles</b> para la preaprobación y <b>cinco días hábiles</b> para la aprobación, contados desde que recibimos la información completa. Si surgen dudas, el plazo depende de la rapidez con la que recibamos sus aclaraciones.</div></details>
@@ -895,7 +911,7 @@ html{scroll-behavior:auto}
 <div class="f"><label for="correo">Correo electrónico</label><input id="correo" type="email" autocomplete="email" placeholder="nombre@empresa.com"><span class="err">Indique un correo válido.</span></div>
 </div>
 <div class="row">
-<div class="f"><label for="producto">Tipo de crédito</label><select id="producto"><option value="">Seleccione una opción</option><option>Arrendamiento Financiero</option><option>Arrendamiento Puro</option><option>Crédito Simple (garantía inmobiliaria)</option><option>Crédito Revolvente (garantía inmobiliaria)</option><option>Requiero asesoría</option></select><span class="err">Seleccione el tipo de crédito.</span></div>
+<div class="f"><label for="producto">Tipo de crédito</label><select id="producto"><option value="">Seleccione una opción</option><option>Arrendamiento Financiero</option><option>Arrendamiento Puro</option><option>Crédito Simple (garantía inmobiliaria)</option><option>Crédito Revolvente (garantía inmobiliaria)</option><option>Crédito Estructurado</option><option>Requiero asesoría</option></select><span class="err">Seleccione el tipo de crédito.</span></div>
 <div class="f"><label for="montoLead">Monto aproximado (MXN)</label><input id="montoLead" type="text" inputmode="numeric" placeholder="Ej. 850,000"></div>
 </div>
 <div class="f"><label for="destino">¿Para qué lo necesita?</label><textarea id="destino" placeholder="Describa el activo o el destino del crédito, y si cuenta con inmueble en garantía."></textarea><span class="err">Describa brevemente el destino.</span></div>
@@ -920,7 +936,7 @@ html{scroll-behavior:auto}
 <p>COLIUM, S.A. de C.V. es una sociedad mercantil que otorga arrendamiento y crédito con recursos propios; no capta recursos del público ni ofrece productos de inversión.</p>
 </div>
 <div class="cols">
-<div><h4>Productos</h4><ul><li><a href="#productos">Arrendamiento Financiero</a></li><li><a href="#productos">Arrendamiento Puro</a></li><li><a href="#productos">Crédito Simple</a></li><li><a href="#productos">Crédito Revolvente</a></li></ul></div>
+<div><h4>Productos</h4><ul><li><a href="#productos">Arrendamiento Financiero</a></li><li><a href="#productos">Arrendamiento Puro</a></li><li><a href="#productos">Crédito Simple</a></li><li><a href="#productos">Crédito Revolvente</a></li><li><a href="#productos">Crédito Estructurado</a></li></ul></div>
 <div><h4>Herramientas</h4><ul><li><a href="#simulador">Simulador</a></li><li><a href="#comparar">Comparar productos</a></li><li><a href="#requisitos">Requisitos</a></li></ul></div>
 <div><h4>Clientes</h4><ul><li><a href="#clientes">Portal de Clientes</a></li><li><a href="#proceso">Proceso de riesgos</a></li><li><a href="#preguntas">Preguntas frecuentes</a></li></ul></div>
 <div><h4>Institucional</h4><ul><li><button class="lb" type="button" data-modal="terminos">Términos y Condiciones</button></li><li><button class="lb" type="button" data-modal="privacidad">Aviso de Privacidad</button></li><li><a href="#contacto">Contacto · 81 3412 7296</a></li></ul></div>
@@ -1105,14 +1121,15 @@ if('IntersectionObserver' in window){const mio=new IntersectionObserver(es=>es.f
 /* ---------- simulator ---------- */
 const fmt=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
 const fmt2=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:2});
-const el={monto:$('#monto'),montoR:$('#montoR'),eng:$('#eng'),res:$('#res'),plazo:$('#plazo'),tasa:$('#tasa'),disp:$('#disp')};
+const el={monto:$('#monto'),montoR:$('#montoR'),eng:$('#eng'),res:$('#res'),plazo:$('#plazo'),tasa:$('#tasa'),disp:$('#disp'),gra:$('#gra')};
 const S={prod:'fin',full:false,last:null};
-const names={fin:'Arrendamiento Financiero',puro:'Arrendamiento Puro',simple:'Crédito Simple (garantía inmobiliaria)',rev:'Crédito Revolvente (garantía inmobiliaria)'};
+const names={fin:'Arrendamiento Financiero',puro:'Arrendamiento Puro',simple:'Crédito Simple (garantía inmobiliaria)',rev:'Crédito Revolvente (garantía inmobiliaria)',est:'Crédito Estructurado'};
 const cfg={
 fin:{ml:'Valor del activo',mh:'Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.',el:'Enganche',eh:'Un enganche mayor reduce la renta y mejora las condiciones.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng'],big:'Renta mensual estimada'},
 puro:{ml:'Valor del activo',mh:'Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.',el:'Pago inicial',eh:'Depósito en garantía y primera renta. Reduce la renta mensual.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng','res'],big:'Renta mensual estimada'},
 simple:{ml:'Monto del crédito',mh:'Requiere garantía inmobiliaria en Nuevo León. El monto se determina por el valor del inmueble y su capacidad de pago.',pl:'Plazo',ph:'De 12 a 48 meses, con pagos fijos de capital e intereses.',pr:[12,48,6,36],show:[],big:'Pago mensual estimado'},
-rev:{ml:'Línea de crédito autorizada',mh:'Requiere garantía inmobiliaria en Nuevo León. La línea se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'}
+rev:{ml:'Línea de crédito autorizada',mh:'Requiere garantía inmobiliaria en Nuevo León. La línea se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'},
+est:{ml:'Monto del crédito',mh:'Esquema a la medida. Las garantías y el calendario se definen en la estructura con base en el estudio del área de Riesgos.',pl:'Plazo total',ph:'De 12 a 60 meses, incluido el periodo de gracia.',pr:[12,60,6,36],show:['gra'],big:'Pago mensual estimado tras la gracia'}
 };
 function setProd(p){
 S.prod=p;const c=cfg[p];
@@ -1120,8 +1137,8 @@ $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prod
 $('#montoLabel').textContent=c.ml;$('#montoHint').textContent=c.mh;
 if(c.el){$('#engLabel').textContent=c.el;$('#engHint').textContent=c.eh}
 $('#plazoLabel').textContent=c.pl;$('#plazoHint').textContent=c.ph;
-const [a,b,s,d]=c.pr;el.plazo.min=a;el.plazo.max=b;el.plazo.step=s;const v=+el.plazo.value;if(v<a||v>b||(v-a)%s)el.plazo.value=d;
-['eng','res','disp'].forEach(k=>{$('#f-'+k).hidden=!c.show.includes(k)});
+const [a,b,s,d]=c.pr;const v=+el.plazo.value;el.plazo.min=a;el.plazo.max=b;el.plazo.step=s;el.plazo.value=(v<a||v>b||(v-a)%s)?d:v;
+['eng','res','disp','gra'].forEach(k=>{$('#f-'+k).hidden=!c.show.includes(k)});
 $('#bigLabel').textContent=c.big;calc();
 }
 const pmt=(pv,r,n,fv=0)=>{if(!r)return(pv-fv)/n;const q=Math.pow(1+r,n);return(pv-fv/q)*r/(1-1/q)};
@@ -1130,6 +1147,7 @@ function calc(){
 const M=Math.max(0,+el.monto.value||0),e=+el.eng.value/100,R=+el.res.value/100,n=+el.plazo.value,t=+el.tasa.value,r=t/1200;
 el.disp.max=Math.max(50000,M);if(+el.disp.value>M)el.disp.value=M;const D=+el.disp.value;
 $('#montoOut').textContent=fmt.format(M);$('#engOut').textContent=Math.round(e*100)+'%';$('#resOut').textContent=Math.round(R*100)+'%';
+const g=Math.min(+el.gra.value,n-1);$('#graOut').textContent=g+(g===1?' mes':' meses');
 $('#plazoOut').textContent=n+(n===1?' mes':' meses');$('#tasaOut').textContent=(t%1?t.toFixed(1):t)+'%';$('#dispOut').textContent=fmt.format(D);
 if(M<=+el.montoR.max&&M>=+el.montoR.min)el.montoR.value=M;
 const ap=b=>b*.025*1.16;let big=0,sub='',kv=[],rows=[],mix=[];
@@ -1144,6 +1162,13 @@ mix=[['Uso del activo',PV-RV,'k'],['Costo financiero',int,'n'],['Residual',RV,'r
 else if(S.prod==='simple'){big=pmt(M,r,n);rows=sched(M,r,n,big);const int=big*n-M;
 sub=`más IVA sobre intereses · ${n} pagos fijos`;
 kv=[['Monto del crédito',fmt.format(M)],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(big*n)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León'],['Pago anticipado','Sin penalización']];
+mix=[['Capital',M,'k'],['Intereses',int,'n']];}
+else if(S.prod==='est'){const ia=M*r,rest=n-g;big=pmt(M,r,rest);
+for(let i=1;i<=g;i++)rows.push([i,ia,ia,0,M]);
+sched(M,r,rest,big).forEach(x=>rows.push([x[0]+g,x[1],x[2],x[3],x[4]]));
+const int=big*rest+ia*g-M;
+sub=g?`más IVA sobre intereses · ${g} ${g===1?'mes':'meses'} de gracia y ${rest} pagos fijos`:`más IVA sobre intereses · ${rest} pagos fijos`;
+kv=[['Monto del crédito',fmt.format(M)],['Pago durante la gracia',g?fmt.format(ia):'Sin gracia'],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(big*rest+ia*g)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Definida en la estructura']];
 mix=[['Capital',M,'k'],['Intereses',int,'n']];}
 else {big=D*r;const fin=D+big;for(let i=1;i<=n;i++){const l=i===n;rows.push([i,l?fin:big,big,l?D:0,l?0:D])}
 sub=`más IVA · sobre ${fmt.format(D)} dispuestos · capital al mes ${n}`;
@@ -1161,7 +1186,7 @@ const tb=$('#toggleAmort');tb.hidden=rows.length<=6;tb.textContent=S.full?'Ver r
 S.last={M,n,t};
 }
 $$('.seg button').forEach(b=>b.addEventListener('click',()=>setProd(b.dataset.prod)));
-['eng','res','plazo','tasa','disp'].forEach(k=>el[k].addEventListener('input',calc));
+['eng','res','plazo','tasa','disp','gra'].forEach(k=>el[k].addEventListener('input',calc));
 el.montoR.addEventListener('input',()=>{el.monto.value=el.montoR.value;calc()});
 el.monto.addEventListener('input',calc);
 el.monto.addEventListener('blur',()=>{el.monto.value=Math.min(10000000,Math.max(100000,Math.round((+el.monto.value||0)/10000)*10000));calc()});
