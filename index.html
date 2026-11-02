@@ -234,6 +234,7 @@ svg{display:block;max-width:100%}
 .panel{border-radius:28px;padding:30px;min-width:0}
 .seg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:rgba(118,118,128,.12)}
 .seg button{border:0;background:transparent;padding:9px 6px;border-radius:10px;font-size:.82rem;font-weight:500;cursor:pointer;color:var(--ink);transition:background .3s,box-shadow .3s}
+.seg.s3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .seg button[aria-pressed="true"]{background:#fff;box-shadow:0 3px 10px -2px rgba(0,0,0,.18),0 0 0 .5px rgba(0,0,0,.04)}
 .fields{display:grid;gap:22px;margin-top:26px}
 .fld{display:grid;gap:8px}
@@ -617,9 +618,9 @@ html{scroll-behavior:auto}
 <div class="lu rv d3">
 <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>
 <div class="pill">Crédito</div><h3>Estructurado</h3>
-<p class="desc">Un esquema diseñado a la medida de su flujo: periodo de gracia, calendario de pagos propio y garantías combinadas.</p>
+<p class="desc">Se diseña según el crédito que requiere su empresa: periodicidad de pagos a capital y corrida a la medida, con vencimiento máximo a 36 meses.</p>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="est">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Plazo</dt><dd>12 a 60 meses</dd></div><div><dt>Pagos</dt><dd>Adaptados a su flujo</dd></div><div><dt>Periodo de gracia</dt><dd>Hasta 6 meses</dd></div><div><dt>Garantía</dt><dd>Definida en la estructura</dd></div></dl>
+<dl><div><dt>Plazo</dt><dd>Hasta 36 meses</dd></div><div><dt>Pagos a capital</dt><dd>Mensual, bimestral o trimestral</dd></div><div><dt>Corrida de cálculo</dt><dd>Hasta 50 meses</dd></div><div><dt>Garantía</dt><dd>Definida en la estructura</dd></div></dl>
 </div>
 </div>
 </div>
@@ -706,10 +707,19 @@ html{scroll-behavior:auto}
 <input type="range" id="res" min="10" max="40" step="1" value="20">
 <div class="hint">Valor pactado al que puede adquirir el activo al término del plazo.</div>
 </div>
-<div class="fld" id="f-gra">
-<div class="lab"><label for="gra">Periodo de gracia</label><output class="tab" id="graOut">3 meses</output></div>
-<input type="range" id="gra" min="0" max="6" step="1" value="3">
-<div class="hint">Meses iniciales en los que solo paga intereses; después, pagos fijos de capital e intereses.</div>
+<div class="fld" id="f-per">
+<div class="lab"><span>Pago a capital</span><output class="tab" id="perOut">Mensual</output></div>
+<div class="seg s3" id="perSeg" role="group" aria-label="Periodicidad de pago a capital">
+<button type="button" data-per="1" aria-pressed="true">Mensual</button>
+<button type="button" data-per="2" aria-pressed="false">Bimestral</button>
+<button type="button" data-per="3" aria-pressed="false">Trimestral</button>
+</div>
+<div class="hint">Los intereses se pagan cada mes; el capital, en la periodicidad que se estructure.</div>
+</div>
+<div class="fld" id="f-corr">
+<div class="lab"><label for="corr">Corrida de cálculo</label><output class="tab" id="corrOut">36 meses</output></div>
+<input type="range" id="corr" min="12" max="50" step="1" value="36">
+<div class="hint">El pago a capital se calcula sobre esta corrida (hasta 50 meses). El crédito vence como máximo al mes 36: ahí se liquida el saldo insoluto. Sujeto al cumplimiento de requisitos.</div>
 </div>
 <div class="fld">
 <div class="lab"><label for="plazo" id="plazoLabel">Plazo</label><output class="tab" id="plazoOut">36 meses</output></div>
@@ -752,12 +762,12 @@ html{scroll-behavior:auto}
 <thead><tr><th></th><th><small>Arrendamiento</small>Financiero</th><th><small>Arrendamiento</small>Puro</th><th><small>Crédito</small>Simple</th><th><small>Crédito</small>Revolvente</th><th><small>Crédito</small>Estructurado</th></tr></thead>
 <tbody>
 <tr><th>Propiedad</th><td>ATRIX durante el plazo; suya al ejercer la opción de compra</td><td>ATRIX durante y después del plazo, salvo compra al residual</td><td>Suya desde el inicio</td><td>Suya desde el inicio</td><td>Suya desde el inicio</td></tr>
-<tr><th>Qué se paga</th><td>100% del valor más intereses</td><td>El uso: valor menos residual</td><td>Capital e intereses en pagos fijos</td><td>Intereses sobre lo dispuesto; capital al vencimiento</td><td>Capital e intereses según el calendario pactado</td></tr>
+<tr><th>Qué se paga</th><td>100% del valor más intereses</td><td>El uso: valor menos residual</td><td>Capital e intereses en pagos fijos</td><td>Intereses sobre lo dispuesto; capital al vencimiento</td><td>Intereses mensuales; capital mensual, bimestral o trimestral</td></tr>
 <tr><th>Fiscal</th><td>Deduce depreciación e intereses</td><td>Renta 100% deducible</td><td>Intereses deducibles</td><td>Intereses deducibles</td><td>Intereses deducibles</td></tr>
 <tr><th>IVA del activo</th><td>Diferido en las rentas</td><td>Sobre cada renta</td><td>No aplica</td><td>No aplica</td><td>No aplica</td></tr>
 <tr><th>Garantía</th><td>El activo, pagaré y aval</td><td>El activo, pagaré y aval</td><td>Inmueble en Nuevo León</td><td>Inmueble en Nuevo León</td><td>Definida en la estructura</td></tr>
-<tr><th>Al término</th><td>El activo pasa a su nombre</td><td>Renovar, devolver o comprar</td><td>Crédito liquidado</td><td>Línea disponible de nuevo</td><td>Crédito liquidado</td></tr>
-<tr><th>Indicado para</th><td>Activos de larga vida útil</td><td>Equipo que se renueva con frecuencia</td><td>Liquidez estructurada con patrimonio</td><td>Flujos estacionales y proyectos por etapas</td><td>Proyectos con flujos irregulares o en arranque</td></tr>
+<tr><th>Al término</th><td>El activo pasa a su nombre</td><td>Renovar, devolver o comprar</td><td>Crédito liquidado</td><td>Línea disponible de nuevo</td><td>Saldo insoluto liquidado al mes 36 como máximo</td></tr>
+<tr><th>Indicado para</th><td>Activos de larga vida útil</td><td>Equipo que se renueva con frecuencia</td><td>Liquidez estructurada con patrimonio</td><td>Flujos estacionales y proyectos por etapas</td><td>Empresas que requieren un calendario de pagos a la medida</td></tr>
 </tbody>
 </table>
 </div>
@@ -869,7 +879,7 @@ html{scroll-behavior:auto}
 <div class="faq rv">
 <details><summary>¿Otorgan crédito simple o revolvente sin garantía inmobiliaria?<i></i></summary><div class="a"><b>No.</b> El crédito simple y el revolvente se otorgan exclusivamente con garantía inmobiliaria ubicada en Nuevo León. Si no cuenta con un inmueble, la alternativa es el arrendamiento financiero o puro, donde el propio activo respalda la operación.</div></details>
 <details><summary>¿Pueden estructurar la operación a la medida?<i></i></summary><div class="a"><b>Sí.</b> Ajustamos plazo, enganche, valor residual, fechas de pago y la combinación de figuras según su flujo, su régimen fiscal y el uso del activo. Toda estructura pasa por el mismo análisis de riesgo.</div></details>
-<details><summary>¿Qué es el Crédito Estructurado?<i></i></summary><div class="a">Es un crédito diseñado a la medida de su operación cuando un esquema estándar no se ajusta a su flujo: puede incluir <b>periodo de gracia</b>, un calendario de pagos acorde a sus ingresos y una combinación de garantías definida en la estructura. Se otorga en Nuevo León y pasa por el mismo estudio del área de Riesgos.</div></details>
+<details><summary>¿Qué es el Crédito Estructurado?<i></i></summary><div class="a">Es un crédito que se estructura según el tipo de financiamiento que requiere su empresa. El plazo máximo es de <b>36 meses</b>, con pagos a capital <b>mensuales, bimestrales o trimestrales</b>. Cuando la estructura lo permite, el pago a capital puede calcularse sobre una corrida de hasta <b>50 meses</b> para reducir la mensualidad; en ese caso el crédito vence al mes 36 y en esa fecha se liquida el saldo insoluto. Siempre sujeto al cumplimiento de requisitos y al estudio del área de Riesgos.</div></details>
 <details><summary>¿En qué zona operan?<i></i></summary><div class="a">Únicamente en <b>Nuevo León</b>. El cliente, el activo y, en su caso, el inmueble en garantía deben ubicarse en el estado.</div></details>
 <details><summary>¿Cómo se determina mi tasa?<i></i></summary><div class="a">Las tasas varían conforme a lo que arroja el <b>estudio del área de Riesgos</b>: capacidad de pago, historial crediticio, tipo y antigüedad del activo, plazo, enganche y garantías. El simulador usa una tasa de referencia de 25% a 45% anual fija; la tasa definitiva se le comunica por escrito en la carta de aprobación, antes de firmar.</div></details>
 <details><summary>¿Cuánto tarda la aprobación?<i></i></summary><div class="a"><b>Dos días hábiles</b> para la preaprobación y <b>cinco días hábiles</b> para la aprobación, contados desde que recibimos la información completa. Si surgen dudas, el plazo depende de la rapidez con la que recibamos sus aclaraciones.</div></details>
@@ -1121,24 +1131,25 @@ if('IntersectionObserver' in window){const mio=new IntersectionObserver(es=>es.f
 /* ---------- simulator ---------- */
 const fmt=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
 const fmt2=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:2});
-const el={monto:$('#monto'),montoR:$('#montoR'),eng:$('#eng'),res:$('#res'),plazo:$('#plazo'),tasa:$('#tasa'),disp:$('#disp'),gra:$('#gra')};
-const S={prod:'fin',full:false,last:null};
+const el={monto:$('#monto'),montoR:$('#montoR'),eng:$('#eng'),res:$('#res'),plazo:$('#plazo'),tasa:$('#tasa'),disp:$('#disp'),corr:$('#corr')};
+const S={prod:'fin',full:false,last:null,per:1};
+const perName={1:'Mensual',2:'Bimestral',3:'Trimestral'};
 const names={fin:'Arrendamiento Financiero',puro:'Arrendamiento Puro',simple:'Crédito Simple (garantía inmobiliaria)',rev:'Crédito Revolvente (garantía inmobiliaria)',est:'Crédito Estructurado'};
 const cfg={
 fin:{ml:'Valor del activo',mh:'Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.',el:'Enganche',eh:'Un enganche mayor reduce la renta y mejora las condiciones.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng'],big:'Renta mensual estimada'},
 puro:{ml:'Valor del activo',mh:'Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.',el:'Pago inicial',eh:'Depósito en garantía y primera renta. Reduce la renta mensual.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng','res'],big:'Renta mensual estimada'},
 simple:{ml:'Monto del crédito',mh:'Requiere garantía inmobiliaria en Nuevo León. El monto se determina por el valor del inmueble y su capacidad de pago.',pl:'Plazo',ph:'De 12 a 48 meses, con pagos fijos de capital e intereses.',pr:[12,48,6,36],show:[],big:'Pago mensual estimado'},
 rev:{ml:'Línea de crédito autorizada',mh:'Requiere garantía inmobiliaria en Nuevo León. La línea se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'},
-est:{ml:'Monto del crédito',mh:'Esquema a la medida. Las garantías y el calendario se definen en la estructura con base en el estudio del área de Riesgos.',pl:'Plazo total',ph:'De 12 a 60 meses, incluido el periodo de gracia.',pr:[12,60,6,36],show:['gra'],big:'Pago mensual estimado tras la gracia'}
+est:{ml:'Monto del crédito',mh:'Estructura a la medida, sujeta al cumplimiento de requisitos y al estudio del área de Riesgos.',pl:'Plazo del crédito',ph:'Hasta 36 meses, plazo máximo por crédito.',pr:[12,36,6,36],show:['per','corr'],big:'Primer pago con capital'}
 };
 function setProd(p){
 S.prod=p;const c=cfg[p];
-$$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prod===p)));
+$$('.seg button[data-prod]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prod===p)));
 $('#montoLabel').textContent=c.ml;$('#montoHint').textContent=c.mh;
 if(c.el){$('#engLabel').textContent=c.el;$('#engHint').textContent=c.eh}
 $('#plazoLabel').textContent=c.pl;$('#plazoHint').textContent=c.ph;
 const [a,b,s,d]=c.pr;const v=+el.plazo.value;el.plazo.min=a;el.plazo.max=b;el.plazo.step=s;el.plazo.value=(v<a||v>b||(v-a)%s)?d:v;
-['eng','res','disp','gra'].forEach(k=>{$('#f-'+k).hidden=!c.show.includes(k)});
+['eng','res','disp','per','corr'].forEach(k=>{$('#f-'+k).hidden=!c.show.includes(k)});
 $('#bigLabel').textContent=c.big;calc();
 }
 const pmt=(pv,r,n,fv=0)=>{if(!r)return(pv-fv)/n;const q=Math.pow(1+r,n);return(pv-fv/q)*r/(1-1/q)};
@@ -1147,7 +1158,7 @@ function calc(){
 const M=Math.max(0,+el.monto.value||0),e=+el.eng.value/100,R=+el.res.value/100,n=+el.plazo.value,t=+el.tasa.value,r=t/1200;
 el.disp.max=Math.max(50000,M);if(+el.disp.value>M)el.disp.value=M;const D=+el.disp.value;
 $('#montoOut').textContent=fmt.format(M);$('#engOut').textContent=Math.round(e*100)+'%';$('#resOut').textContent=Math.round(R*100)+'%';
-const g=Math.min(+el.gra.value,n-1);$('#graOut').textContent=g+(g===1?' mes':' meses');
+el.corr.min=n;if(+el.corr.value<n)el.corr.value=n;const cor=+el.corr.value;$('#corrOut').textContent=cor+' meses';$('#perOut').textContent=perName[S.per];
 $('#plazoOut').textContent=n+(n===1?' mes':' meses');$('#tasaOut').textContent=(t%1?t.toFixed(1):t)+'%';$('#dispOut').textContent=fmt.format(D);
 if(M<=+el.montoR.max&&M>=+el.montoR.min)el.montoR.value=M;
 const ap=b=>b*.025*1.16;let big=0,sub='',kv=[],rows=[],mix=[];
@@ -1163,12 +1174,11 @@ else if(S.prod==='simple'){big=pmt(M,r,n);rows=sched(M,r,n,big);const int=big*n-
 sub=`más IVA sobre intereses · ${n} pagos fijos`;
 kv=[['Monto del crédito',fmt.format(M)],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(big*n)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León'],['Pago anticipado','Sin penalización']];
 mix=[['Capital',M,'k'],['Intereses',int,'n']];}
-else if(S.prod==='est'){const ia=M*r,rest=n-g;big=pmt(M,r,rest);
-for(let i=1;i<=g;i++)rows.push([i,ia,ia,0,M]);
-sched(M,r,rest,big).forEach(x=>rows.push([x[0]+g,x[1],x[2],x[3],x[4]]));
-const int=big*rest+ia*g-M;
-sub=g?`más IVA sobre intereses · ${g} ${g===1?'mes':'meses'} de gracia y ${rest} pagos fijos`:`más IVA sobre intereses · ${rest} pagos fijos`;
-kv=[['Monto del crédito',fmt.format(M)],['Pago durante la gracia',g?fmt.format(ia):'Sin gracia'],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(big*rest+ia*g)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Definida en la estructura']];
+else if(S.prod==='est'){const per=S.per,capK=M*per/cor;let b=M,int=0,tot=0;
+for(let i=1;i<=n;i++){const it=b*r;let k=(i%per===0)?Math.min(capK,b):0;if(i===n)k=b;b=Math.max(0,b-k);int+=it;tot+=it+k;rows.push([i,it+k,it,k,b])}
+const first=rows.find(x=>x[3]>0)||rows[0],fin=rows[n-1];big=first[1];
+sub=`más IVA sobre intereses · capital ${perName[per].toLowerCase()} · corrida de ${cor} meses · vence al mes ${n}`;
+kv=[['Capital por periodo',fmt.format(capK)],[per>1?'Primer pago (solo intereses)':'Interés del primer mes',fmt.format(M*r)],[`Pago final al mes ${n}`,fmt.format(fin[1])],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(tot)],['Comisión por apertura',fmt.format(ap(M))]];
 mix=[['Capital',M,'k'],['Intereses',int,'n']];}
 else {big=D*r;const fin=D+big;for(let i=1;i<=n;i++){const l=i===n;rows.push([i,l?fin:big,big,l?D:0,l?0:D])}
 sub=`más IVA · sobre ${fmt.format(D)} dispuestos · capital al mes ${n}`;
@@ -1185,8 +1195,9 @@ $('#amort tbody').innerHTML=show.map(x=>`<tr><td>${x[0]}</td><td class="tab">${f
 const tb=$('#toggleAmort');tb.hidden=rows.length<=6;tb.textContent=S.full?'Ver resumen':'Ver tabla completa';
 S.last={M,n,t};
 }
-$$('.seg button').forEach(b=>b.addEventListener('click',()=>setProd(b.dataset.prod)));
-['eng','res','plazo','tasa','disp','gra'].forEach(k=>el[k].addEventListener('input',calc));
+$$('.seg button[data-prod]').forEach(b=>b.addEventListener('click',()=>setProd(b.dataset.prod)));
+$$('#perSeg button').forEach(b=>b.addEventListener('click',()=>{S.per=+b.dataset.per;$$('#perSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));calc()}));
+['eng','res','plazo','tasa','disp','corr'].forEach(k=>el[k].addEventListener('input',calc));
 el.montoR.addEventListener('input',()=>{el.monto.value=el.montoR.value;calc()});
 el.monto.addEventListener('input',calc);
 el.monto.addEventListener('blur',()=>{el.monto.value=Math.min(10000000,Math.max(100000,Math.round((+el.monto.value||0)/10000)*10000));calc()});
