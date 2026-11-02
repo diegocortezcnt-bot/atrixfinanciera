@@ -436,7 +436,7 @@ html{scroll-behavior:auto}
 <a href="#preguntas">Preguntas</a>
 <a href="#contacto">Contacto</a>
 </div>
-<a class="portal" href="#clientes" aria-label="Portal de Clientes"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Portal de Clientes</span></a>
+<a class="portal" href="/portal/" aria-label="Portal de Clientes"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Portal de Clientes</span></a>
 <button class="dd" id="lnDd" type="button" aria-label="Mostrar secciones" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
 <a class="btn btn-p" href="#contacto">Solicitar</a>
 </div>
@@ -778,7 +778,7 @@ html{scroll-behavior:auto}
 <div class="head c">
 <div class="kicker rv">Portal de Clientes</div>
 <h2 class="t-1 rv d1">Su crédito, a la vista.</h2>
-<p class="lead sub rv d2">Cada cliente de ATRIX contará con un usuario personal para consultar el detalle de sus contratos: saldo, próximos pagos, historial y documentos, desde cualquier dispositivo.</p>
+<p class="lead sub rv d2">Cada cliente de ATRIX cuenta con un usuario personal para consultar el detalle de sus contratos: saldo, próximo pago, tabla de pagos e historial, desde cualquier dispositivo.</p>
 </div>
 <div class="portal-g">
 <div class="mac" id="mac" aria-label="Vista ilustrativa del Portal de Clientes">
@@ -814,20 +814,16 @@ html{scroll-behavior:auto}
 <div class="login lg-d rv d1">
 <div class="av"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
 <h3>Acceso para clientes</h3>
-<p>Su usuario se asigna al formalizar su contrato.</p>
-<label class="sr" for="pu" style="position:absolute;left:-9999px">Usuario</label>
-<input id="pu" type="text" placeholder="Usuario" disabled>
-<label for="pp" style="position:absolute;left:-9999px">Contraseña</label>
-<input id="pp" type="password" placeholder="Contraseña" disabled>
-<span class="btn btn-w" aria-disabled="true">Disponible próximamente</span>
-<div class="soon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#febc2e" stroke-width="2" stroke-linecap="round" style="flex:0 0 18px;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg><span>El portal se habilitará por etapas. Mientras tanto, solicite su estado de cuenta por WhatsApp al 81 3412 7296 o en atencion@atrixfinanciera.com.</span></div>
+<p>Entre con su RFC y la contraseña que le entregó ATRIX al formalizar su contrato.</p>
+<a class="btn btn-w" href="/portal/" style="justify-content:center">Entrar al Portal de Clientes</a>
+<div class="soon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="2" stroke-linecap="round" style="flex:0 0 18px;margin-top:1px"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>¿Olvidó su contraseña? Escríbanos a atencion@atrixfinanciera.com o por WhatsApp al 81 3412 7296 y le generamos una nueva.</span></div>
 <a class="more" href="#contacto" style="justify-self:center">¿Aún no es cliente? Solicite su crédito</a>
 </div>
 </div>
 <div class="feats">
 <div class="lg-d rv"><svg viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="1.6" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><h4>Estado de cuenta</h4><p>Saldo insoluto, rentas pagadas y por vencer, actualizado con cada pago.</p></div>
 <div class="lg-d rv d1"><svg viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h4>Calendario de pagos</h4><p>Tabla de amortización completa y recordatorio de cada fecha de pago.</p></div>
-<div class="lg-d rv d2"><svg viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="1.6" stroke-linecap="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h4"/></svg><h4>Documentos</h4><p>Contrato, pagarés, facturas, pólizas de seguro y constancias en un solo lugar.</p></div>
+<div class="lg-d rv d2"><svg viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="1.6" stroke-linecap="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h4"/></svg><h4>Pagos realizados</h4><p>Historial de cada pago aplicado a su contrato, con fecha e importe.</p></div>
 <div class="lg-d rv d3"><svg viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="1.6" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h4>Acceso seguro</h4><p>Usuario personal por cliente; cada empresa consulta únicamente sus propias operaciones.</p></div>
 </div>
 </div>
@@ -885,7 +881,7 @@ html{scroll-behavior:auto}
 <details><summary>¿Cuál es la diferencia entre arrendamiento financiero y puro?<i></i></summary><div class="a">En el <b>financiero</b> paga el valor completo del activo en rentas y al final lo adquiere por un valor simbólico. En el <b>puro</b> paga solo el uso durante el plazo, la renta es menor y deducible, y al final decide si renueva, devuelve o compra al valor residual.</div></details>
 <details><summary>¿Qué montos manejan?<i></i></summary><div class="a">De <b>$100,000</b> hasta <b>$2,500,000</b> pesos mexicanos (MXN) por crédito. El monto autorizado dentro de ese rango depende del activo, la garantía y la capacidad de pago.</div></details>
 <details><summary>¿Puedo liquidar anticipadamente?<i></i></summary><div class="a">Sí. En crédito simple y revolvente, sin penalización y previo aviso. En arrendamiento, a partir del mes 12 bajo las condiciones de liquidación anticipada pactadas en el contrato.</div></details>
-<details><summary>¿Cuándo tendré acceso al Portal de Clientes?<i></i></summary><div class="a">El portal se habilitará por etapas. Cada cliente recibirá su usuario al formalizar su contrato; mientras tanto, su estado de cuenta se entrega por WhatsApp o correo cuando lo solicite.</div></details>
+<details><summary>¿Cómo entro al Portal de Clientes?<i></i></summary><div class="a">Al formalizar su contrato, ATRIX le entrega una carta de acceso: su usuario es su RFC y recibe una contraseña temporal que puede cambiar dentro del portal. Entre en www.atrixfinanciera.com/portal. Si la olvida, solicítenos una nueva por WhatsApp o correo.</div></details>
 </div>
 </div>
 </section>
@@ -977,7 +973,7 @@ html{scroll-behavior:auto}
 <h4>2. Titular</h4><p>El sitio es operado por COLIUM, S.A. de C.V. ("COLIUM"), sociedad mercantil con domicilio en Monterrey, Nuevo León, México, titular de las marcas ATRIX<sup>®</sup> y ATRIX FINANCIERA.</p>
 <h4>3. Carácter informativo</h4><p>La información del sitio, incluidos los productos, el simulador y cualquier cifra, tasa o plazo, es exclusivamente informativa. No constituye oferta vinculante, promesa de contratación ni aprobación de crédito o arrendamiento. Toda operación está sujeta al análisis y aprobación de COLIUM; las tasas varían conforme al resultado del estudio del área de Riesgos y las condiciones definitivas serán las pactadas en el contrato que, en su caso, se celebre.</p>
 <h4>4. Simulador</h4><p>El simulador calcula estimaciones con base en los parámetros que el usuario captura y en tasas de referencia. Los resultados no incluyen IVA, seguros, gastos de ratificación o de registro, ni otros accesorios, y pueden diferir de la cotización formal.</p>
-<h4>5. Portal de Clientes</h4><p>El Portal de Clientes se encuentra en desarrollo. Las vistas mostradas son ilustrativas y contienen datos de ejemplo. El acceso se otorgará únicamente a clientes con contrato formalizado, mediante usuario y contraseña personales e intransferibles.</p>
+<h4>5. Portal de Clientes</h4><p>El acceso al Portal de Clientes se otorga únicamente a clientes con contrato formalizado, mediante usuario (RFC) y contraseña personales e intransferibles. La información mostrada es informativa, corresponde a la fecha de corte indicada y no sustituye los términos del contrato. Las vistas de esta página son ilustrativas y contienen datos de ejemplo. ATRIX puede suspender el acceso por motivos de seguridad.</p>
 <h4>6. Cobertura</h4><p>Los productos se ofrecen únicamente a personas morales y personas físicas con actividad empresarial con domicilio, activos y, en su caso, garantías ubicados en el estado de Nuevo León.</p>
 <h4>7. Propiedad intelectual</h4><p>Las marcas, logotipos, textos, diseños, animaciones y demás contenidos del sitio son propiedad de COLIUM o se usan bajo licencia, y están protegidos por la Ley Federal de Protección a la Propiedad Industrial y la Ley Federal del Derecho de Autor. Queda prohibida su reproducción sin autorización previa y por escrito.</p>
 <h4>8. Uso del sitio</h4><p>El usuario se obliga a utilizar el sitio de forma lícita y a proporcionar información veraz. COLIUM podrá suspender el acceso a quien incumpla estos términos.</p>
