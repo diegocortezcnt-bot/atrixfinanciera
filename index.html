@@ -248,6 +248,7 @@ svg{display:block;max-width:100%}
 .res{border-radius:28px;padding:30px;display:grid;gap:22px;min-width:0}
 .res .top span{font-size:.74rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
 .res .top b{display:block;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:600;letter-spacing:-.04em;line-height:1.05;color:var(--navy);margin-top:4px}
+.res .top b .cur{font-size:.36em;font-weight:500;letter-spacing:.02em;color:var(--ink-2)}
 .res .top small{font-size:.86rem;color:var(--ink-2)}
 .mix{display:grid;gap:8px}
 .mix .track{height:10px;border-radius:10px;overflow:hidden;display:flex;background:#e3e3e8}
@@ -636,7 +637,7 @@ html{scroll-behavior:auto}
 <div class="num rv"><b class="tab" data-count="2">2</b><span>días hábiles para emitir la preaprobación.</span></div>
 <div class="num rv d1"><b class="tab" data-count="5">5</b><span>días hábiles para la aprobación definitiva.</span></div>
 <div class="num rv d2"><b class="tab">25–45%</b><span>tasa anual fija de referencia, según el estudio del área de Riesgos.</span></div>
-<div class="num rv d3"><b class="tab" data-count="100000" data-fmt="money">$100,000</b><span>monto mínimo por operación, en pesos mexicanos.</span></div>
+<div class="num rv d3"><b class="tab" data-count="100000" data-fmt="money">$100,000</b><span>monto mínimo por operación; máximo $2,500,000 MXN (pesos mexicanos).</span></div>
 </div>
 </div>
 </section>
@@ -674,7 +675,7 @@ html{scroll-behavior:auto}
 <div class="head c">
 <div class="kicker rv">Simulador</div>
 <h2 class="t-1 rv d1">Estime su operación.</h2>
-<p class="lead sub rv d2">Ajuste los parámetros y obtenga la mensualidad estimada, el costo total y la tabla de pagos. Cifras informativas sin IVA.</p>
+<p class="lead sub rv d2">Ajuste los parámetros y obtenga la mensualidad estimada, el costo total y la tabla de pagos. Cifras informativas en pesos mexicanos (MXN), sin IVA.</p>
 </div>
 <div class="sim">
 <div class="panel lg rv">
@@ -688,9 +689,9 @@ html{scroll-behavior:auto}
 <div class="fields">
 <div class="fld">
 <div class="lab"><label for="monto" id="montoLabel">Valor del activo</label><output class="tab" id="montoOut">$1,000,000</output></div>
-<div class="money"><input type="number" id="monto" min="100000" max="10000000" step="10000" value="1000000" inputmode="numeric"></div>
-<input type="range" id="montoR" min="100000" max="5000000" step="10000" value="1000000" aria-label="Monto (deslizador)">
-<div class="hint" id="montoHint">Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.</div>
+<div class="money"><input type="number" id="monto" min="100000" max="2500000" step="10000" value="1000000" inputmode="numeric"></div>
+<input type="range" id="montoR" min="100000" max="2500000" step="10000" value="1000000" aria-label="Monto (deslizador)">
+<div class="hint" id="montoHint">De $100,000 a $2,500,000 MXN (pesos mexicanos).</div>
 </div>
 <div class="fld" id="f-disp">
 <div class="lab"><label for="disp">Disposición inicial</label><output class="tab" id="dispOut">$400,000</output></div>
@@ -884,7 +885,7 @@ html{scroll-behavior:auto}
 <details><summary>¿Cómo se determina mi tasa?<i></i></summary><div class="a">Las tasas varían conforme a lo que arroja el <b>estudio del área de Riesgos</b>: capacidad de pago, historial crediticio, tipo y antigüedad del activo, plazo, enganche y garantías. El simulador usa una tasa de referencia de 25% a 45% anual fija; la tasa definitiva se le comunica por escrito en la carta de aprobación, antes de firmar.</div></details>
 <details><summary>¿Cuánto tarda la aprobación?<i></i></summary><div class="a"><b>Dos días hábiles</b> para la preaprobación y <b>cinco días hábiles</b> para la aprobación, contados desde que recibimos la información completa. Si surgen dudas, el plazo depende de la rapidez con la que recibamos sus aclaraciones.</div></details>
 <details><summary>¿Cuál es la diferencia entre arrendamiento financiero y puro?<i></i></summary><div class="a">En el <b>financiero</b> paga el valor completo del activo en rentas y al final lo adquiere por un valor simbólico. En el <b>puro</b> paga solo el uso durante el plazo, la renta es menor y deducible, y al final decide si renueva, devuelve o compra al valor residual.</div></details>
-<details><summary>¿Qué montos manejan?<i></i></summary><div class="a">Desde <b>$100,000 MXN</b>. Montos superiores a $2,000,000 MXN se analizan caso por caso según el activo, la garantía y la capacidad de pago.</div></details>
+<details><summary>¿Qué montos manejan?<i></i></summary><div class="a">De <b>$100,000</b> hasta <b>$2,500,000</b> pesos mexicanos (MXN) por crédito. El monto autorizado dentro de ese rango depende del activo, la garantía y la capacidad de pago.</div></details>
 <details><summary>¿Puedo liquidar anticipadamente?<i></i></summary><div class="a">Sí. En crédito simple y revolvente, sin penalización y previo aviso. En arrendamiento, a partir del mes 12 bajo las condiciones de liquidación anticipada pactadas en el contrato.</div></details>
 <details><summary>¿Cuándo tendré acceso al Portal de Clientes?<i></i></summary><div class="a">El portal se habilitará por etapas. Cada cliente recibirá su usuario al formalizar su contrato; mientras tanto, su estado de cuenta se entrega por WhatsApp o correo cuando lo solicite.</div></details>
 </div>
@@ -942,7 +943,7 @@ html{scroll-behavior:auto}
 <p>1. Las tasas mostradas son de referencia. La tasa, el monto, el plazo y las garantías definitivos varían conforme al resultado del estudio del área de Riesgos de cada operación y se comunican por escrito en la carta de aprobación.</p>
 <p>2. Los tiempos de preaprobación (2 días hábiles) y aprobación (5 días hábiles) se cuentan a partir de la recepción de la información completa.</p>
 <p>3. El simulador es informativo y no constituye oferta vinculante. Las cifras no incluyen IVA, seguros, ni gastos de ratificación o registro.</p>
-<p>4. Productos disponibles exclusivamente para personas morales y personas físicas con actividad empresarial en el estado de Nuevo León. El crédito simple y el revolvente requieren garantía inmobiliaria.</p>
+<p>4. Productos disponibles exclusivamente para personas morales y personas físicas con actividad empresarial en el estado de Nuevo León. El crédito simple y el revolvente requieren garantía inmobiliaria. Monto por crédito de $100,000 a $2,500,000 pesos mexicanos (MXN); todas las cifras del sitio están expresadas en MXN.</p>
 <p>COLIUM, S.A. de C.V. es una sociedad mercantil que otorga arrendamiento y crédito con recursos propios; no capta recursos del público ni ofrece productos de inversión.</p>
 </div>
 <div class="cols">
@@ -1136,11 +1137,11 @@ const S={prod:'fin',full:false,last:null,per:1};
 const perName={1:'Mensual',2:'Bimestral',3:'Trimestral'};
 const names={fin:'Arrendamiento Financiero',puro:'Arrendamiento Puro',simple:'Crédito Simple (garantía inmobiliaria)',rev:'Crédito Revolvente (garantía inmobiliaria)',est:'Crédito Estructurado'};
 const cfg={
-fin:{ml:'Valor del activo',mh:'Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.',el:'Enganche',eh:'Un enganche mayor reduce la renta y mejora las condiciones.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng'],big:'Renta mensual estimada'},
-puro:{ml:'Valor del activo',mh:'Desde $100,000 MXN. Montos mayores a $2,000,000 se analizan caso por caso.',el:'Pago inicial',eh:'Depósito en garantía y primera renta. Reduce la renta mensual.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng','res'],big:'Renta mensual estimada'},
-simple:{ml:'Monto del crédito',mh:'Requiere garantía inmobiliaria en Nuevo León. El monto se determina por el valor del inmueble y su capacidad de pago.',pl:'Plazo',ph:'De 12 a 48 meses, con pagos fijos de capital e intereses.',pr:[12,48,6,36],show:[],big:'Pago mensual estimado'},
-rev:{ml:'Línea de crédito autorizada',mh:'Requiere garantía inmobiliaria en Nuevo León. La línea se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'},
-est:{ml:'Monto del crédito',mh:'Estructura a la medida, sujeta al cumplimiento de requisitos y al estudio del área de Riesgos.',pl:'Plazo del crédito',ph:'Hasta 36 meses, plazo máximo por crédito.',pr:[12,36,6,36],show:['per','corr'],big:'Primer pago con capital'}
+fin:{ml:'Valor del activo',mh:'De $100,000 a $2,500,000 MXN (pesos mexicanos).',el:'Enganche',eh:'Un enganche mayor reduce la renta y mejora las condiciones.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng'],big:'Renta mensual estimada'},
+puro:{ml:'Valor del activo',mh:'De $100,000 a $2,500,000 MXN (pesos mexicanos).',el:'Pago inicial',eh:'Depósito en garantía y primera renta. Reduce la renta mensual.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng','res'],big:'Renta mensual estimada'},
+simple:{ml:'Monto del crédito',mh:'De $100,000 a $2,500,000 MXN. Requiere garantía inmobiliaria en Nuevo León; el monto se determina por el valor del inmueble y su capacidad de pago.',pl:'Plazo',ph:'De 12 a 48 meses, con pagos fijos de capital e intereses.',pr:[12,48,6,36],show:[],big:'Pago mensual estimado'},
+rev:{ml:'Línea de crédito autorizada',mh:'Línea de hasta $2,500,000 MXN. Requiere garantía inmobiliaria en Nuevo León y se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'},
+est:{ml:'Monto del crédito',mh:'Hasta $2,500,000 MXN. Estructura a la medida, sujeta al cumplimiento de requisitos y al estudio del área de Riesgos.',pl:'Plazo del crédito',ph:'Hasta 36 meses, plazo máximo por crédito.',pr:[12,36,6,36],show:['per','corr'],big:'Primer pago con capital'}
 };
 function setProd(p){
 S.prod=p;const c=cfg[p];
@@ -1155,7 +1156,7 @@ $('#bigLabel').textContent=c.big;calc();
 const pmt=(pv,r,n,fv=0)=>{if(!r)return(pv-fv)/n;const q=Math.pow(1+r,n);return(pv-fv/q)*r/(1-1/q)};
 function sched(PV,r,n,pay){const rows=[];let b=PV;for(let i=1;i<=n;i++){const it=b*r,k=pay-it;b=Math.max(0,b-k);rows.push([i,pay,it,k,b])}return rows}
 function calc(){
-const M=Math.max(0,+el.monto.value||0),e=+el.eng.value/100,R=+el.res.value/100,n=+el.plazo.value,t=+el.tasa.value,r=t/1200;
+const M=Math.min(2500000,Math.max(0,+el.monto.value||0)),e=+el.eng.value/100,R=+el.res.value/100,n=+el.plazo.value,t=+el.tasa.value,r=t/1200;
 el.disp.max=Math.max(50000,M);if(+el.disp.value>M)el.disp.value=M;const D=+el.disp.value;
 $('#montoOut').textContent=fmt.format(M);$('#engOut').textContent=Math.round(e*100)+'%';$('#resOut').textContent=Math.round(R*100)+'%';
 el.corr.min=n;if(+el.corr.value<n)el.corr.value=n;const cor=+el.corr.value;$('#corrOut').textContent=cor+' meses';$('#perOut').textContent=perName[S.per];
@@ -1184,7 +1185,7 @@ else {big=D*r;const fin=D+big;for(let i=1;i<=n;i++){const l=i===n;rows.push([i,l
 sub=`más IVA · sobre ${fmt.format(D)} dispuestos · capital al mes ${n}`;
 kv=[['Línea autorizada',fmt.format(M)],['Disponible tras disponer',fmt.format(M-D)],['Intereses del periodo',fmt.format(big*n)],['Pago al vencimiento',fmt.format(fin)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León']];
 mix=[['Dispuesto',D,'k'],['Intereses',big*n,'n'],['Disponible',M-D,'r']];}
-$('#bigVal').textContent=fmt.format(big);$('#bigSub').textContent=sub;
+$('#bigVal').innerHTML=fmt.format(big)+'<span class="cur"> MXN</span>';$('#bigSub').textContent=sub;
 $('#kv').innerHTML=kv.map(([k,v])=>`<div><span>${k}</span><b class="tab">${v}</b></div>`).join('');
 const tot=mix.reduce((s,m)=>s+Math.max(0,m[1]),0)||1;
 ['k','n','r'].forEach(c=>{const m=mix.find(x=>x[2]===c);$('#mix'+c.toUpperCase()).style.width=(m?Math.max(0,m[1])/tot*100:0)+'%'});
@@ -1200,7 +1201,7 @@ $$('#perSeg button').forEach(b=>b.addEventListener('click',()=>{S.per=+b.dataset
 ['eng','res','plazo','tasa','disp','corr'].forEach(k=>el[k].addEventListener('input',calc));
 el.montoR.addEventListener('input',()=>{el.monto.value=el.montoR.value;calc()});
 el.monto.addEventListener('input',calc);
-el.monto.addEventListener('blur',()=>{el.monto.value=Math.min(10000000,Math.max(100000,Math.round((+el.monto.value||0)/10000)*10000));calc()});
+el.monto.addEventListener('blur',()=>{el.monto.value=Math.min(2500000,Math.max(100000,Math.round((+el.monto.value||0)/10000)*10000));calc()});
 $('#toggleAmort').addEventListener('click',()=>{S.full=!S.full;calc()});
 $$('[data-sim]').forEach(a=>a.addEventListener('click',()=>setProd(a.dataset.sim)));
 $('#simGo').addEventListener('click',()=>{$('#producto').value=names[S.prod];$('#montoLead').value=nf.format(S.last.M);const d=$('#destino');if(!d.value)d.value=`Simulé ${names[S.prod]} por ${fmt.format(S.last.M)} a ${S.last.n} meses. `;updWa()});
