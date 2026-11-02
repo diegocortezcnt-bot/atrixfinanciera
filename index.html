@@ -1091,7 +1091,7 @@ const y=scrollY, navB=lnav.getBoundingClientRect().bottom;
 // nav theme
 lnav.classList.toggle('dark',darkZones.some(z=>{const r=z.getBoundingClientRect();return r.top<=navB&&r.bottom>=navB}));
 // active link
-let cur=null; secs.forEach(s=>{const r=s.el.getBoundingClientRect(); if(r.top<=innerHeight*.4) cur=s.a}); $$('#lnLinks a').forEach(a=>a.classList.toggle('on',a===cur));
+let cur=null; const th=innerHeight*.4; secs.forEach(s=>{const r=s.el.getBoundingClientRect(); if(r.top<=th&&r.bottom>th) cur=s.a}); $$('#lnLinks a').forEach(a=>a.classList.toggle('on',a===cur));
 toTop.classList.toggle('show',y>900);
 if(reduce){heroP=0;return}
 // hero
