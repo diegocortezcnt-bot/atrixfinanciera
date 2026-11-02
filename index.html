@@ -81,23 +81,19 @@ svg{display:block;max-width:100%}
 .gnav .wrap{display:flex;align-items:center;gap:22px;height:44px;font-size:.76rem}
 .gnav a{text-decoration:none;opacity:.82;transition:opacity .2s}
 .gnav a:hover{opacity:1}
-.gnav .logo{display:flex;align-items:center;gap:8px;opacity:1;margin-right:auto}
-.gnav .logo .wm{display:grid;justify-items:start;line-height:1}
-.gnav .logo b{font-weight:300;letter-spacing:.34em;font-size:.84rem;color:#fff}
-.gnav .logo sup{font-size:.5em;letter-spacing:0;position:relative;top:-.2em;margin-left:-.3em}
-.gnav .logo i{display:block;width:16px;height:1.5px;background:var(--red);margin:3px 0 2px}
-.gnav .logo small{font-size:.42rem;font-weight:500;letter-spacing:.36em;color:#c7c7cc}
+.gnav .logo{display:flex;align-items:center;opacity:1;margin-right:auto}
+.gnav .logo svg{display:block}
 .gnav .portal{display:inline-flex;align-items:center;gap:6px;opacity:1;padding:5px 12px;border-radius:999px;border:1px solid #424245}
 .gnav .portal:hover{background:#2a2a2d}
 @media (max-width:760px){.gnav .hide-s{display:none}}
 .lnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:70;background:rgba(255,255,255,.72);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(0,0,0,.08);transition:background .4s,border-color .4s,color .4s}
 .lnav.dark{background:rgba(10,10,12,.6);border-color:rgba(255,255,255,.08);color:#f5f5f7}
 .lnav .wrap{display:flex;align-items:center;gap:20px;height:54px}
-.lnav .ttl{margin-right:auto;text-decoration:none;display:grid;justify-items:start;line-height:1}
-.lnav .ttl b{font-weight:300;font-size:1.12rem;letter-spacing:.34em}
+.lnav .ttl{margin-right:auto;text-decoration:none;display:grid;justify-items:start;align-content:center;line-height:1}
+.lnav .ttl b{font-weight:300;font-size:1.06rem;letter-spacing:.34em}
 .lnav .ttl sup{font-size:.45em;letter-spacing:0;position:relative;top:-.25em;margin-left:-.3em}
 .lnav .ttl i{display:block;width:20px;height:2px;background:var(--red);margin:4px 0 3px}
-.lnav .ttl span{font-weight:500;font-size:.5rem;letter-spacing:.38em;color:var(--ink-2)}
+.lnav .ttl span{font-weight:500;font-size:.48rem;letter-spacing:.38em;color:var(--ink-2)}
 .lnav.dark .ttl span{color:var(--on-dark-2)}
 .lnav .links{display:flex;gap:22px;font-size:.8rem}
 .lnav .links a{text-decoration:none;opacity:.8;position:relative;padding-block:4px}
@@ -425,7 +421,6 @@ html{scroll-behavior:auto}
 <div class="wrap">
 <a class="logo" href="#inicio" aria-label="ATRIX Financiera, inicio">
 <svg width="24" height="24" viewBox="0 0 101 101" aria-hidden="true"><polygon points="50.468,0 0,100.934 50.468,74.606" fill="#E71922"/><polygon points="50.468,0 35.109,87.770 50.468,74.606" fill="#A50F16"/><polygon points="50.468,0 100.933,100.934 50.468,74.606" fill="#0D2A52"/><polygon points="50.468,0 65.828,87.770 50.468,74.606" fill="#071D3D"/></svg>
-<span class="wm"><b>ATRIX<sup>®</sup></b><i></i><small>FINANCIERA</small></span>
 </a>
 <a class="hide-s" href="#productos">Productos</a>
 <a class="hide-s" href="#simulador">Simulador</a>
