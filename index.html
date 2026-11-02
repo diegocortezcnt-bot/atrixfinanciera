@@ -265,11 +265,16 @@ svg{display:block;max-width:100%}
 .kv span{font-size:.72rem;color:var(--ink-2)}
 .kv b{font-weight:600;font-size:1rem}
 .amort{overflow-x:auto;border-radius:14px;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.55)}
-.amort table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:420px}
-.amort th,.amort td{padding:9px 12px;text-align:right;border-bottom:1px solid rgba(0,0,0,.06);white-space:nowrap}
+.amort table{width:100%;border-collapse:collapse;font-size:.74rem;min-width:470px}
+.amort th,.amort td{padding:9px 7px;text-align:right;border-bottom:1px solid rgba(0,0,0,.06);white-space:nowrap}
+.amort th:first-child,.amort td:first-child{padding-left:12px}.amort th:last-child,.amort td:last-child{padding-right:12px}
 .amort th:first-child,.amort td:first-child{text-align:left}
-.amort th{font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.amort th{font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);white-space:normal;vertical-align:bottom;line-height:1.25}
 .amort tr:last-child td{border-bottom:0}
+.amort td:nth-child(2){text-align:left;color:var(--ink-2)}.amort th:nth-child(2){text-align:left}
+.amort td:nth-child(3){color:var(--ink-2)}
+.amort-note{font-size:.72rem;color:var(--ink-3);line-height:1.5;margin:-4px 2px 0}
+.amort-note .swipe{display:none}@media (max-width:620px){.amort-note .swipe{display:inline}}
 .sim-acts{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .fine{font-size:.76rem;color:var(--ink-3);line-height:1.5}
 @media (max-width:960px){.sim{grid-template-columns:1fr}}
@@ -733,7 +738,8 @@ html{scroll-behavior:auto}
 <div class="leg" id="mixLeg"></div>
 </div>
 <div class="kv" id="kv"></div>
-<div class="amort"><table id="amort"><thead><tr><th>Mes</th><th>Pago</th><th>Interés</th><th>Capital</th><th>Saldo</th></tr></thead><tbody></tbody></table></div>
+<div class="amort"><table id="amort"><thead></thead><tbody></tbody></table></div>
+<p class="amort-note">Importes en pesos mexicanos (MXN). Interés ordinario calculado sobre días naturales reales / 360 (ACT/360) con tasa anual fija, sin IVA. Fechas estimadas con pago mensual a partir de hoy; las definitivas se fijan en el contrato.<span class="swipe"> Deslice la tabla para ver todas las columnas.</span></p>
 <div class="sim-acts">
 <button type="button" class="btn btn-o btn-s" id="toggleAmort">Ver tabla completa</button>
 <a class="btn btn-p btn-s" href="#contacto" id="simGo">Solicitar esta operación</a>
@@ -1174,46 +1180,61 @@ const [a,b,s,d]=c.pr;const v=+el.plazo.value;el.plazo.min=a;el.plazo.max=b;el.pl
 ['eng','res','disp','per','corr'].forEach(k=>{$('#f-'+k).hidden=!c.show.includes(k)});
 $('#bigLabel').textContent=c.big;calc();
 }
-const pmt=(pv,r,n,fv=0)=>{if(!r)return(pv-fv)/n;const q=Math.pow(1+r,n);return(pv-fv/q)*r/(1-1/q)};
-function sched(PV,r,n,pay){const rows=[];let b=PV;for(let i=1;i<=n;i++){const it=b*r,k=pay-it;b=Math.max(0,b-k);rows.push([i,pay,it,k,b])}return rows}
+/* Interés ordinario con la metodología del motor ATRIX Cartera: ACT/360 (días naturales reales / 360), tasa anual nominal sin IVA,
+fechas de pago mensuales a partir de hoy (fin de mes se ajusta al último día), redondeo a centavos por obligación y el último periodo absorbe los centavos. */
+const r2=x=>Math.round((x+Number.EPSILON)*100)/100;
+function addM(s,k){const y=s.getFullYear(),m=s.getMonth()+k,d=s.getDate(),last=new Date(y,m+1,0).getDate(),sl=new Date(s.getFullYear(),s.getMonth()+1,0).getDate();return new Date(y,m,d===sl?last:Math.min(d,last))}
+const dDays=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+function calendar(n){const t=new Date(),s=new Date(t.getFullYear(),t.getMonth(),t.getDate()),c=[];let p=s;for(let k=1;k<=n;k++){const q=addM(s,k);c.push({f:q,d:dDays(p,q)});p=q}return c}
+/* Francés ACT/360 (crédito simple y arrendamiento financiero) y renta objetivo por valor presente (arrendamiento puro, VR>0):
+con f_k = 1 + i·d_k/360, P = (B·Πf − VR) / Σ_k Π_{j>k} f_j  ≡  R = (C − VR·DF_n) / Σ DF_k */
+function levelACT(B,i,c,VR=0){let pf=1,sum=0;for(let k=c.length-1;k>=0;k--){sum+=pf;pf*=1+i*c[k].d/360}
+const P=r2(sum?(B*pf-VR)/sum:B-VR);let b=B;const rows=[];
+c.forEach((x,k)=>{const it=r2(b*i*x.d/360);let cap=r2(P-it),pay=P;if(k===c.length-1){cap=r2(b-VR);pay=r2(it+cap)}b=r2(b-cap);rows.push([k+1,x.f,x.d,pay,it,cap,b])});
+return {P,rows,int:r2(rows.reduce((a,x)=>a+x[4],0)),tot:r2(rows.reduce((a,x)=>a+x[3],0))}}
+const heads={fin:['Renta','Carga financiera','Capital','Saldo'],puro:['Renta','Interés implícito','Recuperación','Por recuperar'],simple:['Pago','Interés','Capital','Saldo'],rev:['Pago','Interés','Capital','Dispuesto'],est:['Pago','Interés','Capital','Saldo']};
+const fDate=new Intl.DateTimeFormat('es-MX',{day:'2-digit',month:'short',year:'2-digit'});
+const fN2=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
 function calc(){
-const M=Math.min(2500000,Math.max(0,+el.monto.value||0)),e=+el.eng.value/100,R=+el.res.value/100,n=+el.plazo.value,t=+el.tasa.value,r=t/1200;
+const M=Math.min(2500000,Math.max(0,+el.monto.value||0)),e=+el.eng.value/100,R=+el.res.value/100,n=+el.plazo.value,t=+el.tasa.value,i=t/100;
 el.disp.max=Math.max(50000,M);if(+el.disp.value>M)el.disp.value=M;const D=+el.disp.value;
 $('#montoOut').textContent=fmt.format(M);$('#engOut').textContent=Math.round(e*100)+'%';$('#resOut').textContent=Math.round(R*100)+'%';
 el.corr.min=n;if(+el.corr.value<n)el.corr.value=n;const cor=+el.corr.value;$('#corrOut').textContent=cor+' meses';$('#perOut').textContent=perName[S.per];
 $('#plazoOut').textContent=n+(n===1?' mes':' meses');$('#tasaOut').textContent=(t%1?t.toFixed(1):t)+'%';$('#dispOut').textContent=fmt.format(D);
 if(M<=+el.montoR.max&&M>=+el.montoR.min)el.montoR.value=M;
-const ap=b=>b*.025*1.16;let big=0,sub='',kv=[],rows=[],mix=[];
-if(S.prod==='fin'){const PV=M*(1-e);big=pmt(PV,r,n);rows=sched(PV,r,n,big);const int=big*n-PV;
-sub=`más IVA · ${n} rentas fijas · opción de compra al término`;
-kv=[['Monto financiado',fmt.format(PV)],['Enganche',fmt.format(M*e)],['Intereses totales',fmt.format(int)],['Total de rentas',fmt.format(big*n)],['Comisión por apertura',fmt.format(ap(PV))],['Al término','El activo es suyo']];
-mix=[['Capital',PV,'k'],['Intereses',int,'n'],['Enganche',M*e,'r']];}
-else if(S.prod==='puro'){const PV=M*(1-e),RV=M*R;big=pmt(PV,r,n,RV);rows=sched(PV,r,n,big);const int=big*n-(PV-RV);
-sub=`más IVA · ${n} rentas · residual ${Math.round(R*100)}%`;
-kv=[['Pago inicial',fmt.format(M*e)],['Valor residual',fmt.format(RV)],['Total de rentas',fmt.format(big*n)],['Ahorro mensual vs. financiero',fmt.format(Math.max(0,pmt(PV,r,n)-big))],['Comisión por apertura',fmt.format(ap(PV))],['Al término','Renovar, devolver o comprar']];
-mix=[['Uso del activo',PV-RV,'k'],['Costo financiero',int,'n'],['Residual',RV,'r']];}
-else if(S.prod==='simple'){big=pmt(M,r,n);rows=sched(M,r,n,big);const int=big*n-M;
-sub=`más IVA sobre intereses · ${n} pagos fijos`;
-kv=[['Monto del crédito',fmt.format(M)],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(big*n)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León'],['Pago anticipado','Sin penalización']];
+const ap=b=>b*.025*1.16,c=calendar(n);let big=0,sub='',kv=[],rows=[],mix=[];
+if(S.prod==='fin'){const PV=r2(M*(1-e)),L=levelACT(PV,i,c);rows=L.rows;big=L.P;
+sub=`más IVA · ${n} rentas fijas · carga financiera ACT/360 · sin valor residual`;
+kv=[['Monto financiado',fmt.format(PV)],['Enganche',fmt.format(M*e)],['Carga financiera total',fmt.format(L.int)],['Total de rentas',fmt.format(L.tot)],['Comisión por apertura',fmt.format(ap(PV))],['Al término','El activo es suyo']];
+mix=[['Capital',PV,'k'],['Carga financiera',L.int,'n'],['Enganche',M*e,'r']];}
+else if(S.prod==='puro'){const C=r2(M*(1-e)),RV=r2(M*R),L=levelACT(C,i,c,RV),F=levelACT(C,i,c);rows=L.rows;big=L.P;
+sub=`más IVA · ${n} rentas · valor residual ${Math.round(R*100)}% · renta por valor presente ACT/360`;
+kv=[['Pago inicial',fmt.format(M*e)],['Valor residual',fmt.format(RV)],['Total de rentas',fmt.format(L.tot)],['Ahorro mensual vs. financiero',fmt.format(Math.max(0,F.P-L.P))],['Comisión por apertura',fmt.format(ap(C))],['Al término','Renovar, devolver o comprar']];
+mix=[['Uso del activo',C-RV,'k'],['Costo financiero',L.int,'n'],['Residual',RV,'r']];}
+else if(S.prod==='simple'){const L=levelACT(M,i,c);rows=L.rows;big=L.P;
+sub=`más IVA sobre intereses · ${n} pagos fijos · interés ACT/360`;
+kv=[['Monto del crédito',fmt.format(M)],['Intereses totales',fmt.format(L.int)],['Total a pagar',fmt.format(L.tot)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León'],['Pago anticipado','Sin penalización']];
+mix=[['Capital',M,'k'],['Intereses',L.int,'n']];}
+else if(S.prod==='est'){const per=S.per,capK=r2(M*per/cor);let b=M,int=0,tot=0;
+c.forEach((x,k)=>{const j=k+1,it=r2(b*i*x.d/360);let cap=(j%per===0)?Math.min(capK,b):0;if(j===n)cap=b;cap=r2(cap);b=r2(b-cap);int+=it;tot+=it+cap;rows.push([j,x.f,x.d,r2(it+cap),it,cap,b])});
+int=r2(int);tot=r2(tot);const first=rows.find(x=>x[5]>0)||rows[0],fin=rows[n-1];big=first[3];
+sub=`más IVA sobre intereses · capital ${perName[per].toLowerCase()} · corrida de ${cor} meses · vence al mes ${n} · interés ACT/360`;
+kv=[['Capital por periodo',fmt.format(capK)],[per>1?'Primer pago (solo intereses)':'Interés del primer mes',fmt.format(rows[0][4])],[`Pago final al mes ${n}`,fmt.format(fin[3])],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(tot)],['Comisión por apertura',fmt.format(ap(M))]];
 mix=[['Capital',M,'k'],['Intereses',int,'n']];}
-else if(S.prod==='est'){const per=S.per,capK=M*per/cor;let b=M,int=0,tot=0;
-for(let i=1;i<=n;i++){const it=b*r;let k=(i%per===0)?Math.min(capK,b):0;if(i===n)k=b;b=Math.max(0,b-k);int+=it;tot+=it+k;rows.push([i,it+k,it,k,b])}
-const first=rows.find(x=>x[3]>0)||rows[0],fin=rows[n-1];big=first[1];
-sub=`más IVA sobre intereses · capital ${perName[per].toLowerCase()} · corrida de ${cor} meses · vence al mes ${n}`;
-kv=[['Capital por periodo',fmt.format(capK)],[per>1?'Primer pago (solo intereses)':'Interés del primer mes',fmt.format(M*r)],[`Pago final al mes ${n}`,fmt.format(fin[1])],['Intereses totales',fmt.format(int)],['Total a pagar',fmt.format(tot)],['Comisión por apertura',fmt.format(ap(M))]];
-mix=[['Capital',M,'k'],['Intereses',int,'n']];}
-else {big=D*r;const fin=D+big;for(let i=1;i<=n;i++){const l=i===n;rows.push([i,l?fin:big,big,l?D:0,l?0:D])}
-sub=`más IVA · sobre ${fmt.format(D)} dispuestos · capital al mes ${n}`;
-kv=[['Línea autorizada',fmt.format(M)],['Disponible tras disponer',fmt.format(M-D)],['Intereses del periodo',fmt.format(big*n)],['Pago al vencimiento',fmt.format(fin)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León']];
-mix=[['Dispuesto',D,'k'],['Intereses',big*n,'n'],['Disponible',M-D,'r']];}
+else {let int=0;c.forEach((x,k)=>{const l=k===n-1,it=r2(D*i*x.d/360);int+=it;rows.push([k+1,x.f,x.d,r2(it+(l?D:0)),it,l?D:0,l?0:D])});int=r2(int);
+big=rows[0][4];const fin=rows[n-1][3];
+sub=`más IVA · interés diario ACT/360 sobre ${fmt.format(D)} dispuestos · capital al mes ${n}`;
+kv=[['Línea autorizada',fmt.format(M)],['Disponible tras disponer',fmt.format(M-D)],['Intereses del periodo',fmt.format(int)],['Pago al vencimiento',fmt.format(fin)],['Comisión por apertura',fmt.format(ap(M))],['Garantía','Inmueble en Nuevo León']];
+mix=[['Dispuesto',D,'k'],['Intereses',int,'n'],['Disponible',M-D,'r']];}
 $('#bigVal').innerHTML=fmt.format(big)+'<span class="cur"> MXN</span>';$('#bigSub').textContent=sub;
 $('#kv').innerHTML=kv.map(([k,v])=>`<div><span>${k}</span><b class="tab">${v}</b></div>`).join('');
 const tot=mix.reduce((s,m)=>s+Math.max(0,m[1]),0)||1;
 ['k','n','r'].forEach(c=>{const m=mix.find(x=>x[2]===c);$('#mix'+c.toUpperCase()).style.width=(m?Math.max(0,m[1])/tot*100:0)+'%'});
 const col={k:'#071D3D',n:'#9fb8e6',r:'#d2d2d7'};
 $('#mixLeg').innerHTML=mix.map(m=>`<span style="--c:${col[m[2]]}">${m[0]} · ${fmt.format(Math.max(0,m[1]))}</span>`).join('');
-const show=S.full?rows:rows.slice(0,6);
-$('#amort tbody').innerHTML=show.map(x=>`<tr><td>${x[0]}</td><td class="tab">${fmt2.format(x[1])}</td><td class="tab">${fmt2.format(x[2])}</td><td class="tab">${fmt2.format(x[3])}</td><td class="tab">${fmt2.format(x[4])}</td></tr>`).join('')+(!S.full&&rows.length>6?`<tr><td colspan="5" style="text-align:center;color:#86868b">${rows.length-6} pagos más</td></tr>`:'');
+const show=S.full?rows:rows.slice(0,6),h=heads[S.prod];
+$('#amort thead').innerHTML=`<tr><th>No.</th><th>Fecha</th><th>Días</th><th>${h[0]}</th><th>${h[1]}</th><th>${h[2]}</th><th>${h[3]}</th></tr>`;
+$('#amort tbody').innerHTML=show.map(x=>`<tr><td>${x[0]}</td><td>${fDate.format(x[1]).replace(/\./g,'')}</td><td class="tab">${x[2]}</td><td class="tab">${fN2.format(x[3])}</td><td class="tab">${fN2.format(x[4])}</td><td class="tab">${fN2.format(x[5])}</td><td class="tab">${fN2.format(x[6])}</td></tr>`).join('')+(!S.full&&rows.length>6?`<tr><td colspan="7" style="text-align:center;color:#86868b">${rows.length-6} pagos más</td></tr>`:'');
 const tb=$('#toggleAmort');tb.hidden=rows.length<=6;tb.textContent=S.full?'Ver resumen':'Ver tabla completa';
 S.last={M,n,t};
 }
