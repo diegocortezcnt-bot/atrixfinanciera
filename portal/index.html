@@ -82,14 +82,21 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .tabs{display:flex;gap:6px;margin-top:14px}
 .tabs button{border:0;background:none;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer}
 .tabs button.on{background:var(--navy);color:#fff}
-.tw{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch}
+.tw{overflow:auto;margin-top:12px;-webkit-overflow-scrolling:touch;max-height:430px;border-radius:12px}
+.tw thead th{position:sticky;top:0;background:var(--white);z-index:1}
+.seg{display:inline-flex;background:#e8e8ed;border-radius:999px;padding:3px;margin:0 0 22px;gap:2px}
+.seg button{border:0;background:none;padding:8px 22px;border-radius:999px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.seg button.on{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pnow{display:inline-block;margin-left:6px;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--navy);border-radius:999px;padding:2px 8px;vertical-align:1px}
 table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
-th{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-td{padding:8px 10px;text-align:right;border-bottom:1px solid #f0f0f3;white-space:nowrap}
+th{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);text-align:right;padding:8px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 9px;text-align:right;border-bottom:1px solid #f0f0f3;white-space:nowrap}
 th.l,td.l{text-align:left}
-tr.hoy td{background:#f4f7fd}
+tr.cur td{background:#e9f0fb;font-weight:600;border-bottom-color:#c9d8f2}
+tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
 .empty{color:var(--ink-2);font-size:13px;padding:14px 0}
 .side{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start;margin-top:6px}
+.side>*{min-width:0}
 .box{padding:20px 22px}
 .box h3{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:10px}
 .box p{font-size:13px;color:var(--ink-2);margin-bottom:10px}
@@ -103,7 +110,7 @@ tr.hoy td{background:#f4f7fd}
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:860px){.kpis{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.side{grid-template-columns:1fr}.bar .who{display:none}}
-@media print{.bar,.side .box:last-child,.tabs,.btn{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}
+@media print{.tw{max-height:none;overflow:visible}.seg,.bar,.side .box:last-child,.tabs,.btn{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}
 </style>
 </head>
 <body>
@@ -120,7 +127,7 @@ tr.hoy td{background:#f4f7fd}
     <form class="card lg" id="fLogin" autocomplete="on">
       <div class="k">Portal de Clientes</div>
       <h1>Bienvenido</h1>
-      <p class="s">Consulte el saldo de sus contratos, su próximo pago y su historial.</p>
+      <p class="s">Consulte sus créditos o su inversión: saldo, próximo pago e historial.</p>
       <div class="msg err" id="lErr" hidden></div>
       <div class="f"><label for="rfc">Usuario (RFC)</label><input id="rfc" name="username" autocomplete="username" autocapitalize="characters" spellcheck="false" placeholder="Ej. ABC123456XY9" required></div>
       <div class="f"><label for="pw">Contraseña</label><div class="pw"><input id="pw" name="password" type="password" autocomplete="current-password" required><button type="button" data-ver="pw">Ver</button></div></div>
@@ -144,7 +151,7 @@ tr.hoy td{background:#f4f7fd}
   const fdate = iso => { if (!iso) return '—'; const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }); };
   const pct = n => (Number(n) || 0).toLocaleString('es-MX', { maximumFractionDigits: 2 }) + '%';
   const emailDe = rfc => String(rfc || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, 'y').replace(/[^a-z0-9]/g, '') + '@portal.atrixfinanciera.com';
-  const st = { ses: null, datos: null, tab: {} };
+  const st = { ses: null, datos: null, tab: {}, vista: null };
   const guardar = s => { st.ses = s; try { if (s) sessionStorage.setItem(SKEY, JSON.stringify(s)); else sessionStorage.removeItem(SKEY); } catch (e) { } };
   const leer = () => { try { return JSON.parse(sessionStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } };
   const errTxt = j => { const c = j && (j.error_code || j.code || j.error); const m = (j && (j.msg || j.message || j.error_description)) || '';
@@ -179,38 +186,77 @@ tr.hoy td{background:#f4f7fd}
     $('#bEntrar').disabled = false; $('#bEntrar').textContent = 'Entrar';
   }
   const chip = (cls, t) => `<span class="chip ${esc(String(cls).replace(/\s+/g, '-'))}">${esc(t)}</span>`;
-  function pintar() {
-    $('#vLogin').hidden = true; const P = $('#vPanel'); P.hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true;
-    const row = st.datos; const D = row && row.datos;
-    if (!D || !Array.isArray(D.contratos)) {
-      $('#who').textContent = row ? row.nombre : '';
-      P.innerHTML = `<div class="card box" style="max-width:560px;margin:40px auto;text-align:center"><h3>Su información aún no está disponible</h3><p>ATRIX está preparando su información. Intente más tarde o contáctenos en atencion@atrixfinanciera.com.</p><button class="btn" data-act="pass">Cambiar contraseña</button></div>`;
-      return;
-    }
-    $('#who').innerHTML = `<b style="color:var(--navy)">${esc(D.cliente.nombre)}</b><br>${esc(D.cliente.rfc)}`;
-    const act = D.contratos.filter(c => c.estatus !== 'liquidado');
-    const saldo = act.reduce((a, c) => a + (c.saldo || 0), 0), venc = D.contratos.reduce((a, c) => a + (c.vencido || 0), 0);
-    const prox = act.map(c => c.proximo && { ...c.proximo, folio: c.folio }).filter(Boolean).sort((a, b) => a.fecha < b.fecha ? -1 : 1)[0];
-    const actz = row.actualizado ? new Date(row.actualizado).toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : fdate(D.corte);
-    const cont = D.contratos.map(c => {
-      const t = st.tab[c.folio] || 'tabla'; const esAP = c.producto === 'AP';
-      const tabla = c.tabla && c.tabla.length ? `<div class="tw"><table><thead><tr><th class="l">No.</th><th class="l">Fecha</th>${esAP ? '<th>Renta</th>' : '<th>Capital</th><th>Interés</th>'}<th>IVA</th><th>Total</th><th>Pagado</th><th class="l">Estado</th></tr></thead><tbody>${c.tabla.map(r => `<tr class="${r.fecha === D.corte ? 'hoy' : ''}"><td class="l">${r.k}</td><td class="l">${fdate(r.fecha)}</td>${esAP ? `<td>${money(r.renta)}</td>` : `<td>${money(r.capital)}</td><td>${money(r.interes)}</td>`}<td>${money(r.iva)}</td><td><b>${money(r.total)}</b></td><td>${money(r.pagado)}</td><td class="l">${chip(r.estado, r.estado)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Sin tabla de pagos.</div>';
+  const fila = (r, cur, celdas) => `<tr class="${cur ? 'cur' : ''}">${celdas}</tr>`;
+  const ultimoPagado = tabla => { let k = null; (tabla || []).forEach(r => { if (r.estado === 'Pagado') k = r.k; }); return k; };
+  function tarjetasCredito(D) {
+    return D.contratos.map(c => {
+      const t = st.tab['c' + c.folio] || 'tabla'; const esAP = c.producto === 'AP'; const cur = ultimoPagado(c.tabla);
+      const tabla = c.tabla && c.tabla.length ? `<div class="tw"><table><thead><tr><th class="l">No.</th><th class="l">Fecha</th>${esAP ? '<th>Renta</th>' : '<th>Capital</th><th>Interés</th>'}<th>IVA</th><th>Total</th><th class="l">Estado</th></tr></thead><tbody>${c.tabla.map(r => fila(r, r.k === cur, `<td class="l">${r.k}</td><td class="l">${fdate(r.fecha)}${r.k === cur ? '<span class="pnow">Último pago</span>' : ''}</td>${esAP ? `<td>${money(r.renta)}</td>` : `<td>${money(r.capital)}</td><td>${money(r.interes)}</td>`}<td>${money(r.iva)}</td><td><b>${money(r.total)}</b></td><td class="l">${chip(r.estado, r.estado)}</td>`)).join('')}</tbody></table></div>` : '<div class="empty">Sin tabla de pagos.</div>';
       const pagos = c.pagos && c.pagos.length ? `<div class="tw"><table><thead><tr><th class="l">Fecha</th><th class="l">Concepto</th><th>Importe</th></tr></thead><tbody>${c.pagos.map(p => `<tr><td class="l">${fdate(p.fecha)}</td><td class="l">${esc(p.concepto)}</td><td>${money(p.monto)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay pagos registrados.</div>';
       return `<article class="card ct"><div class="top"><div><h2>${esc(c.productoNombre)} · ${esc(c.folio)}</h2><div class="sub">${esc(c.activo || '')}</div></div>${chip(c.estatus, c.estatusTxt)}</div>
         <div class="grid"><div><span>Monto original</span><b>${money(c.monto)}</b></div><div><span>${esAP ? 'Saldo por recuperar' : 'Saldo de capital'}</span><b>${money(c.saldo)}</b></div><div><span>Tasa anual</span><b>${pct(c.tasa)}</b></div><div><span>Plazo</span><b>${c.plazo} meses</b></div><div><span>Inicio</span><b>${fdate(c.inicio)}</b></div><div><span>Vencimiento</span><b>${fdate(c.vence)}</b></div><div><span>Total pagado</span><b>${money(c.pagado)}</b></div><div><span>Días de atraso</span><b style="${c.diasAtraso ? 'color:var(--bad)' : ''}">${c.diasAtraso || 0}</b></div></div>
         ${c.vencido > 0.005 ? `<div class="nx" style="background:#fdecec"><span class="t" style="color:var(--bad)">Importe vencido${c.mora > 0.005 ? ' (incluye ' + money(c.mora) + ' de intereses moratorios con IVA)' : ''}<b style="color:var(--bad)">${money(c.vencido)}</b></span></div>` : ''}
         ${c.proximo ? `<div class="nx"><span class="t">Próximo pago · ${fdate(c.proximo.fecha)}<b>${money(c.proximo.total)}</b></span></div>` : ''}
-        <div class="tabs"><button class="${t === 'tabla' ? 'on' : ''}" data-act="tab" data-f="${esc(c.folio)}" data-t="tabla">Tabla de pagos</button><button class="${t === 'pagos' ? 'on' : ''}" data-act="tab" data-f="${esc(c.folio)}" data-t="pagos">Pagos realizados</button></div>
+        <div class="tabs"><button class="${t === 'tabla' ? 'on' : ''}" data-act="tab" data-f="c${esc(c.folio)}" data-t="tabla">Tabla de pagos</button><button class="${t === 'pagos' ? 'on' : ''}" data-act="tab" data-f="c${esc(c.folio)}" data-t="pagos">Pagos realizados</button></div>
         ${t === 'tabla' ? tabla : pagos}</article>`;
     }).join('');
-    P.innerHTML = `<div class="hd"><div><h1>Hola, ${esc(D.cliente.nombre)}</h1><div class="s">Información al ${fdate(D.corte)} · actualizada ${esc(actz)}</div></div><button class="btn" data-act="print">Imprimir</button></div>
-      <div class="kpis"><div class="card kpi"><div class="l">Saldo total</div><div class="v">${money(saldo)}</div><div class="d">${act.length} contrato${act.length === 1 ? '' : 's'} activo${act.length === 1 ? '' : 's'}</div></div>
+  }
+  function tarjetasInversion(D) {
+    return D.inversiones.map(v => {
+      const t = st.tab['i' + v.folio] || 'tabla'; const cur = ultimoPagado(v.tabla); const iva = v.aplicaIva, ret = v.retencionPct > 0;
+      const tabla = v.tabla && v.tabla.length ? `<div class="tw"><table><thead><tr><th class="l">No.</th><th class="l">Fecha de pago</th><th>Rendimiento</th>${iva ? '<th>IVA</th>' : ''}${ret ? '<th>Retención ISR</th>' : ''}<th>Neto a recibir</th><th class="l">Estado</th></tr></thead><tbody>${v.tabla.map(r => fila(r, r.k === cur, `<td class="l">${r.k}</td><td class="l">${fdate(r.fecha)}${r.k === cur ? '<span class="pnow">Último pago</span>' : ''}</td><td>${money(r.interes)}</td>${iva ? `<td>${money(r.iva)}</td>` : ''}${ret ? `<td>−${money(r.retencion)}</td>` : ''}<td${r.capital ? ' style="white-space:normal"' : ''}><b>${money(r.total)}</b>${r.capital ? `<div style="font-size:11px;color:var(--ink-3);font-weight:400">incluye capital</div>` : ''}</td><td class="l">${chip(r.estado === 'Pendiente' ? 'Vence-hoy' : r.estado === 'Programado' ? 'Por-vencer' : r.estado, r.estado)}</td>`)).join('')}</tbody></table></div>` : '<div class="empty">Sin calendario de pagos.</div>';
+      const pagos = v.pagos && v.pagos.length ? `<div class="tw"><table><thead><tr><th class="l">Fecha</th><th class="l">Concepto</th><th>Importe</th></tr></thead><tbody>${v.pagos.map(p => `<tr><td class="l">${fdate(p.fecha)}</td><td class="l">${esc(p.concepto)}</td><td>${money(p.monto)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay pagos realizados.</div>';
+      return `<article class="card ct"><div class="top"><div><h2>Inversión · ${esc(v.folio)}</h2><div class="sub">Pago de rendimientos ${esc(String(v.modalidad).toLowerCase())}${ret ? ' · retención de ISR ' + pct(v.retencionPct) : ''}</div></div>${chip(v.estatus === 'atrasado' ? 'atrasado' : v.estatus, v.estatusTxt)}</div>
+        <div class="grid"><div><span>Capital invertido</span><b>${money(v.monto)}</b></div><div><span>Capital vigente</span><b>${money(v.saldo)}</b></div><div><span>Tasa anual</span><b>${pct(v.tasa)}</b></div><div><span>Plazo</span><b>${v.plazo} meses</b></div><div><span>Inicio</span><b>${fdate(v.inicio)}</b></div><div><span>Vencimiento</span><b>${fdate(v.vence)}</b></div><div><span>Recibido a la fecha</span><b>${money(v.recibido)}</b></div><div><span>Rendimiento acumulado del periodo</span><b>${money(v.devengado)}</b></div></div>
+        ${v.pendiente > 0.005 ? `<div class="nx" style="background:#fff4e0"><span class="t" style="color:var(--warn)">Pago en proceso<b style="color:var(--warn)">${money(v.pendiente)}</b></span></div>` : ''}
+        ${v.proximo ? `<div class="nx"><span class="t">Próximo pago · ${fdate(v.proximo.fecha)}<b>${money(v.proximo.total)}</b></span></div>` : ''}
+        <div class="tabs"><button class="${t === 'tabla' ? 'on' : ''}" data-act="tab" data-f="i${esc(v.folio)}" data-t="tabla">Calendario de pagos</button><button class="${t === 'pagos' ? 'on' : ''}" data-act="tab" data-f="i${esc(v.folio)}" data-t="pagos">Pagos recibidos</button></div>
+        ${t === 'tabla' ? tabla : pagos}</article>`;
+    }).join('');
+  }
+  function pintar() {
+    $('#vLogin').hidden = true; const P = $('#vPanel'); P.hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true;
+    const row = st.datos; const D = row && row.datos;
+    if (D) { D.contratos = D.contratos || []; D.inversiones = D.inversiones || []; }
+    const hayC = !!D && (D.contratos.length > 0 || !!(D.perfiles && D.perfiles.credito)), hayI = !!D && (D.inversiones.length > 0 || !!(D.perfiles && D.perfiles.inversion));
+    if (!D || (!hayC && !hayI)) {
+      $('#who').textContent = row ? row.nombre : '';
+      P.innerHTML = `<div class="card box" style="max-width:560px;margin:40px auto;text-align:center"><h3>Su información aún no está disponible</h3><p>ATRIX está preparando su información. Intente más tarde o contáctenos en atencion@atrixfinanciera.com.</p><button class="btn" data-act="pass">Cambiar contraseña</button></div>`;
+      return;
+    }
+    if (!st.vista || (st.vista === 'credito' && !hayC) || (st.vista === 'inversion' && !hayI)) st.vista = hayC ? 'credito' : 'inversion';
+    const V = st.vista;
+    $('#who').innerHTML = `<b style="color:var(--navy)">${esc(D.cliente.nombre)}</b><br>${esc(D.cliente.rfc)}`;
+    const actz = row.actualizado ? new Date(row.actualizado).toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : fdate(D.corte);
+    const seg = hayC && hayI ? `<div class="seg" role="tablist"><button role="tab" aria-selected="${V === 'credito'}" class="${V === 'credito' ? 'on' : ''}" data-act="vista" data-v="credito">Crédito</button><button role="tab" aria-selected="${V === 'inversion'}" class="${V === 'inversion' ? 'on' : ''}" data-act="vista" data-v="inversion">Inversión</button></div>` : '';
+    let kpis, cont, ayuda;
+    if (V === 'credito') {
+      const act = D.contratos.filter(c => c.estatus !== 'liquidado');
+      const saldo = act.reduce((a, c) => a + (c.saldo || 0), 0), venc = D.contratos.reduce((a, c) => a + (c.vencido || 0), 0);
+      const prox = act.map(c => c.proximo && { ...c.proximo, folio: c.folio }).filter(Boolean).sort((a, b) => a.fecha < b.fecha ? -1 : 1)[0];
+      kpis = `<div class="card kpi"><div class="l">Saldo total</div><div class="v">${money(saldo)}</div><div class="d">${act.length} contrato${act.length === 1 ? '' : 's'} activo${act.length === 1 ? '' : 's'}</div></div>
         <div class="card kpi"><div class="l">Próximo pago</div><div class="v">${prox ? money(prox.total) : '—'}</div><div class="d">${prox ? fdate(prox.fecha) + ' · ' + esc(prox.folio) : 'Sin pagos programados'}</div></div>
-        <div class="card kpi ${venc > 0.005 ? 'bad' : ''}"><div class="l">Importe vencido</div><div class="v">${money(venc)}</div><div class="d">${venc > 0.005 ? 'Le pedimos regularizarlo a la brevedad' : 'Está al corriente'}</div></div></div>
-      <div class="side"><div>${cont || '<div class="card box"><p>No tiene contratos activos.</p></div>'}</div>
-        <aside class="card box"><h3>¿Cómo pagar?</h3><p>Realice su pago con los datos de su contrato e indique su folio como referencia. Si necesita los datos de pago o una aclaración, contáctenos.</p>
+        <div class="card kpi ${venc > 0.005 ? 'bad' : ''}"><div class="l">Importe vencido</div><div class="v">${money(venc)}</div><div class="d">${venc > 0.005 ? 'Le pedimos regularizarlo a la brevedad' : 'Está al corriente'}</div></div>`;
+      cont = tarjetasCredito(D) || '<div class="card box"><p>No tiene contratos activos.</p></div>';
+      ayuda = `<h3>¿Cómo pagar?</h3><p>Realice su pago con los datos de su contrato e indique su folio como referencia. Si necesita los datos de pago o una aclaración, contáctenos.</p>`;
+    } else {
+      const act = D.inversiones.filter(v => v.estatus !== 'liquidado');
+      const cap = act.reduce((a, v) => a + (v.saldo || 0), 0), rec = D.inversiones.reduce((a, v) => a + (v.recibido || 0), 0);
+      const prox = act.map(v => v.proximo && { ...v.proximo, folio: v.folio }).filter(Boolean).sort((a, b) => a.fecha < b.fecha ? -1 : 1)[0];
+      kpis = `<div class="card kpi"><div class="l">Capital invertido</div><div class="v">${money(cap)}</div><div class="d">${act.length} inversi${act.length === 1 ? 'ón vigente' : 'ones vigentes'}</div></div>
+        <div class="card kpi"><div class="l">Próximo pago</div><div class="v">${prox ? money(prox.total) : '—'}</div><div class="d">${prox ? fdate(prox.fecha) + ' · ' + esc(prox.folio) : 'Sin pagos programados'}</div></div>
+        <div class="card kpi"><div class="l">Recibido a la fecha</div><div class="v">${money(rec)}</div><div class="d">Rendimientos y capital pagados</div></div>`;
+      cont = tarjetasInversion(D) || '<div class="card box"><p>No tiene inversiones vigentes.</p></div>';
+      ayuda = `<h3>Sus pagos</h3><p>ATRIX deposita sus rendimientos en la cuenta registrada en su contrato, en cada fecha de pago del calendario. Si tiene una duda o necesita una constancia, contáctenos.</p>`;
+    }
+    P.innerHTML = `${seg}<div class="hd"><div><h1>Hola, ${esc(D.cliente.nombre)}</h1><div class="s">Información al ${fdate(D.corte)} · actualizada ${esc(actz)}</div></div><button class="btn" data-act="print">Imprimir</button></div>
+      <div class="kpis">${kpis}</div>
+      <div class="side"><div>${cont}</div>
+        <aside class="card box">${ayuda}
           <a class="btn" href="mailto:${esc((D.contacto || {}).correo || 'atencion@atrixfinanciera.com')}">Correo</a><a class="btn" href="${esc((D.contacto || {}).whatsapp || 'https://wa.me/528134127296')}" target="_blank" rel="noopener">WhatsApp</a>
           <h3 style="margin-top:20px">Seguridad</h3><p>Su contraseña es personal. ATRIX nunca se la pedirá por teléfono ni por correo.</p><button class="btn" data-act="pass">Cambiar contraseña</button></aside></div>`;
+    // lleva cada tabla a su periodo actual (el renglón resaltado queda a la vista)
+    P.querySelectorAll('.tw').forEach(w => { const c = w.querySelector('tr.cur'); if (c) w.scrollTop = Math.max(0, c.offsetTop - 2 * c.offsetHeight - (w.querySelector('thead') ? w.querySelector('thead').offsetHeight : 0)); });
   }
   function modalPass() {
     $('#modal').innerHTML = `<div class="modal-bg" data-act="cerrar"><form class="card modal" id="fPass" data-stop="1"><h2>Cambiar contraseña</h2><p>Use al menos 8 caracteres combinando letras y números.</p><div class="msg" id="pMsg" hidden></div>
@@ -243,6 +289,7 @@ tr.hoy td{background:#f4f7fd}
     const el = e.target.closest('[data-act]'); if (!el) return;
     if (el.dataset.act === 'cerrar') { if (e.target.closest('[data-stop]') && !e.target.closest('button[data-act="cerrar"]')) return; $('#modal').innerHTML = ''; }
     if (el.dataset.act === 'tab') { st.tab[el.dataset.f] = el.dataset.t; pintar(); }
+    if (el.dataset.act === 'vista') { st.vista = el.dataset.v; pintar(); window.scrollTo({ top: 0 }); }
     if (el.dataset.act === 'pass') modalPass();
     if (el.dataset.act === 'print') window.print();
   });
