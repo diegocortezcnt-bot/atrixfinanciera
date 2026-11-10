@@ -294,8 +294,20 @@ svg{display:block;max-width:100%}
 .cmp-c strong{display:block;font-size:1rem;font-weight:500;color:var(--ink);line-height:1.35;text-wrap:balance}
 .cmp-c strong.na{color:var(--ink-3);font-weight:400}
 .cmp-c span{display:block;margin-top:6px;font-size:.74rem;color:var(--ink-3)}
-.cmp-hint{display:none;text-align:center;font-size:.78rem;color:var(--ink-3);margin-top:14px}
-@media (max-width:980px){.cmp-hint{display:block}}
+.cmp-pick{display:none}
+@media (max-width:760px){
+.cmp{overflow:visible;margin:0;padding:0}
+.cmp-g{grid-template-columns:repeat(2,minmax(0,1fr));min-width:0;column-gap:14px}
+.cmp-g>div{display:none;order:var(--o,0)}
+.cmp-g>.cmp-h.on{display:flex}.cmp-g>.cmp-c.on{display:block}
+.cmp-c{padding:18px 2px 20px!important}
+.cmp-c strong{font-size:.95rem}
+.cmp-h b{font-size:1.15rem}
+.cmp-pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 22px}
+.cmp-pick label{display:flex;flex-direction:column;gap:6px;text-align:center}
+.cmp-pick span{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.cmp-pick select{appearance:none;-webkit-appearance:none;width:100%;border:1px solid var(--line);background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23071D3D' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;border-radius:999px;padding:11px 30px 11px 14px;font:inherit;font-size:.84rem;font-weight:600;color:var(--ink);text-align:center;text-align-last:center;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+}
 .portal-g{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.75fr);gap:24px;align-items:center}
 .mac{border-radius:16px;overflow:hidden;background:rgba(28,28,32,.75);border:1px solid rgba(255,255,255,.14);box-shadow:0 60px 120px -50px rgba(28,95,196,.55),0 40px 80px -40px rgba(0,0,0,.9);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);transform:perspective(1600px) rotateX(var(--tilt,10deg)) scale(var(--sc,.94));transform-origin:center bottom;transition:transform .2s linear;min-width:0}
 .mac .tb{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08)}
@@ -765,6 +777,7 @@ html{scroll-behavior:auto}
 <div class="kicker rv">Comparar</div>
 <h2 class="t-1 rv d1">Las cinco figuras, lado a lado.</h2>
 </div>
+<div class="cmp-pick rv" aria-label="Elija dos productos para comparar"><label><span>Producto 1</span><select id="cmpA"><option value="0" selected>Financiero</option><option value="1">Puro</option><option value="2">Simple</option><option value="3">Revolvente</option><option value="4">Estructurado</option></select></label><label><span>Producto 2</span><select id="cmpB"><option value="0">Financiero</option><option value="1" selected>Puro</option><option value="2">Simple</option><option value="3">Revolvente</option><option value="4">Estructurado</option></select></label></div>
 <div class="cmp rv" role="region" aria-label="Comparativo de productos" tabindex="0">
 <div class="cmp-g">
 <div class="cmp-h"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg></span><small>Arrendamiento</small><b>Financiero</b><a class="btn btn-p btn-s" href="#simulador" data-sim="fin">Simular</a></div>
@@ -799,7 +812,6 @@ html{scroll-behavior:auto}
 <div class="cmp-c"><strong>Pagos a la medida</strong><span>Ideal para</span></div>
 </div>
 </div>
-<p class="cmp-hint">Deslice para ver las cinco figuras.</p>
 </div>
 </section>
 <!-- PORTAL DE CLIENTES -->
@@ -1272,6 +1284,10 @@ el.monto.addEventListener('input',calc);
 el.monto.addEventListener('blur',()=>{el.monto.value=Math.min(2500000,Math.max(100000,Math.round((+el.monto.value||0)/10000)*10000));calc()});
 $('#toggleAmort').addEventListener('click',()=>{S.full=!S.full;calc()});
 $$('[data-sim]').forEach(a=>a.addEventListener('click',()=>setProd(a.dataset.sim)));
+(()=>{const g=$('.cmp-g'),A=$('#cmpA'),B=$('#cmpB');if(!g||!A||!B)return;const cells=[...g.children];
+const apply=ch=>{if(A.value===B.value){const o=ch===A?B:A;o.value=String((+o.value+1)%5);}const a=+A.value,b=+B.value;
+cells.forEach((c,i)=>{const col=i%5,row=Math.floor(i/5);const sd=col===a?0:col===b?1:-1;c.classList.toggle('on',sd>=0);c.style.setProperty('--o',sd>=0?row*2+sd:999)})};
+A.addEventListener('change',()=>apply(A));B.addEventListener('change',()=>apply(B));apply();})();
 $('#simGo').addEventListener('click',()=>{$('#producto').value=names[S.prod];$('#montoLead').value=nf.format(S.last.M);const d=$('#destino');if(!d.value)d.value=`Simulé ${names[S.prod]} por ${fmt.format(S.last.M)} a ${S.last.n} meses. `;updWa()});
 setProd('fin');
 /* ---------- form ---------- */
