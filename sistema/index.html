@@ -321,6 +321,41 @@
   .copt span { flex: 1; min-width: 0; } .copt b { display: block; font-size: 13px; } .copt small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
   .cart-t th, .cart-t td { padding-left: 9px; padding-right: 9px; } .cart-t td.acr { max-width: 172px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .copt em { font-style: normal; font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* 17.21 · orden visual */
+  .vtabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 16px; padding: 5px; background: var(--soft-2); border-radius: 14px; width: fit-content; max-width: 100%; }
+  .vtabs button { border: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 600; color: var(--fg-2); padding: 8px 15px; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .vtabs button:hover { color: var(--fg); background: rgba(255,255,255,0.55); }
+  .vtabs button.on { background: #fff; color: var(--fg); font-weight: 800; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  .vtabs button i { font-style: normal; font-size: 11px; font-weight: 800; background: var(--chip-orange); color: var(--orange); border-radius: 999px; padding: 1px 7px; }
+  .vtabs button u { width: 7px; height: 7px; border-radius: 50%; background: var(--red); display: inline-block; }
+  .vpane[hidden] { display: none; } .vpane > * + * { margin-top: 16px; } .vpane > section + section { margin-top: 20px; }
+  .vpane.medio > .glass.panel { max-width: 900px; } .vpane .grid2.vrow { align-items: start; }
+  .kpis[data-n="6"] { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kpis[data-n="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); } .kpis[data-n="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); } .kpis[data-n="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kpis[data-n="7"], .kpis[data-n="8"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (min-width: 1700px) { .kpis[data-n="6"] { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  @media (max-width: 1100px) { .kpis[data-n="5"] { grid-template-columns: repeat(6, minmax(0, 1fr)); } .kpis[data-n="5"] > * { grid-column: span 2; } .kpis[data-n="5"] > :nth-child(n+4) { grid-column: span 3; } .kpis[data-n="4"], .kpis[data-n="7"], .kpis[data-n="8"] { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpis[data-n="6"], .kpis[data-n="3"] { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) { .kpis[data-n] { grid-template-columns: 1fr; } .kpis[data-n="5"] > * { grid-column: auto !important; } }
+  .kpi { position: relative; } .kpi .s { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+  .kpi.click .more { display: none; } .kpi.click.on .more { display: block; }
+  .kpi.click::after { content: "›"; position: absolute; top: 11px; right: 14px; font-size: 17px; line-height: 1; font-weight: 700; color: var(--line-2); transition: color .14s, transform .14s; }
+  .kpi.click:hover::after, .kpi.click:focus-visible::after { color: var(--blue); transform: translateX(2px); } .kpi.click .k { padding-right: 16px; }
+  details.nd { margin-top: 10px; } details.nd > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--fg-2); font-size: 12px; padding: 3px 0; user-select: none; }
+  details.nd > summary::-webkit-details-marker { display: none; } details.nd > summary::before { content: "i"; width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--muted); color: var(--muted); font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; font-style: normal; }
+  details.nd > summary::after { content: "›"; color: var(--muted); transition: transform .14s; } details.nd[open] > summary::after { transform: rotate(90deg); } details.nd > summary:hover { color: var(--fg); }
+  details.nd > div { margin-top: 6px; line-height: 1.55; max-width: 980px; }
+  .tscroll.cap { max-height: min(68vh, 620px); overflow-y: auto; } .tscroll.cap tfoot td { position: sticky; bottom: 0; background: var(--soft); z-index: 1; box-shadow: 0 -1px 0 var(--line); }
+  .tscroll.fit1 th, .tscroll.fit1 td { padding-left: 7px; padding-right: 7px; } .tscroll.fit1 td .btn.sm { padding-left: 8px; padding-right: 8px; }
+  .tscroll.fit2 th, .tscroll.fit2 td { padding-left: 6px; padding-right: 6px; font-size: 12px; } .tscroll.fit2 th { font-size: 10px; letter-spacing: 0.03em; white-space: normal; }
+  .tscroll.fit2 td.wr { white-space: normal; min-width: 150px; } .tscroll.fit2 td.wr .chip, .tscroll.fit2 td.wr .btn, .tscroll.fit2 td.wr .score { white-space: nowrap; }
+  .tscroll.fit3 th, .tscroll.fit3 td { padding-left: 5px; padding-right: 5px; font-size: 11.5px; } .tscroll.fit3 td.l:not(.b) { white-space: normal; } .tscroll.fit3 td.wr { min-width: 120px; } .tscroll.fit3 .chip, .tscroll.fit3 .score { font-size: 10.5px; padding-left: 7px; padding-right: 7px; }
+  /* ventanas: tamaño estable y sólo desplazamiento vertical */
+  html { scrollbar-gutter: stable; } body { overflow-x: hidden; }
+  .modal { overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; } .modal.ancha { width: min(1320px, 100%); }
+  .modal.ficha { height: calc(100vh - 32px); } .modal .tscroll { max-width: 100%; }
+  .modal-bg { overflow: hidden; }
+  details.plegado { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); } details.plegado > summary { cursor: pointer; list-style: none; padding: 11px 14px; font-weight: 800; font-size: 13px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  details.plegado > summary::-webkit-details-marker { display: none; } details.plegado > summary::before { content: "›"; color: var(--muted); font-size: 15px; transition: transform .14s; display: inline-block; } details.plegado[open] > summary::before { transform: rotate(90deg); }
+  details.plegado > summary span { font-weight: 500; font-size: 11.5px; color: var(--muted); } details.plegado > .desgs { margin: 0; padding: 0 12px 12px; }
+  @media print { .vtabs { display: none; } .vpane[hidden] { display: block !important; } details.nd > div { display: block; } .tscroll.cap { max-height: none; } }
 </style>
 
 <div class="app">
@@ -2144,7 +2179,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.20';
+  const SISTEMA_VERSION = '17.21';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -2385,12 +2420,99 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   function renderNav() { $('#nav').innerHTML = NAV.map(n => n.length === 1 ? `<div class="sep">${n[0]}</div>` : `<button data-act="nav" data-view="${n[0]}" class="${S.view === n[0] ? 'on' : ''}">${ICON[n[0]]}<span>${n[1]}</span></button>`).join(''); }
 
   /* ---------- Render ---------- */
+  /* ======== 17.21 · Orden visual ========
+     Sólo acomoda lo que cada pantalla ya dibuja: reparte los bloques en pestañas, pliega las notas largas, alinea las tarjetas
+     y acota las tablas largas. No calcula ni quita nada: todos los bloques, botones y cifras siguen en la página. */
+  const LAY = { tab: {}, open: {} };
+  const LAYOUT = {
+    inicio: [['resumen', 'Resumen', ['Mi dinero', 'Mi cartera', 'Mi resultado']], ['rent', 'Rentabilidad y capital', [['Rentabilidad de la cartera', 'Capital y apalancamiento']]], ['deuda', 'Deuda no colocada', ['Deuda no colocada'], 'medio'], ['atrasos', 'Atrasos', ['Atrasos'], 'medio'], ['riesgo', 'Indicadores de riesgo', ['Indicadores de riesgo']]],
+    default: [['resumen', 'Resumen', ['Default de la cartera', 'Contratos en default']], ['tend', 'Antigüedad y tendencia', [['Antigüedad del atraso', 'Default al cierre'], 'Default por producto']]],
+    fondo: [['resumen', 'Resumen', ['Fondo de inversión bancario', ['Movimientos', 'De quién es el dinero']]], ['mes', 'Rendimiento por mes', ['Rendimiento por mes']], ['hist', 'Historial de movimientos', ['Historial de movimientos']]],
+    admin: [['resumen', 'Resumen', ['Mis cuentas', 'Disponible para sueldos']], ['cobros', 'Cobros a acreditados', ['Cobros a acreditados']], ['pagos', 'Pagos a inversionistas', ['Pagos a inversionistas']], ['otros', 'Otros movimientos', ['Otros movimientos']], ['empresa', 'Datos de la empresa', ['Datos de la empresa'], 'medio']]
+  };
+  function layBloques(v) {
+    const out = [];
+    for (const el of v.querySelectorAll('section, .glass.panel')) {
+      let h = null;
+      if (el.tagName === 'SECTION') { h = el.querySelector(':scope > .sec h2'); if (!h) continue; }
+      else { if (el.closest('.modal') || (el.parentElement && el.parentElement.closest('.glass.panel'))) continue; const s = el.closest('section'); if (s && s.querySelector(':scope > .sec h2')) continue; h = el.querySelector(':scope > h2, :scope > .ph h2, :scope > .ph > h2'); if (!h) continue; }
+      out.push({ el, t: h.textContent.trim() });
+    }
+    return out;
+  }
+  function ordenar() {
+    const v = $('#view'); if (!v) return; const vista = S.view; const cfg = LAYOUT[vista];
+    try {
+      if (cfg) {
+        const bl = layBloques(v); const usados = new Set(); const busca = t => { const b = bl.find(x => !usados.has(x) && x.t.startsWith(t)); if (b) usados.add(b); return b ? b.el : null; };
+        const plan = cfg.map(([id, nombre, items, modo]) => ({ id, nombre, modo, filas: items.map(it => Array.isArray(it) ? it.map(busca).filter(Boolean) : [busca(it)].filter(Boolean)).filter(f => f.length) })).filter(p => p.filas.length);
+        if (plan.length >= 2 && usados.size >= 2) {
+          const previos = [...v.children]; const act = plan.some(p => p.id === LAY.tab[vista]) ? LAY.tab[vista] : plan[0].id; LAY.tab[vista] = act;
+          const bar = document.createElement('div'); bar.className = 'vtabs'; bar.setAttribute('role', 'tablist'); const panes = {};
+          for (const p of plan) {
+            const pane = document.createElement('div'); pane.className = 'vpane' + (p.modo ? ' ' + p.modo : ''); pane.dataset.pane = p.id; if (p.id !== act) pane.hidden = true;
+            for (const f of p.filas) { if (f.length > 1) { const g = document.createElement('div'); g.className = f[0].matches('.glass.panel') && /^(Movimientos)/.test((f[0].querySelector('h2') || {}).textContent || '') ? 'grid-side' : 'grid2 vrow'; f.forEach(x => g.appendChild(x)); pane.appendChild(g); } else pane.appendChild(f[0]); }
+            panes[p.id] = pane;
+            const b = document.createElement('button'); b.type = 'button'; b.dataset.lay = p.id; b.setAttribute('role', 'tab'); b.className = p.id === act ? 'on' : ''; const n = pane.querySelectorAll('.list > .item').length;
+            b.innerHTML = esc(p.nombre) + (p.id === 'atrasos' && n ? ` <i>${n}</i>` : '') + (pane.querySelector('.glass.panel.alerta') ? ' <u title="Requiere atención"></u>' : ''); bar.appendChild(b);
+          }
+          // lo que no esté en el plan se conserva: va al final de la primera pestaña
+          const primera = panes[plan[0].id];
+          for (const x of bl) if (!usados.has(x)) primera.appendChild(x.el);
+          for (const c of previos) { if (c.parentElement !== v) continue; if (c.querySelector('input, select, textarea, button, table, svg, canvas, .kpi, .kv') || c.textContent.trim()) primera.appendChild(c); else c.remove(); }
+          v.appendChild(bar); for (const p of plan) v.appendChild(panes[p.id]);
+        }
+      }
+      layPulir(v, vista); layAjustar(v);
+    } catch (e) { console.error('orden visual', e); }
+  }
+  function layPulir(root, clave) {
+    // tarjetas: cuántas hay por renglón, para que no quede una sola colgando
+    root.querySelectorAll('.kpis').forEach(k => { if (!k.classList.contains('def-k')) k.dataset.n = k.children.length; k.querySelectorAll('.kpi .s').forEach(s => { if (!s.title) s.title = s.textContent.trim(); }); });
+    // notas largas: plegadas, con un clic se leen completas
+    let i = 0;
+    root.querySelectorAll('.note').forEach(n => {
+      if (n.tagName === 'DETAILS' || n.closest('details.nd') || n.closest('form') || n.querySelector('input, select, button, a')) return; const pan = n.closest('.glass.panel, .desg, .dcol'); if (pan && pan.querySelector('input, select, textarea') && !pan.querySelector('table')) return; const txt = n.textContent.trim(); if (txt.length < 170) return;
+      const key = clave + ':' + (i++); const d = document.createElement('details'); d.className = 'note nd'; d.dataset.k = key; if (LAY.open[key]) d.open = true;
+      const s = document.createElement('summary'); s.textContent = 'Cómo se calcula y cómo leerlo'; const c = document.createElement('div'); while (n.firstChild) c.appendChild(n.firstChild); d.appendChild(s); d.appendChild(c); if (n.style.cssText) d.style.cssText = n.style.cssText; n.replaceWith(d);
+    });
+    // tablas largas: alto acotado con encabezado y totales fijos
+    root.querySelectorAll('.tscroll').forEach(t => { if (t.style.maxHeight || t.closest('.modal:not(.ficha)')) return; const filas = t.querySelectorAll('tbody tr').length; if (filas > 12) t.classList.add('cap'); });
+  }
+  /* tablas que no caben a lo ancho: primero se aprietan los márgenes; si no basta, se permite que los nombres largos bajen de renglón */
+  function layAjustar(root) {
+    if (!root) return;
+    root.querySelectorAll('.tscroll').forEach(t => { if (!t.offsetParent) return; const tb = t.querySelector('table'); t.classList.remove('fit1', 'fit2', 'fit3'); if (tb) tb.style.zoom = '';
+      const sobra = () => t.scrollWidth > t.clientWidth + 1; if (!sobra()) return;
+      const m = t.closest('.modal'); if (m && !m.classList.contains('ancha')) { m.classList.add('ancha'); if (!sobra()) return; }
+      t.classList.add('fit1'); if (!sobra()) return;
+      t.classList.add('fit2'); t.querySelectorAll('tbody td.l').forEach(td => { if (!td.classList.contains('b') && td.textContent.trim().length > 26) td.classList.add('wr'); }); if (!sobra()) return;
+      t.classList.add('fit3'); if (!sobra() || !tb) return;
+      // último recurso: la tabla completa se reduce lo necesario para caber; nunca queda una columna fuera de la vista
+      const z = Math.max(0.5, Math.floor((t.clientWidth - 1) / t.scrollWidth * 1000) / 1000); tb.style.zoom = z; if (sobra()) tb.style.zoom = Math.max(0.45, z - 0.04);
+    });
+  }
+  new MutationObserver(() => { const r = $('#modalRoot'); if (r && r.firstElementChild) layAjustar(r); }).observe(document.getElementById('modalRoot'), { childList: true });
+  let layT = null; window.addEventListener('resize', () => { clearTimeout(layT); layT = setTimeout(() => { layAjustar($('#view')); layAjustar($('#fichaRoot')); }, 150); });
+  function ordenarFicha(root) {
+    try {
+      const f = fichaTop(); if (!f) return; const body = root.querySelector('.ficha'); if (!body) return;
+      const dg = body.querySelector('.ficha-body > .desgs');
+      if (dg && dg.children.length > 1 && f.t === 'contrato') { const key = 'ficha:desgs'; const d = document.createElement('details'); d.className = 'plegado'; d.dataset.k = key; if (LAY.open[key]) d.open = true; const s = document.createElement('summary'); s.innerHTML = `De qué se compone cada cifra <span>${dg.children.length} desgloses: ${[...dg.querySelectorAll(':scope > .desg > .dt')].map(x => esc(x.textContent.split(':')[0].trim().toLowerCase())).join(' · ')}</span>`; dg.replaceWith(d); d.appendChild(s); d.appendChild(dg); }
+      layPulir(body, 'ficha:' + f.t); layAjustar(body);
+    } catch (e) { console.error('orden ficha', e); }
+  }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.vtabs button[data-lay]'); if (!b) return; const v = $('#view'); LAY.tab[S.view] = b.dataset.lay;
+    v.querySelectorAll('.vtabs button').forEach(x => x.classList.toggle('on', x === b)); v.querySelectorAll(':scope > .vpane').forEach(p => { p.hidden = p.dataset.pane !== b.dataset.lay; }); layAjustar(v); window.scrollTo(0, 0); });
+  document.addEventListener('toggle', e => { const d = e.target; if (d && d.dataset && d.dataset.k) LAY.open[d.dataset.k] = d.open; }, true);
+
   function render() {
     evCache.clear(); evInvCache.clear(); E.setConfig({ regimenRegulatorio: CFG().regimenRegulatorio, umbralGestion: CFG().umbralGestion });
     renderNav();
     const t = TITLES[S.view] || ['', '']; $('#vTitle').textContent = t[0]; $('#vSub').textContent = t[1];
     const v = $('#view'); const sy = window.scrollY;
     try { v.innerHTML = VIEWS[S.view](); } catch (e) { console.error(e); v.innerHTML = `<div class="glass panel"><div class="empty"><b>Algo falló al dibujar esta vista</b>${esc(e.message)}</div></div>`; }
+    ordenar();
     window.scrollTo(0, sy);
     v.querySelectorAll('tr.click, .item').forEach(el => { el.tabIndex = 0; });
     renderFicha();
@@ -2419,6 +2541,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const key = f.t + ':' + f.id; const prev = root.querySelector('.ficha'); const st = prev && root._key === key ? prev.scrollTop : 0;
     let html = ''; try { html = FICHAS[f.t](f); } catch (e) { console.error(e); html = `<div class="empty"><b>No se pudo mostrar la ficha</b>${esc(e.message)}</div>`; }
     root.innerHTML = `<div class="modal-bg ${root._key ? 'quiet' : ''}" data-act="fichaCerrar"><div class="glass modal ficha ${f.t === 'cobrar' ? 'mid' : ''}" data-stop="1"><div class="ficha-bar">${S.ficha.length > 1 ? '<button class="btn sm" data-act="fichaAtras">‹ Volver</button>' : ''}<span class="sp"></span><button class="btn sm" data-act="fichaCerrar">Cerrar ✕</button></div>${html}</div></div>`;
+    ordenarFicha(root);
     root._key = key; const now = root.querySelector('.ficha'); if (now && st) now.scrollTop = st;
     root.querySelectorAll('tr.click, .item').forEach(el => { el.tabIndex = 0; });
   }
