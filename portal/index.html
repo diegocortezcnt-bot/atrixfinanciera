@@ -79,6 +79,16 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .nx{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;background:var(--pearl);border-radius:14px;padding:12px 16px}
 .nx .t{font-size:13px;color:var(--ink-2)}
 .nx .t b{color:var(--navy);font-size:16px;margin-left:4px}
+.dia{margin-top:14px;border:1px solid #d9e4f5;background:#f5f8fd;border-radius:14px;padding:14px 16px}
+.dia .dh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--navy)}
+.dia .dh i{font-style:normal;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-2);font-size:12px}
+.dia .dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px 18px;margin-top:10px}
+.dia .dg span{display:block;font-size:11.5px;color:var(--ink-2)}
+.dia .dg b{display:block;font-size:17px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;margin-top:1px}
+.dia .dg small{display:block;font-size:11.5px;color:var(--ink-3);line-height:1.35;margin-top:1px}
+.dia .dg .m b{color:var(--bad)}
+.dia p{font-size:12px;color:var(--ink-2);margin-top:10px;line-height:1.45}
+.nx small{flex-basis:100%;font-size:11.5px;color:var(--ink-2)}
 .tabs{display:flex;gap:6px;margin-top:14px}
 .tabs button{border:0;background:none;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer}
 .tabs button.on{background:var(--navy);color:#fff}
@@ -110,7 +120,7 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:860px){.kpis{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.side{grid-template-columns:1fr}.bar .who{display:none}}
-@media print{.tw{max-height:none;overflow:visible}.seg,.bar,.side .box:last-child,.tabs,.btn{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}
+@media print{.dia{break-inside:avoid}.tw{max-height:none;overflow:visible}.seg,.bar,.side .box:last-child,.tabs,.btn{display:none!important}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}
 </style>
 </head>
 <body>
@@ -137,7 +147,7 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
   </section>
   <section id="vPanel" hidden></section>
 </main>
-<div class="foot">ATRIX® es una marca comercial de COLIUM, S.A. de C.V. La información de este portal es informativa y corresponde a la fecha de corte indicada; los pagos registrados después de esa fecha se reflejarán en la siguiente actualización. Para cualquier aclaración prevalecen los términos de su contrato.</div>
+<div class="foot">ATRIX® es una marca comercial de COLIUM, S.A. de C.V. La información de este portal es informativa. Los intereses, rendimientos y moratorios «al día de hoy» se calculan con los pagos registrados por ATRIX hasta la última actualización indicada; los pagos posteriores se reflejarán en la siguiente actualización. Para cualquier aclaración prevalecen los términos de su contrato.</div>
 <div id="modal"></div>
 
 <script>
@@ -151,7 +161,44 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
   const fdate = iso => { if (!iso) return '—'; const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }); };
   const pct = n => (Number(n) || 0).toLocaleString('es-MX', { maximumFractionDigits: 2 }) + '%';
   const emailDe = rfc => String(rfc || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, 'y').replace(/[^a-z0-9]/g, '') + '@portal.atrixfinanciera.com';
-  const st = { ses: null, datos: null, tab: {}, vista: null };
+  const st = { ses: null, datos: null, tab: {}, vista: null, hoy: null };
+  /* Fecha de hoy en Monterrey (AAAA-MM-DD): con ella se elige la fila del día que publica ATRIX Cartera */
+  const hoyMX = () => { try { const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/Monterrey', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; }); if (p.year && p.month && p.day) return p.year + '-' + p.month + '-' + p.day; } catch (e) { } const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const EST_TXT = { vigente: 'Vigente', atrasado: 'Atrasado', vencido: 'Vencido', liquidado: 'Liquidado', cancelado: 'Cancelado' };
+  const dias = n => n + (n === 1 ? ' día' : ' días');
+  /* Cifras al día: ATRIX publica una fila por fecha (calculada por su sistema con los pagos registrados). Aquí sólo se toma la de hoy;
+     si no existe (información muy antigua), se conserva la de la fecha de corte. */
+  function alDia(D) {
+    st.hoy = hoyMX(); D.alDia = true;
+    const fila = x => { const a = Array.isArray(x.dia) ? x.dia : []; const d = a.find(r => r.f === st.hoy) || null; x.d = d || a[0] || null; if (x.d && !d) D.alDia = false; return d; };
+    D.contratos.forEach(c => { if (c.estatus === 'liquidado') return; const d = fila(c); if (!c.d) { D.alDia = false; return; } if (!d) return;
+      c.vencido = d.ve; c.exigible = d.ex; c.mora = Math.round((d.mo + d.mi) * 100) / 100; c.diasAtraso = d.da; c.proximo = d.px; c.estatus = d.es; c.estatusTxt = EST_TXT[d.es] || d.es;
+      (c.tabla || []).forEach(r => { if (r.estado !== 'Pagado') r.estado = r.fecha < d.f ? 'Vencido' : r.fecha === d.f ? 'Vence hoy' : 'Por vencer'; }); });
+    D.inversiones.forEach(v => { if (v.estatus === 'liquidado') return; const d = fila(v); if (!v.d) { D.alDia = false; return; } if (!d) return;
+      v.devengado = d.dv; v.pendiente = d.pe; v.proximo = d.px; v.estatus = d.es; v.estatusTxt = d.es === 'liquidado' ? 'Liquidada' : d.es === 'atrasado' ? 'Pago en proceso' : 'Vigente';
+      (v.tabla || []).forEach(r => { if (r.estado !== 'Pagado') r.estado = r.fecha <= d.f ? 'Pendiente' : 'Programado'; }); });
+  }
+  function diaCredito(c) {
+    const d = c.d; if (!d || c.estatus === 'liquidado') return ''; const esAP = c.producto === 'AP'; const esHoy = d.f === st.hoy; const cel = [];
+    if (d.od > 0.005 || d.dv > 0.005) {
+      cel.push(`<div><span>${esAP ? 'Renta diaria' : 'Interés ordinario diario'}</span><b>${money(d.od)}</b><small>${esAP || d.iv > 0.005 ? 'más IVA · ' : ''}${esAP ? 'renta del periodo entre sus días' : 'saldo × tasa anual ÷ 360'}</small></div>`);
+      cel.push(`<div><span>${esAP ? 'Renta generada en el periodo' : 'Interés ordinario generado en el periodo'}</span><b>${money(d.dv)}</b><small>${dias(d.dd)}${d.de ? ' desde el ' + fdate(d.de) : ''}${d.iv > 0.005 ? ' · IVA ' + money(d.iv) : ''}</small></div>`);
+    }
+    if (d.da > 0 && d.md > 0.005) cel.push(`<div class="m"><span>Interés moratorio diario</span><b>${money(d.md)}</b><small>${d.mi > 0.005 ? 'más IVA · ' : ''}mientras continúe el atraso</small></div>`);
+    if (d.mo > 0.005) cel.push(`<div class="m"><span>Moratorios acumulados</span><b>${money(d.mo + d.mi)}</b><small>${dias(d.da)} de atraso${d.mi > 0.005 ? ' · incluye IVA' : ''}</small></div>`);
+    if (!cel.length) return '';
+    const nota = d.od > 0.005 || d.dv > 0.005 ? `${esAP ? 'La renta' : 'El interés ordinario'} se genera día a día y ya forma parte de su ${d.px ? 'pago del ' + fdate(d.px.fecha) : 'próximo pago'}: no es un cargo adicional.` : '';
+    return `<div class="dia"><div class="dh">${esHoy ? 'Al día de hoy' : 'A la fecha de corte'}<i>${fdate(d.f)}</i></div><div class="dg">${cel.join('')}</div>${nota ? `<p>${nota}${d.mo > 0.005 ? ' Los moratorios se cobran sólo sobre lo vencido y dejan de generarse al ponerse al corriente.' : ''}</p>` : d.mo > 0.005 ? '<p>Los moratorios dejan de generarse al ponerse al corriente.</p>' : ''}</div>`;
+  }
+  function diaInversion(v) {
+    const d = v.d; if (!d || v.estatus === 'liquidado') return ''; const esHoy = d.f === st.hoy;
+    const per = d.px ? (v.tabla || []).find(r => r.fecha === d.px.fecha) : null; const f = per && per.interes > 0.005 ? per.neto / per.interes : 1; const hayImp = Math.abs(f - 1) > 0.0001;
+    return `<div class="dia"><div class="dh">${esHoy ? 'Rendimientos al día de hoy' : 'Rendimientos a la fecha de corte'}<i>${fdate(d.f)}</i></div><div class="dg">
+      <div><span>Rendimiento diario</span><b>${money(d.rd)}</b><small>capital vigente × tasa anual ÷ 360</small></div>
+      <div><span>Generado en el periodo en curso</span><b>${money(d.dv)}</b><small>${dias(d.dd)}${d.de ? ' desde el ' + fdate(d.de) : ''}${hayImp ? ' · neto estimado ' + money(d.dv * f) : ''}</small></div>
+      <div><span>Generado desde el inicio</span><b>${money(d.ac)}</b><small>rendimientos${hayImp ? ' antes de impuestos' : ''}, pagados y por pagar</small></div></div>
+      <p>Sus rendimientos se generan día a día y se le depositan en cada fecha de pago del calendario${d.px ? '; el siguiente es el ' + fdate(d.px.fecha) : ''}.</p></div>`;
+  }
   const guardar = s => { st.ses = s; try { if (s) sessionStorage.setItem(SKEY, JSON.stringify(s)); else sessionStorage.removeItem(SKEY); } catch (e) { } };
   const leer = () => { try { return JSON.parse(sessionStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } };
   const errTxt = j => { const c = j && (j.error_code || j.code || j.error); const m = (j && (j.msg || j.message || j.error_description)) || '';
@@ -178,7 +225,7 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
     const r = await api('/rest/v1/portal_clientes?select=nombre,rfc,datos,actualizado&limit=1', { auth: true });
     if (r.status === 401) { guardar(null); return mostrarLogin('Su sesión terminó. Vuelva a entrar.'); }
     if (!r.ok) return mostrarLogin(errTxt(r.json));
-    st.datos = (r.json || [])[0] || null; pintar();
+    st.datos = (r.json || [])[0] || null; const D0 = st.datos && st.datos.datos; if (D0) { D0.contratos = D0.contratos || []; D0.inversiones = D0.inversiones || []; try { alDia(D0); } catch (e) { D0.alDia = false; } } pintar();
   }
   function mostrarLogin(msg, ok) {
     $('#vPanel').hidden = true; $('#vLogin').hidden = false; $('#bSalir').hidden = true; $('#bSitio').hidden = false; $('#who').textContent = '';
@@ -195,8 +242,9 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
       const pagos = c.pagos && c.pagos.length ? `<div class="tw"><table><thead><tr><th class="l">Fecha</th><th class="l">Concepto</th><th>Importe</th></tr></thead><tbody>${c.pagos.map(p => `<tr><td class="l">${fdate(p.fecha)}</td><td class="l">${esc(p.concepto)}</td><td>${money(p.monto)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay pagos registrados.</div>';
       return `<article class="card ct"><div class="top"><div><h2>${esc(c.productoNombre)} · ${esc(c.folio)}</h2><div class="sub">${esc(c.activo || '')}</div></div>${chip(c.estatus, c.estatusTxt)}</div>
         <div class="grid"><div><span>Monto original</span><b>${money(c.monto)}</b></div><div><span>${esAP ? 'Saldo por recuperar' : 'Saldo de capital'}</span><b>${money(c.saldo)}</b></div><div><span>Tasa anual</span><b>${pct(c.tasa)}</b></div><div><span>Plazo</span><b>${c.plazo} meses</b></div><div><span>Inicio</span><b>${fdate(c.inicio)}</b></div><div><span>Vencimiento</span><b>${fdate(c.vence)}</b></div><div><span>Total pagado</span><b>${money(c.pagado)}</b></div><div><span>Días de atraso</span><b style="${c.diasAtraso ? 'color:var(--bad)' : ''}">${c.diasAtraso || 0}</b></div></div>
-        ${c.vencido > 0.005 ? `<div class="nx" style="background:#fdecec"><span class="t" style="color:var(--bad)">Importe vencido${c.mora > 0.005 ? ' (incluye ' + money(c.mora) + ' de intereses moratorios con IVA)' : ''}<b style="color:var(--bad)">${money(c.vencido)}</b></span></div>` : ''}
+        ${c.vencido > 0.005 ? `<div class="nx" style="background:#fdecec"><span class="t" style="color:var(--bad)">${c.d && c.d.f === st.hoy ? 'Para ponerse al corriente hoy' : 'Importe vencido'}${c.mora > 0.005 ? ' (incluye ' + money(c.mora) + ' de intereses moratorios con IVA)' : ''}<b style="color:var(--bad)">${money(c.exigible > c.vencido ? c.exigible : c.vencido)}</b></span>${c.d && c.d.f === st.hoy ? '<small>Si ya realizó su pago, se verá reflejado en cuanto ATRIX lo registre.</small>' : ''}</div>` : ''}
         ${c.proximo ? `<div class="nx"><span class="t">Próximo pago · ${fdate(c.proximo.fecha)}<b>${money(c.proximo.total)}</b></span></div>` : ''}
+        ${diaCredito(c)}
         <div class="tabs"><button class="${t === 'tabla' ? 'on' : ''}" data-act="tab" data-f="c${esc(c.folio)}" data-t="tabla">Tabla de pagos</button><button class="${t === 'pagos' ? 'on' : ''}" data-act="tab" data-f="c${esc(c.folio)}" data-t="pagos">Pagos realizados</button></div>
         ${t === 'tabla' ? tabla : pagos}</article>`;
     }).join('');
@@ -207,9 +255,10 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
       const tabla = v.tabla && v.tabla.length ? `<div class="tw"><table><thead><tr><th class="l">No.</th><th class="l">Fecha de pago</th><th>Rendimiento</th>${iva ? '<th>IVA</th>' : ''}${ret ? '<th>Retención ISR</th>' : ''}<th>Neto a recibir</th><th class="l">Estado</th></tr></thead><tbody>${v.tabla.map(r => fila(r, r.k === cur, `<td class="l">${r.k}</td><td class="l">${fdate(r.fecha)}${r.k === cur ? '<span class="pnow">Último pago</span>' : ''}</td><td>${money(r.interes)}</td>${iva ? `<td>${money(r.iva)}</td>` : ''}${ret ? `<td>−${money(r.retencion)}</td>` : ''}<td${r.capital ? ' style="white-space:normal"' : ''}><b>${money(r.total)}</b>${r.capital ? `<div style="font-size:11px;color:var(--ink-3);font-weight:400">incluye capital</div>` : ''}</td><td class="l">${chip(r.estado === 'Pendiente' ? 'Vence-hoy' : r.estado === 'Programado' ? 'Por-vencer' : r.estado, r.estado)}</td>`)).join('')}</tbody></table></div>` : '<div class="empty">Sin calendario de pagos.</div>';
       const pagos = v.pagos && v.pagos.length ? `<div class="tw"><table><thead><tr><th class="l">Fecha</th><th class="l">Concepto</th><th>Importe</th></tr></thead><tbody>${v.pagos.map(p => `<tr><td class="l">${fdate(p.fecha)}</td><td class="l">${esc(p.concepto)}</td><td>${money(p.monto)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay pagos realizados.</div>';
       return `<article class="card ct"><div class="top"><div><h2>Inversión · ${esc(v.folio)}</h2><div class="sub">Pago de rendimientos ${esc(String(v.modalidad).toLowerCase())}${ret ? ' · retención de ISR ' + pct(v.retencionPct) : ''}</div></div>${chip(v.estatus === 'atrasado' ? 'atrasado' : v.estatus, v.estatusTxt)}</div>
-        <div class="grid"><div><span>Capital invertido</span><b>${money(v.monto)}</b></div><div><span>Capital vigente</span><b>${money(v.saldo)}</b></div><div><span>Tasa anual</span><b>${pct(v.tasa)}</b></div><div><span>Plazo</span><b>${v.plazo} meses</b></div><div><span>Inicio</span><b>${fdate(v.inicio)}</b></div><div><span>Vencimiento</span><b>${fdate(v.vence)}</b></div><div><span>Recibido a la fecha</span><b>${money(v.recibido)}</b></div><div><span>Rendimiento acumulado del periodo</span><b>${money(v.devengado)}</b></div></div>
+        <div class="grid"><div><span>Capital invertido</span><b>${money(v.monto)}</b></div><div><span>Capital vigente</span><b>${money(v.saldo)}</b></div><div><span>Tasa anual</span><b>${pct(v.tasa)}</b></div><div><span>Plazo</span><b>${v.plazo} meses</b></div><div><span>Inicio</span><b>${fdate(v.inicio)}</b></div><div><span>Vencimiento</span><b>${fdate(v.vence)}</b></div><div><span>Recibido a la fecha</span><b>${money(v.recibido)}</b></div>${v.d ? `<div><span>Rendimiento total del plazo</span><b>${money(v.interesTotal)}</b></div>` : `<div><span>Rendimiento acumulado del periodo</span><b>${money(v.devengado)}</b></div>`}</div>
         ${v.pendiente > 0.005 ? `<div class="nx" style="background:#fff4e0"><span class="t" style="color:var(--warn)">Pago en proceso<b style="color:var(--warn)">${money(v.pendiente)}</b></span></div>` : ''}
         ${v.proximo ? `<div class="nx"><span class="t">Próximo pago · ${fdate(v.proximo.fecha)}<b>${money(v.proximo.total)}</b></span></div>` : ''}
+        ${diaInversion(v)}
         <div class="tabs"><button class="${t === 'tabla' ? 'on' : ''}" data-act="tab" data-f="i${esc(v.folio)}" data-t="tabla">Calendario de pagos</button><button class="${t === 'pagos' ? 'on' : ''}" data-act="tab" data-f="i${esc(v.folio)}" data-t="pagos">Pagos recibidos</button></div>
         ${t === 'tabla' ? tabla : pagos}</article>`;
     }).join('');
@@ -249,7 +298,7 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
       cont = tarjetasInversion(D) || '<div class="card box"><p>No tiene inversiones vigentes.</p></div>';
       ayuda = `<h3>Sus pagos</h3><p>ATRIX deposita sus rendimientos en la cuenta registrada en su contrato, en cada fecha de pago del calendario. Si tiene una duda o necesita una constancia, contáctenos.</p>`;
     }
-    P.innerHTML = `${seg}<div class="hd"><div><h1>Hola, ${esc(D.cliente.nombre)}</h1><div class="s">Información al ${fdate(D.corte)} · actualizada ${esc(actz)}</div></div><button class="btn" data-act="print">Imprimir</button></div>
+    P.innerHTML = `${seg}<div class="hd"><div><h1>Hola, ${esc(D.cliente.nombre)}</h1><div class="s">${D.alDia ? 'Cifras al día de hoy, ' + fdate(st.hoy) + ' · con los pagos registrados al ' + esc(actz) : 'Información al ' + fdate(D.corte) + ' · actualizada ' + esc(actz)}</div></div><button class="btn" data-act="print">Imprimir</button></div>
       <div class="kpis">${kpis}</div>
       <div class="side"><div>${cont}</div>
         <aside class="card box">${ayuda}
