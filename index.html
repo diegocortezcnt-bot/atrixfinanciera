@@ -1291,7 +1291,7 @@ $$('[data-sim]').forEach(a=>a.addEventListener('click',()=>setProd(a.dataset.sim
 const apply=ch=>{if(A.value===B.value){const o=ch===A?B:A;o.value=String((+o.value+1)%5);}const a=+A.value,b=+B.value;
 cells.forEach((c,i)=>{const col=i%5,row=Math.floor(i/5);const sd=col===a?0:col===b?1:-1;c.classList.toggle('on',sd>=0);c.style.setProperty('--o',sd>=0?row*2+sd:999)})};
 A.addEventListener('change',()=>apply(A));B.addEventListener('change',()=>apply(B));apply();})();
-$('#simGo').addEventListener('click',()=>{$('#producto').value=names[S.prod];$('#montoLead').value=nf.format(S.last.M);const d=$('#destino');if(!d.value)d.value=`Simulé ${names[S.prod]} por ${fmt.format(S.last.M)} a ${S.last.n} meses. `;updWa()});
+$('#simGo').addEventListener('click',e=>{if(S.last&&S.last.M){e.preventDefault();location.href='/solicitud/?prod='+({fin:'AF',puro:'AP',simple:'CGI',rev:'CGI',est:'CE'}[S.prod]||'AF')+'&monto='+Math.round(S.last.M)+'&plazo='+(S.last.n||'');return}$('#producto').value=names[S.prod];$('#montoLead').value=nf.format(S.last.M);const d=$('#destino');if(!d.value)d.value=`Simulé ${names[S.prod]} por ${fmt.format(S.last.M)} a ${S.last.n} meses. `;updWa()});
 setProd('fin');
 /* ---------- form ---------- */
 const v=id=>($('#'+id).value||'').trim();
