@@ -396,6 +396,10 @@
   .sol-mrow b { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; } .sol-mrow .solmb { grid-column: 1 / -1; height: 5px; border-radius: 5px; background: var(--line); overflow: hidden; } .sol-mrow .solmb i { display: block; height: 100%; background: var(--navy); border-radius: 5px; }
   .sol-mrow.tot { border-top: 2px solid var(--line-2); font-size: 13.5px; } .sol-mrow.tot > span:first-child, .sol-mrow.tot b { font-weight: 800; } .sol-mrow.off { opacity: .62; } .sol-mrow.off .solmb { display: none; }
   @media (max-width: 900px) { .sol-mg { grid-template-columns: 1fr; } }
+  /* 17.27 · preaprobación y aprobación */
+  .sol-tabs { margin-top: 14px; } .sol-tabs button { padding: 7px 14px; font-size: 13px; } .sol-tabs button i { font-style: normal; font-weight: 700; font-size: 10.5px; margin-left: 4px; padding: 1px 7px; border-radius: 8px; background: var(--chip-blue); color: var(--navy); }
+  .sol-rates { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 10px 0 0; } .sol-prop .kpis { margin-bottom: 0; } .sol-prop textarea { min-height: 70px; }
+  @media (max-width: 1100px) { .sol-prop { grid-template-columns: 1fr; } } @media (max-width: 620px) { .sol-rates { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 
 <div class="app">
@@ -2219,7 +2223,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.26';
+  const SISTEMA_VERSION = '17.27';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -4830,7 +4834,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   function copiar(text) { const done = () => toast('Copiado'); const fb = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) { } document.body.removeChild(ta); done(); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fb); else fb(); }
   let toastT; function toast(msg, err) { const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : ''); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
 
-  /* ======== 17.26 · SOLICITUDES EN LÍNEA ========
+  /* ======== 17.27 · SOLICITUDES EN LÍNEA ========
      Prospectos que iniciaron su solicitud en www.atrixfinanciera.com/solicitud/. Viven en el servidor (tabla public.solicitudes y
      almacenamiento privado «solicitudes»); aquí se revisa el expediente, se califica cada documento y se mueve la etapa.
      No forman parte de datos.json: se consultan en línea con la sesión del administrador.
@@ -4872,16 +4876,16 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     return L; };
   const solExtras = s => Array.isArray((s.revision || {})._extra) ? s.revision._extra.filter(x => x && x.c && x.n) : [];
   const solDocs = s => CATALOGO(s).concat(solExtras(s).map(x => ({ g: 'Solicitados por ATRIX', c: x.c, n: x.n, a: x.a || '', opc: false, extra: true })));
-  const SOL = { lista: null, cargando: false, error: null, sel: null, files: {}, int: {}, grupo: 'pendientes', q: '', fProd: '', sy: 0, t: 0 };
+  const SOL = { lista: null, cargando: false, error: null, sel: null, files: {}, int: {}, grupo: 'pendientes', q: '', fProd: '', sy: 0, t: 0, tab: 'exp', props: {} };
   const solMs = iso => (iso ? Date.parse(iso) : 0) || 0;
   const solF = (iso, hora) => { if (!iso) return '—'; try { const d = new Date(iso); return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Monterrey' }) + (hora ? ' ' + d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Monterrey' }) : ''); } catch (e) { return String(iso).slice(0, 10); } };
   const solPeso = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round((b || 0) / 1024)) + ' KB';
   const solNorm = t => String(t == null ? '' : t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const solDe = id => (SOL.lista || []).find(x => x.id === id) || null;
-  const solCliMov = s => Math.max(solMs(s.creado), solMs(s.docs_cambio), solMs(s.enviado));
+  const solCliMov = s => Math.max(solMs(s.creado), solMs(s.docs_cambio), solMs(s.enviado), solMs(((s.datos || {}).aceptacion || {}).fecha));
   const solAt = s => solMs((SOL.int[s.id] || {}).atendido);
   const solGrupo = s => SOL_CERRADA.includes(s.etapa) ? 'cerradas' : solAt(s) >= solCliMov(s) ? 'atendidas' : 'pendientes';
-  const solMotivo = s => { const at = solAt(s); if (solMs(s.enviado) > at) return 'Envió su expediente a revisión'; if (solMs(s.docs_cambio) > at) return 'Cargó documentos'; return 'Solicitud nueva'; };
+  const solMotivo = s => { const at = solAt(s); if (solMs(((s.datos || {}).aceptacion || {}).fecha) > at) return 'Aceptó la propuesta de aprobación'; if (solMs(s.enviado) > at) return 'Envió su expediente a revisión'; if (solMs(s.docs_cambio) > at) return 'Cargó documentos'; return 'Solicitud nueva'; };
   const solDias = ms => Math.max(0, Math.floor((Date.now() - ms) / 86400000));
   const solHace = ms => { const d = solDias(ms); return d === 0 ? 'hoy' : d === 1 ? 'hace 1 día' : 'hace ' + d + ' días'; };
   const solDisponible = () => Nube.activo && Nube._dentro && !Nube.soloLectura && !!Nube.sesion;
@@ -4916,7 +4920,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   }
   const solAtender = s => solInterno(s, { atendido: new Date().toISOString() });
   async function solAbrir(id) {
-    const s = solDe(id); if (!s) return; if (!SOL.sel) SOL.sy = window.scrollY; SOL.sel = id; render(); window.scrollTo(0, 0);
+    const s = solDe(id); if (!s) return; if (!SOL.sel) SOL.sy = window.scrollY; if (SOL.sel !== id) SOL.tab = 'exp'; SOL.sel = id; render(); window.scrollTo(0, 0);
     await solArchivos(s); if (S.view === 'solicitudes' && SOL.sel === id && !$('#modalRoot').innerHTML) render();
   }
   function solEstadoDoc(d, s) {
@@ -4945,7 +4949,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       const estado = g === 'pendientes' ? `<b class="${tarde ? 'neg' : ''}">${esc(solMotivo(x))}</b><span>${solHace(mov)}${tarde ? ' · fuera del plazo de 2 días' : ''}</span>` : g === 'atendidas' ? `<b>Atendida ${solF((SOL.int[x.id] || {}).atendido)}</b><span>${['recibida', 'documentos'].includes(x.etapa) ? 'en espera del solicitante' : x.etapa === 'revision' ? 'en análisis interno' : 'por formalizar'}</span>` : `<b>Cerrada</b><span>${solF(x.actualizado)}</span>`;
       return `<div class="sol-row ${g}" data-act="solAbrir" data-id="${x.id}" tabindex="0"><div class="a"><div class="t">${esc(x.nombre)}</div><div class="s">${esc(x.folio)} · ${esc(x.rfc)}${D.municipio ? ' · ' + esc(D.municipio) : ''}${x.promotor ? ' · promotor ' + esc(x.promotor) : ''}</div></div>
         <div class="b"><b>${money(x.monto)}</b><span>${esc(SOL_PROD[x.producto] || x.producto)}</span></div>
-        <div class="c">${chip(e[1], e[0])}${hallados ? ' ' + chip('gray', SOL_GRUPO[g].replace(/s$/, '')) : ''}<span>${av[0]} de ${av[1]} documentos aceptados</span></div>
+        <div class="c">${chip(e[1], e[0])}${hallados ? ' ' + chip('gray', SOL_GRUPO[g].replace(/s$/, '')) : ''}<span>${solAceptVigente(x) ? 'Propuesta aceptada por el solicitante' : solPub(x, 'apr') ? 'Aprobación en su portal' : solPub(x, 'pre') ? 'Preaprobación en su portal' : av[0] + ' de ' + av[1] + ' documentos aceptados'}</span></div>
         <div class="d">${estado}</div>
         <div class="e"><button class="btn sm" data-act="solAbrir" data-id="${x.id}">Abrir</button><button class="btn sm danger" data-act="solEliminar" data-id="${x.id}" title="Borrar solicitud">Borrar</button></div></div>`; };
     const vacio = hallados ? emptyBox('Sin resultados para «' + SOL.q + '»', 'Busca por folio, RFC, nombre, contacto, teléfono, correo, giro, municipio o promotor. Puedes combinar palabras.') : !L.length ? emptyBox('Aún no hay solicitudes', 'Comparte la liga ' + SOL_WEB + ' con tus prospectos: aquí aparecerán en cuanto inicien su solicitud.') : SOL.grupo === 'pendientes' ? emptyBox('Nada pendiente', 'Todas las solicitudes están atendidas. Aquí aparecerán cuando un prospecto inicie su solicitud, cargue documentos o envíe su expediente.') : emptyBox('Sin solicitudes en «' + SOL_GRUPO[SOL.grupo] + '»', '');
@@ -4968,18 +4972,20 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       return `${h}<div class="sol-doc"><div class="sol-top"><div><b>${esc(d.n)}</b>${d.extra && d.a ? `<div class="small muted">${esc(d.a)}</div>` : ''}${x.e === 'rechazado' && x.motivo ? `<div class="small" style="color:var(--red)">Motivo: ${esc(x.motivo)}</div>` : ''}</div>${x.chip}</div>
         ${x.fs.map(f => `<div class="sol-file"><span class="n" title="${esc(f.nombre)}">${esc(f.nombre)}</span><span class="muted small">${solPeso(f.tam)} · ${solF(f.fecha, true)}</span><button class="btn sm" data-act="solVer" data-ruta="${esc(f.ruta)}" data-nom="${esc(f.nombre)}" data-mime="${esc(f.mime)}">Ver</button></div>`).join('')}
         ${x.fs.length || x.e === 'aceptado' || x.e === 'rechazado' || d.extra ? `<div class="pill-row" style="margin-top:8px">${x.fs.length && x.e !== 'aceptado' ? `<button class="btn sm primary" data-act="solDocOk" data-id="${s.id}" data-c="${d.c}">Aceptar</button>` : ''}${x.fs.length && x.e !== 'rechazado' ? `<button class="btn sm danger" data-act="solDocNo" data-id="${s.id}" data-c="${d.c}">Rechazar</button>` : ''}${x.e === 'aceptado' || x.e === 'rechazado' ? `<button class="btn sm" data-act="solDocLimpiar" data-id="${s.id}" data-c="${d.c}">Quitar calificación</button>` : ''}${d.extra && !x.fs.length ? `<button class="btn sm" data-act="solExtraQuitar" data-id="${s.id}" data-c="${d.c}">Ya no pedirlo</button>` : ''}</div>` : ''}</div>`; }).join('');
+    const pPre = solPub(s, 'pre'), pApr = solPub(s, 'apr'), aV = solAceptVigente(s); const tb = (v, t, c) => `<button type="button" class="${SOL.tab === v ? 'on' : ''}" data-act="solTab" data-v="${v}">${t}${c ? ' <i>' + c + '</i>' : ''}</button>`;
+    const tabs = `<div class="seg sol-tabs">${tb('exp', 'Expediente', rev ? rev + ' por revisar' : '')}${tb('pre', 'Preaprobación', pPre ? 'en el portal' : '')}${tb('apr', 'Aprobación', aV ? 'aceptada' : pApr ? (solPropVigente(pApr) ? 'en el portal' : 'vencida') : '')}</div>`;
     return `<div class="sol-back"><button class="btn" data-act="solVolver"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Atrás · Solicitudes</button><span class="muted small">${g === 'pendientes' ? esc(solMotivo(s)) + ' · ' + solHace(solCliMov(s)) : g === 'atendidas' ? 'Atendida el ' + solF(N.atendido, true) : 'Solicitud cerrada'}</span></div>
       <div class="glass panel"><div class="ph"><h2>${esc(s.folio)} ${chip(e[1], e[0])} ${chip(g === 'pendientes' ? 'atrasado' : g === 'atendidas' ? 'ok' : 'gray', g === 'pendientes' ? 'Pendiente' : g === 'atendidas' ? 'Atendida' : 'Cerrada')}</h2><div class="pill-row"><button class="btn primary" data-act="solEtapa" data-id="${s.id}">Etapa y mensaje</button><button class="btn" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>${g === 'pendientes' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="1">Marcar atendida</button>` : g === 'atendidas' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="0">Regresar a pendientes</button>` : ''}${cli ? `<button class="btn" data-act="selCliente" data-id="${cli.id}">Abrir acreditado</button>` : `<button class="btn" data-act="solConvertir" data-id="${s.id}">Convertir en acreditado</button>`}<button class="btn danger" data-act="solEliminar" data-id="${s.id}">Borrar solicitud</button></div></div>
         <div style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:2px 0 12px;overflow-wrap:anywhere">${esc(s.nombre)}</div>
         <div class="kpis"><div class="kpi glass"><div class="k">Producto</div><div class="v" style="font-size:16px">${esc(SOL_PROD[s.producto] || s.producto)}</div><div class="s">${D.plazo ? esc(D.plazo) + (/^\d+$/.test(D.plazo) ? ' meses' : '') : 'plazo por definir'}</div></div><div class="kpi glass blue"><div class="k">Monto solicitado</div><div class="v">${money(s.monto)}</div><div class="s">sin IVA</div></div><div class="kpi glass green"><div class="k">Documentos aceptados</div><div class="v">${ok} de ${req.length}</div><div class="s"><span class="sol-pb"><i style="width:${req.length ? Math.round(ok / req.length * 100) : 0}%"></i></span></div></div><div class="kpi glass ${rev ? 'orange' : ''}"><div class="k">Por revisar</div><div class="v">${cargado ? rev : '…'}</div><div class="s">${cargado ? falta + ' sin cargar · ' + nArch + ' archivo' + (nArch === 1 ? '' : 's') : 'consultando expediente'}</div></div></div>
         ${s.mensaje ? `<div class="note"><b>Mensaje visible para el solicitante:</b> ${esc(s.mensaje)}</div>` : ''}</div>
-      <div class="grid-side" style="margin-top:14px"><div>
+      ${tabs}${SOL.tab !== 'exp' ? solVistaProp(s, SOL.tab) : `<div class="grid-side" style="margin-top:14px"><div>
         <div class="glass panel"><h2>Datos del solicitante</h2><div class="kv">${kv('Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial')}${kv('RFC', s.rfc)}${kv('Giro', D.giro)}${kv('Años de operación en México', D.antiguedad)}${kv('Municipio', D.municipio)}${kv(/mill/.test(D.ventas || '') ? 'Ventas anuales' : 'Ventas', D.ventas)}${kv('Aval', D.aval_tipo === 'PM' ? 'Persona moral' : 'Persona física')}${s.tipo === 'PM' ? kv('Dos socios al 50 %', D.socios5050 === 'si' ? 'Sí' : 'No') : ''}${kv('Contacto', D.contacto)}${kv('Cargo', D.cargo)}${kv('Teléfono', D.telefono)}${kv('Correo', D.correo)}${kv('Promotor', s.promotor)}${kv('Recibida', solF(s.creado, true))}${kv('Enviada a revisión', s.enviado ? solF(s.enviado, true) : '')}${kv('Última carga', s.docs_cambio ? solF(s.docs_cambio, true) : '')}</div>
           ${D.activo ? `<div class="note"><b>${['AF', 'AP'].includes(s.producto) ? 'Activo' : 'Destino y garantía'}:</b> ${esc(D.activo)}</div>` : ''}
           <div class="pill-row" style="margin-top:10px"><button class="btn sm primary" data-act="solAviso" data-id="${s.id}">Aviso por WhatsApp</button><button class="btn sm" data-act="portalCopiar" data-v="${esc([s.folio, s.nombre, s.rfc, D.contacto, D.telefono, D.correo].filter(Boolean).join(' · '))}">Copiar datos</button></div></div>
         <div class="glass panel" style="margin-top:14px"><h2>Notas internas de Riesgos</h2><div class="small" style="white-space:pre-line;overflow-wrap:anywhere">${N.notas ? esc(N.notas) : '<span class="muted">Sin notas. Solo las ve ATRIX; el solicitante no tiene acceso.</span>'}</div><div class="pill-row" style="margin-top:10px"><button class="btn sm" data-act="solNotas" data-id="${s.id}">${N.notas ? 'Editar notas' : 'Agregar nota'}</button></div></div>
         <div class="glass panel" style="margin-top:14px"><h2>Acceso del solicitante</h2><div class="small muted">Entra en ${SOL_WEB} con su RFC y la contraseña que creó.</div><div class="pill-row" style="margin-top:10px"><button class="btn sm" data-act="solPass" data-id="${s.id}">Nueva contraseña</button></div></div>
-      </div><div class="glass panel"><div class="ph"><h2>Expediente</h2><div class="pill-row"><button class="btn sm" data-act="solExtra" data-id="${s.id}">Pedir otro documento</button><button class="btn sm" data-act="solAbrir" data-id="${s.id}">Actualizar</button></div></div>${cargado ? lista : emptyBox('Consultando expediente…', '')}</div></div>`;
+      </div><div class="glass panel"><div class="ph"><h2>Expediente</h2><div class="pill-row"><button class="btn sm" data-act="solExtra" data-id="${s.id}">Pedir otro documento</button><button class="btn sm" data-act="solAbrir" data-id="${s.id}">Actualizar</button></div></div>${cargado ? lista : emptyBox('Consultando expediente…', '')}</div></div>`}`;
   }
   function solMetricas(L) {
     const mto = a => sum(a, x => Number(x.monto) || 0); const act = L.filter(x => !SOL_CERRADA.includes(x.etapa)); const fondear = mto(act); const de = (...e) => L.filter(x => e.includes(x.etapa));
@@ -4993,6 +4999,120 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       <div class="grid2 sol-mg"><div><div class="sol-g">Monto a fondear por etapa</div>${fila('Recibida e integrando expediente', de('recibida', 'documentos'), fondear)}${fila('En análisis de Riesgos', de('revision'), fondear)}${fila('Preaprobada', de('preaprobada'), fondear)}${fila('Aprobada, por formalizar', de('aprobada'), fondear)}<div class="sol-mrow tot"><span>Monto a fondear</span><span class="muted">${act.length} en proceso</span><b>${money(fondear)}</b></div>${de('formalizada').length ? fila('Formalizada (ya no suma)', de('formalizada'), 0, true) : ''}${de('rechazada', 'cancelada').length ? fila('No aprobada o cancelada (no suma)', de('rechazada', 'cancelada'), 0, true) : ''}</div>
         <div><div class="sol-g">Por producto</div>${Object.keys(SOL_PROD).map(p => fila(SOL_PROD[p], act.filter(x => x.producto === p), fondear)).join('')}${lp.length > 1 || (lp[0] && lp[0] !== 'Sin promotor (directo)') ? `<div class="sol-g" style="margin-top:18px">Por promotor</div>${lp.slice(0, 6).map(p => fila(p, proms[p], fondear)).join('')}` : ''}</div></div></div>`;
   }
+  /* ---- 17.27 · Preaprobación y aprobación (propuesta / term sheet) ----
+     El borrador vive en solicitudes_interno (solo ATRIX). «Cargar al portal» copia la propuesta a solicitudes.revision._pre / _apr,
+     que es lo que el solicitante ve en su página. La aceptación la sella el servidor en datos.aceptacion (función solicitud_cliente). */
+  const SOL_PP = { AF: 'Arrendamiento financiero', AP: 'Arrendamiento puro', PS: 'Crédito simple', PR: 'Crédito revolvente', CE: 'Crédito estructurado' };
+  const SOL_IVA = 16, SOL_VIGENCIA = 30;
+  const SOL_CAMPOS = { pre: ['producto', 'monto', 'tasa', 'plazo', 'comision', 'notas'], apr: ['producto', 'monto', 'tasa', 'tasaMora', 'plazo', 'periodicidad', 'comision', 'residualPct', 'primerPago', 'garantia', 'aval', 'avales', 'metodologia', 'condiciones'] };
+  const solPick = (o, tipo) => { const r = {}; SOL_CAMPOS[tipo].forEach(k => { if (o && o[k] != null) r[k] = o[k]; }); return r; };
+  const solPub = (s, tipo) => { const p = (s.revision || {})['_' + tipo]; return p && p.id ? p : null; };
+  const solAcept = s => { const a = (s.datos || {}).aceptacion; return a && a.fecha ? a : null; };
+  const solAceptVigente = s => { const a = solAcept(s), p = solPub(s, 'apr'); return a && p && a.oferta === p.id ? a : null; };
+  function solProp(s, tipo) {
+    const k = s.id + ':' + tipo; if (SOL.props[k]) return SOL.props[k];
+    const D = s.datos || {}; const N = SOL.int[s.id] || {}; const prod = s.producto === 'CGI' ? 'PS' : s.producto; const pre = solPub(s, 'pre');
+    const base = tipo === 'pre' ? { producto: prod, monto: Number(s.monto) || 0, tasa: 36, plazo: parseInt(D.plazo) || 36, comision: 2.5, notas: '' }
+      : Object.assign({ producto: prod, monto: Number(s.monto) || 0, tasa: 36, tasaMora: 72, plazo: parseInt(D.plazo) || 36, periodicidad: 'mensual', comision: 2.5, residualPct: 20, primerPago: nextMonthISO(), garantia: '', aval: 'si', avales: '', metodologia: '', condiciones: '' }, pre ? { producto: pre.producto, monto: pre.monto, tasa: pre.tasa, plazo: pre.plazo, comision: pre.comision } : {});
+    return (SOL.props[k] = Object.assign(base, solPick(solPub(s, tipo), tipo), solPick(N[tipo + '_b'], tipo)));
+  }
+  function solPropCalc(f) { // todo lo que se deriva de lo capturado: tasas mensuales, IVA, comisión y tabla
+    const monto = Number(f.monto) || 0, tasa = Number(f.tasa) || 0, plazo = Math.max(1, parseInt(f.plazo) || 1), k = 1 + SOL_IVA / 100, P = f.producto;
+    const o = { monto, tasa, plazo, tasaMes: tasa / 12, tasaIva: tasa * k, tasaMesIva: tasa / 12 * k }; const tm = Number(f.tasaMora) || 0; o.tasaMora = tm; o.moraMes = tm / 12; o.moraIva = tm * k; o.moraMesIva = tm / 12 * k;
+    o.comisionPct = Number(f.comision) || 0; o.comision = E.r2(monto * o.comisionPct / 100); o.comisionIva = E.r2(o.comision * SOL_IVA / 100);
+    if (P !== 'PR' && monto > 0) { try { const pm = P === 'CE' ? 'PS' : P; const c = { producto: pm, monto, tasa, plazo, fechaPrimerPago: f.primerPago || nextMonthISO(), residualPct: P === 'AP' ? (Number(f.residualPct) || 0) : 0, iva: SOL_IVA, ivaSobre: E.PRODUCTOS[pm].ivaSobre }; if (P === 'CE' && f.periodicidad && f.periodicidad !== 'mensual') c.periodicidad = f.periodicidad;
+      const sch = E.buildSchedule(c); o.tabla = sch.rows.map(r => ({ k: r.k, f: r.fecha, si: E.r2(r.saldoInicial), c: E.r2(r.capital), i: E.r2(r.interes), v: E.r2(r.iva), t: E.r2(r.total), sf: E.r2(r.saldoFinal) }));
+      o.pago = E.r2(sch.pago); o.pagoIva = o.tabla[0] ? o.tabla[0].t : 0; o.residual = E.r2(sch.residual || 0); o.tot = { c: E.r2(sum(o.tabla, r => r.c)), i: E.r2(sum(o.tabla, r => r.i)), v: E.r2(sum(o.tabla, r => r.v)), t: E.r2(sum(o.tabla, r => r.t)) }; } catch (e) { o.err = String(e && e.message || e); } }
+    return o;
+  }
+  function solPropObj(s, tipo, f, pub) { // lo que se publica al solicitante (pub = true asigna identificador, fecha y vigencia nuevos)
+    const X = solPropCalc(f); const ahora = new Date(); const ant = solPub(s, tipo);
+    const o = { id: pub || !ant ? uid(tipo) : ant.id, publicado: pub || !ant ? ahora.toISOString() : ant.publicado, producto: f.producto, productoNombre: SOL_PP[f.producto] || f.producto, monto: X.monto, tasa: X.tasa, plazo: X.plazo, comision: X.comisionPct, iva: SOL_IVA };
+    if (X.pago != null) { o.pago = X.pago; o.pagoIva = X.pagoIva; }
+    if (tipo === 'pre') { o.notas = String(f.notas || '').slice(0, 1500); return o; }
+    o.vence = new Date(Date.parse(o.publicado) + SOL_VIGENCIA * 86400000).toISOString(); o.tasaMora = X.tasaMora; o.periodicidad = f.producto === 'CE' ? (f.periodicidad || 'mensual') : 'mensual'; o.primerPago = f.primerPago || ''; if (f.producto === 'AP') { o.residualPct = Number(f.residualPct) || 0; o.residual = X.residual || 0; }
+    o.garantia = String(f.garantia || '').slice(0, 1500); o.aval = f.aval === 'no' ? 'no' : 'si'; o.avales = o.aval === 'si' ? String(f.avales || '').slice(0, 800) : ''; o.metodologia = String(f.metodologia || '').slice(0, 3000); o.condiciones = String(f.condiciones || '').slice(0, 2000);
+    if (X.tabla) { o.tabla = X.tabla; o.tot = X.tot; } return o;
+  }
+  const solPropVigente = p => !p.vence || Date.now() <= Date.parse(p.vence);
+  const SOL_AVISOS = {
+    pre: ['Esta preaprobación es una estimación preliminar elaborada con la información proporcionada por el solicitante. No constituye una aprobación, una oferta vinculante ni la obligación de otorgar financiamiento.', 'El monto, la tasa y el plazo son tentativos y pueden modificarse o dejarse sin efecto como resultado del análisis del área de Riesgos y de la resolución del Comité de Crédito.', 'Las tasas se expresan en términos anuales y sin IVA; el Impuesto al Valor Agregado se causa conforme a la ley vigente.'],
+    apr: ['Vigencia: esta propuesta tiene una vigencia de 30 días naturales contados a partir de su fecha de emisión. Transcurrido ese plazo queda sin efecto sin necesidad de aviso.', 'La aceptación de esta propuesta no representa una obligación entre las partes ni constituye un contrato. Los derechos y obligaciones nacerán únicamente con la firma del contrato correspondiente y de sus anexos.', 'El otorgamiento queda sujeto a la firma del contrato, pagaré y garantías; a la verificación de la documentación; a que no existan cambios adversos en la situación financiera, legal o crediticia del solicitante o de sus avales, y al cumplimiento de las disposiciones de prevención de operaciones con recursos de procedencia ilícita.', 'ATRIX podrá modificar o retirar esta propuesta si detecta información falsa, inexacta o incompleta, o si cambian las condiciones con las que fue evaluada.', 'Las tasas se expresan en términos anuales y sin IVA; el Impuesto al Valor Agregado se causa conforme a la ley vigente. La tabla de amortización es ilustrativa: los importes y fechas definitivos serán los del contrato, según la fecha de firma o disposición.'],
+    conf: ['Documento confidencial dirigido exclusivamente al solicitante. No debe compartirse con terceros sin autorización de ATRIX.', 'Los datos personales y la documentación del solicitante se tratan conforme al Aviso de Privacidad de COLIUM, S.A. de C.V., únicamente para analizar y, en su caso, formalizar la operación, y se resguardan en un espacio de acceso restringido.']
+  };
+  function solPropSpec(s, tipo, p) { // PDF con membrete y logotipo oficial
+    const X = solPropCalc(p); const esAP = p.producto === 'AP'; const D = s.datos || {}; const a = tipo === 'apr' ? solAceptVigente(s) : null;
+    const tasas = [['Tasa de interés ordinaria anual', pct(p.tasa) + ' más IVA'], ['Tasa ordinaria mensual', pct(p.tasa / 12, 4) + ' más IVA']];
+    const cond = [['Producto', p.productoNombre || SOL_PP[p.producto]], [tipo === 'pre' ? 'Monto tentativo' : 'Monto autorizado', money(p.monto)], [tipo === 'pre' ? 'Plazo tentativo' : 'Plazo de la línea', p.plazo + ' meses']].concat(tasas);
+    if (tipo === 'apr') cond.push(['Tasa de interés moratoria anual', pct(p.tasaMora) + ' más IVA'], ['Tasa moratoria mensual', pct(p.tasaMora / 12, 4) + ' más IVA']);
+    cond.push(['Comisión por apertura', pct(p.comision) + ' más IVA (' + money(X.comision) + ' + IVA)']);
+    if (p.pago != null) cond.push([esAP ? 'Renta mensual estimada' : 'Pago ' + (p.periodicidad && p.periodicidad !== 'mensual' ? p.periodicidad : 'mensual') + ' estimado', money(p.pago) + ' más IVA']);
+    if (esAP && p.residualPct != null) cond.push(['Valor residual', pct(p.residualPct, 1) + ' (' + money(p.residual || 0) + ')']);
+    if (tipo === 'apr') { cond.push(['Aval', p.aval === 'si' ? 'Sí' + (p.avales ? ': ' + p.avales : '') : 'No se requiere']); cond.push(['Fecha de emisión', solF(p.publicado)], ['Vigencia de la oferta', '30 días naturales · vence el ' + solF(p.vence)]); } else cond.push(['Fecha de emisión', solF(p.publicado)]);
+    const lineas = t => String(t || '').split(/\n+/).map(x => x.trim()).filter(Boolean); const bloques = [];
+    if (tipo === 'apr' && p.garantia) bloques.push({ tipo: 'bullets', titulo: 'Garantía', items: lineas(p.garantia) });
+    if (tipo === 'apr' && p.metodologia) bloques.push({ tipo: 'bullets', titulo: 'Metodología de la línea', items: lineas(p.metodologia) });
+    if (tipo === 'apr' && p.condiciones) bloques.push({ tipo: 'bullets', titulo: 'Condiciones adicionales', items: lineas(p.condiciones) });
+    if (tipo === 'pre' && p.notas) bloques.push({ tipo: 'bullets', titulo: 'Observaciones', items: lineas(p.notas) });
+    bloques.push({ tipo: 'bullets', titulo: 'Avisos importantes', items: SOL_AVISOS[tipo] }, { tipo: 'bullets', titulo: 'Confidencialidad y datos personales', items: SOL_AVISOS.conf });
+    if (a) bloques.push({ tipo: 'bullets', titulo: 'Aceptación', items: ['Aceptada en línea por ' + a.nombre + (a.cargo ? ' (' + a.cargo + ')' : '') + ' el ' + solF(a.fecha, true) + '. La aceptación no representa una obligación entre las partes; esta nacerá con la firma del contrato.'] });
+    const tablas = tipo === 'apr' && p.tabla && p.tabla.length ? [{ titulo: 'Tabla de amortización (ilustrativa)', head: esAP ? ['No.', 'Fecha', 'Renta', 'IVA', 'Pago total'] : ['No.', 'Fecha', 'Saldo inicial', 'Capital', 'Interés', 'IVA', 'Pago total', 'Saldo final'], align: ['r', 'l'], widths: esAP ? [8, 20, 24, 24, 24] : [6, 14, 16, 14, 14, 12, 14, 16], rows: p.tabla.map(r => esAP ? [String(r.k), fdate(r.f), money(r.c + r.i), money(r.v), money(r.t)] : [String(r.k), fdate(r.f), money(r.si), money(r.c), money(r.i), money(r.v), money(r.t), money(r.sf)]).concat(p.tot ? [esAP ? ['', 'Total', money(p.tot.c + p.tot.i), money(p.tot.v), money(p.tot.t)] : ['', 'Total', '', money(p.tot.c), money(p.tot.i), money(p.tot.v), money(p.tot.t), '']] : []), boldLast: !!p.tot }] : [];
+    return { titulo: tipo === 'pre' ? 'Carta de preaprobación' : 'Propuesta de aprobación · Términos y condiciones', subtitulo: s.folio + ' · ' + s.nombre,
+      secciones: [{ titulo: 'Solicitante', kv: [['Nombre o razón social', s.nombre], ['RFC', s.rfc], ['Folio de solicitud', s.folio], ['Contacto', D.contacto || '']].filter(x => x[1]) }, { titulo: tipo === 'pre' ? 'Condiciones tentativas' : 'Condiciones autorizadas', cols: 1, kv: cond }],
+      bloques, tablas, firma: 'ATRIX Financiera · ' + (CFG().razonSocial || 'COLIUM, S.A. de C.V.'), nota: tipo === 'pre' ? 'Preaprobación sujeta al análisis de Riesgos. No constituye oferta vinculante.' : 'Oferta vigente por 30 días naturales a partir de su emisión. Su aceptación no representa una obligación entre las partes; esta nacerá con la firma del contrato.',
+      pie: 'ATRIX es una marca comercial de ' + (CFG().razonSocial || 'COLIUM, S.A. de C.V.') + '. Documento confidencial dirigido a ' + s.nombre + '.' };
+  }
+  const solPropNombre = (s, tipo) => (tipo === 'pre' ? 'Preaprobacion' : 'Aprobacion') + '_ATRIX_' + s.folio + '_' + solArchivoNombre(s.nombre).replace(/\s+/g, '_') + '.pdf';
+  function solVistaProp(s, tipo) {
+    const f = solProp(s, tipo); const X = solPropCalc(f); const pub = solPub(s, tipo); const P = f.producto; const esAP = P === 'AP', esPR = P === 'PR'; const N = SOL.int[s.id] || {};
+    const sinPublicar = pub && JSON.stringify(solPick(pub, tipo)) !== JSON.stringify(solPick(solPropObj(s, tipo, f), tipo)); const a = solAcept(s), aV = tipo === 'apr' ? solAceptVigente(s) : null;
+    const estado = !pub ? chip('gray', 'Sin cargar al portal') : tipo === 'apr' && aV ? chip('ok', 'Aceptada por el solicitante') : tipo === 'apr' && !solPropVigente(pub) ? chip('vencido', 'Vencida') : chip('liquidado', 'En el portal del solicitante');
+    const nota = !pub ? 'El solicitante aún no ve nada: en su página esta sección aparece bloqueada hasta que la cargues.' : 'Cargada el ' + solF(pub.publicado, true) + (tipo === 'apr' ? ' · vence el ' + solF(pub.vence) : '') + '.' + (aV ? ' Aceptada por ' + aV.nombre + (aV.cargo ? ' (' + aV.cargo + ')' : '') + ' el ' + solF(aV.fecha, true) + '.' : tipo === 'apr' && a ? ' El solicitante aceptó una versión anterior; esta aún no.' : '') + (sinPublicar ? ' Hay cambios sin cargar: el solicitante sigue viendo la versión anterior.' : '');
+    const T = (l, n, v, ph) => `<div class="f"><label>${l}</label><textarea name="${n}" placeholder="${esc(ph || '')}">${esc(v || '')}</textarea></div>`;
+    const form = tipo === 'pre' ? `<div class="row">${Sel('Producto', 'producto', Object.keys(SOL_PP).map(k => [k, SOL_PP[k]]), P)}${F('Monto tentativo (sin IVA) *', 'monto', 'number', f.monto, 'step="0.01" min="0"')}</div>
+        <div class="row3">${F('Tasa anual tentativa % *', 'tasa', 'number', f.tasa, 'step="0.01" min="0"')}${F('Plazo tentativo (meses) *', 'plazo', 'number', f.plazo, 'step="1" min="1"')}${F('Comisión apertura %', 'comision', 'number', f.comision, 'step="0.1" min="0"')}</div>
+        ${T('Observaciones para el solicitante (opcional)', 'notas', f.notas, 'Ej. Sujeta a la entrega de los estados financieros y a la visita al negocio.')}`
+      : `<div class="row">${Sel('Producto aprobado', 'producto', Object.keys(SOL_PP).map(k => [k, SOL_PP[k]]), P)}${F(esPR ? 'Línea autorizada *' : 'Monto autorizado (sin IVA) *', 'monto', 'number', f.monto, 'step="0.01" min="0"')}</div>
+        <div class="row3">${F('Tasa anual de interés ordinario % *', 'tasa', 'number', f.tasa, 'step="0.01" min="0"')}${F('Tasa anual de interés moratorio % *', 'tasaMora', 'number', f.tasaMora, 'step="0.01" min="0"')}${F(esPR ? 'Tiempo de la línea (meses) *' : 'Tiempo de la línea / plazo (meses) *', 'plazo', 'number', f.plazo, 'step="1" min="1"')}</div>
+        <div class="row3">${F('Comisión apertura %', 'comision', 'number', f.comision, 'step="0.1" min="0"')}${esPR ? '<div></div>' : F('Fecha estimada del primer pago', 'primerPago', 'date', f.primerPago)}${esAP ? F('Valor residual %', 'residualPct', 'number', f.residualPct, 'step="0.5" min="0"') : P === 'CE' ? Sel('Pago de capital', 'periodicidad', [['mensual', 'Mensual'], ['bimestral', 'Bimestral'], ['trimestral', 'Trimestral']], f.periodicidad || 'mensual') : '<div></div>'}</div>
+        ${T('Garantía', 'garantia', f.garantia, 'Ej. El propio activo arrendado, con factura a nombre de ATRIX, seguro y dos GPS.')}
+        <div class="row">${Sel('Aval', 'aval', [['si', 'Sí'], ['no', 'No']], f.aval === 'no' ? 'no' : 'si')}${f.aval === 'no' ? '<div></div>' : F('¿Quiénes serán los avales?', 'avales', 'text', f.avales, 'placeholder="Nombre de cada aval" maxlength="800"')}</div>
+        ${T('Metodología de la línea (cómo funciona)', 'metodologia', f.metodologia, 'Ej. ATRIX adquiere el activo al proveedor y lo entrega en arrendamiento; rentas mensuales fijas; al término el arrendatario adquiere el bien…')}
+        ${T('Condiciones adicionales (opcional)', 'condiciones', f.condiciones, 'Ej. Ratificación del contrato ante fedatario e inscripción en el RUG.')}`;
+    const tasaBox = (k, v, hi) => `<div class="rate ${hi ? 'hi' : ''}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+    const tasas = `<div class="rates sol-rates">${tasaBox('Ordinaria anual + IVA', pct(X.tasa))}${tasaBox('Ordinaria mensual + IVA', pct(X.tasaMes, 4))}${tipo === 'apr' ? tasaBox('Moratoria anual + IVA', pct(X.tasaMora)) + tasaBox('Moratoria mensual + IVA', pct(X.moraMes, 4)) : tasaBox('Anual con IVA', pct(X.tasaIva), 1) + tasaBox('Mensual con IVA', pct(X.tasaMesIva, 4), 1)}</div>`;
+    const tabla = tipo === 'apr' && X.tabla ? `<div class="tscroll" style="max-height:340px;overflow:auto;margin-top:10px"><table><thead><tr><th>No.</th><th class="l">Fecha</th>${esAP ? '<th>Renta</th>' : '<th>Saldo inicial</th><th>Capital</th><th>Interés</th>'}<th>IVA</th><th>Pago total</th>${esAP ? '' : '<th>Saldo final</th>'}</tr></thead><tbody>${X.tabla.map(r => `<tr><td>${r.k}</td><td class="l">${fdate(r.f)}</td>${esAP ? `<td>${money(r.c + r.i)}</td>` : `<td>${money(r.si)}</td><td>${money(r.c)}</td><td>${money(r.i)}</td>`}<td>${money(r.v)}</td><td class="b">${money(r.t)}</td>${esAP ? '' : `<td>${money(r.sf)}</td>`}</tr>`).join('')}</tbody></table></div>` : '';
+    return `<div class="grid2 sol-prop" style="margin-top:14px"><div class="glass panel"><div class="ph"><h2>${tipo === 'pre' ? 'Preaprobación' : 'Aprobación'} ${estado}</h2></div>
+        <div class="note" style="margin:0 0 12px">${esc(nota)}</div>
+        <form id="solPropForm" data-act-input="solProp" data-id="${s.id}" data-tipo="${tipo}">${form}</form>
+        <div class="note">Captura las tasas en términos <b>anuales y sin IVA</b>: el sistema calcula la mensual (anual ÷ 12) y las presenta «más IVA» al solicitante.${tipo === 'apr' ? ' Al final de la propuesta se incluye la leyenda de vigencia de <b>30 días naturales</b> y los avisos de protección.' : ''}</div>
+        <div class="pill-row" style="margin-top:12px"><button class="btn primary" data-act="solPropPublicar" data-id="${s.id}" data-tipo="${tipo}">${pub ? 'Cargar cambios al portal' : 'Cargar al portal'}</button><button class="btn" data-act="solPropGuardar" data-id="${s.id}" data-tipo="${tipo}">Guardar borrador</button>${pub ? `<button class="btn danger" data-act="solPropRetirar" data-id="${s.id}" data-tipo="${tipo}">Retirar del portal</button>` : ''}</div></div>
+      <div class="glass panel"><div class="ph"><h2>Así lo verá el solicitante</h2><div class="pill-row"><button class="btn sm" data-act="solPropPDF" data-id="${s.id}" data-tipo="${tipo}">Descargar PDF</button><button class="btn sm primary" data-act="solPropCorreo" data-id="${s.id}" data-tipo="${tipo}">Enviar por correo</button></div></div>
+        <div class="kpis sol-mk"><div class="kpi glass blue"><div class="k">${tipo === 'pre' ? 'Monto tentativo' : esPR ? 'Línea autorizada' : 'Monto autorizado'}</div><div class="v" style="font-size:18px">${money(X.monto)}</div><div class="s">${esc(SOL_PP[P])} · ${X.plazo} meses</div></div>${X.pago != null ? `<div class="kpi glass green"><div class="k">${esAP ? 'Renta mensual' : 'Pago ' + (P === 'CE' && f.periodicidad !== 'mensual' ? f.periodicidad : 'mensual')}</div><div class="v" style="font-size:18px">${money(X.pagoIva)}</div><div class="s">${money(X.pago)} más IVA</div></div>` : ''}<div class="kpi glass"><div class="k">Comisión por apertura</div><div class="v" style="font-size:18px">${money(X.comision + X.comisionIva)}</div><div class="s">${pct(X.comisionPct)} · ${money(X.comision)} más IVA</div></div></div>
+        ${tasas}${X.err ? `<div class="note" style="color:var(--red)">No se pudo calcular la tabla: ${esc(X.err)}</div>` : ''}${tipo === 'apr' && esPR ? '<div class="note">El crédito revolvente no lleva tabla fija: los intereses se calculan sobre el saldo dispuesto en cada corte. Explícalo en «Metodología de la línea».</div>' : ''}${tabla}
+        ${tipo === 'apr' ? `<div class="note"><b>Leyenda al final de la propuesta:</b> ${esc(SOL_AVISOS.apr[0])} ${esc(SOL_AVISOS.apr[1])}</div>` : `<div class="note"><b>Leyenda al final:</b> ${esc(SOL_AVISOS.pre[0])}</div>`}</div></div>`;
+  }
+  const SOL_PROP_ACT = {
+    solTab: d => { SOL.tab = d.v; render(); },
+    solPropGuardar: async d => { const s = solDe(d.id); if (!s) return; if (await solInterno(s, { [d.tipo + '_b']: solPick(solProp(s, d.tipo), d.tipo) })) toast('Borrador guardado (el solicitante no lo ve)'); },
+    solPropPublicar: d => { const s = solDe(d.id); if (!s) return; const tipo = d.tipo; const f = solProp(s, tipo); const X = solPropCalc(f);
+      if (!(X.monto > 0)) return toast('Captura el monto', true); if (!(X.tasa > 0)) return toast('Captura la tasa anual', true); if (tipo === 'apr' && !(X.tasaMora > 0)) return toast('Captura la tasa moratoria anual', true); if (X.err) return toast('Revisa los datos: no se pudo calcular la tabla', true);
+      if (tipo === 'apr' && f.aval !== 'no' && !String(f.avales || '').trim()) return toast('Indica quiénes serán los avales o elige «No»', true);
+      const sube = tipo === 'pre' ? ['recibida', 'documentos', 'revision'].includes(s.etapa) : !SOL_CERRADA.includes(s.etapa) && s.etapa !== 'aprobada';
+      confirmar(tipo === 'pre' ? 'Cargar la preaprobación al portal' : 'Cargar la aprobación al portal', s.nombre + ' la verá de inmediato en su página' + (tipo === 'apr' ? ', con su tabla de amortización, y podrá aceptarla durante 30 días naturales' : '') + '.' + (sube ? ' La solicitud pasará a la etapa «' + (tipo === 'pre' ? 'Preaprobada' : 'Aprobada') + '».' : '') + (tipo === 'apr' && solAcept(s) ? ' Como es una versión nueva, el solicitante tendrá que aceptarla otra vez.' : ''), async () => {
+        const o = solPropObj(s, tipo, f, true); const cambios = { revision: Object.assign({}, solDe(s.id).revision || {}, { ['_' + tipo]: o }) }; if (sube) cambios.etapa = tipo === 'pre' ? 'preaprobada' : 'aprobada';
+        if (await solPatch(solDe(s.id), cambios)) { await solInterno(solDe(s.id), { [tipo + '_b']: solPick(f, tipo), atendido: new Date().toISOString() }); toast(tipo === 'pre' ? 'Preaprobación cargada al portal' : 'Aprobación cargada al portal'); renderNav(); render(); } }); },
+    solPropRetirar: d => { const s = solDe(d.id); if (!s) return; confirmar('Retirar del portal', 'El solicitante dejará de ver la ' + (d.tipo === 'pre' ? 'preaprobación' : 'aprobación') + ' y la sección volverá a aparecer bloqueada. Tu borrador se conserva. La etapa de la solicitud no cambia.', async () => { const rv = Object.assign({}, solDe(s.id).revision || {}); delete rv['_' + d.tipo]; if (await solPatch(solDe(s.id), { revision: rv })) { toast('Retirada del portal'); render(); } }); },
+    solPropPDF: d => { const s = solDe(d.id); if (!s) return; descargarPDF(solPropNombre(s, d.tipo), solPropSpec(s, d.tipo, solPropObj(s, d.tipo, solProp(s, d.tipo)))); },
+    solPropCorreo: d => { const s = solDe(d.id); if (!s) return; const tipo = d.tipo; const D = s.datos || {}; const p = solPropObj(s, tipo, solProp(s, tipo)); const nom = D.contacto ? ' ' + String(D.contacto).split(' ')[0] : '';
+      descargarPDF(solPropNombre(s, tipo), solPropSpec(s, tipo, p));
+      const asunto = (tipo === 'pre' ? 'Preaprobación' : 'Propuesta de aprobación') + ' de su solicitud ' + s.folio + ' · ATRIX Financiera';
+      const cuerpo = 'Estimado(a)' + nom + ':\n\n' + (tipo === 'pre' ? 'Nos da gusto informarle que su solicitud ' + s.folio + ' fue preaprobada. Adjuntamos la carta de preaprobación con el monto y la tasa tentativos.' : 'Nos da gusto informarle que su solicitud ' + s.folio + ' fue aprobada. Adjuntamos la propuesta con los términos y condiciones autorizados y su tabla de amortización.') + '\n\n' + (tipo === 'pre' ? 'Monto tentativo: ' : 'Monto autorizado: ') + money(p.monto) + '\nTasa ordinaria anual: ' + pct(p.tasa) + ' más IVA\nPlazo: ' + p.plazo + ' meses\n\n' + (tipo === 'apr' ? 'La oferta tiene una vigencia de 30 días naturales (vence el ' + solF(p.vence) + '). Puede revisarla y aceptarla en línea, con su RFC y contraseña, en ' + SOL_WEB + '?entrar\n\nLa aceptación no representa una obligación entre las partes; esta nacerá con la firma del contrato.' : 'Puede consultarla también en línea, con su RFC y contraseña, en ' + SOL_WEB + '?entrar\n\nLa preaprobación no constituye una oferta vinculante y queda sujeta al análisis del área de Riesgos.') + '\n\nQuedamos a sus órdenes.\n\nATRIX Financiera\nWhatsApp 81 3412 7296 · atencion@atrixfinanciera.com\n\nEste mensaje y su anexo son confidenciales y están dirigidos exclusivamente a su destinatario.';
+      openModal('Enviar por correo · ' + s.folio, `<div class="note" style="margin:0 0 10px">El PDF <b>${esc(solPropNombre(s, tipo))}</b> se acaba de descargar: <b>adjúntalo</b> al correo antes de enviarlo. El sistema abre el correo ya redactado; el envío lo haces desde tu cuenta.</div>${F('Para', 'para', 'email', D.correo || '')}${F('Asunto', 'asunto', 'text', asunto)}<div class="f"><label>Mensaje</label><textarea name="cuerpo" id="solCorreoTxt" style="min-height:220px">${esc(cuerpo)}</textarea></div>`,
+        { submitText: 'Abrir en Gmail', left: '<button class="btn" type="button" data-act="solCorreoCopiar">Copiar mensaje</button><button class="btn" type="button" data-act="solCorreoMailto">Abrir en mi app de correo</button>', onSubmit: async v => { const u = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(v.para || '') + '&su=' + encodeURIComponent(v.asunto || '') + '&body=' + encodeURIComponent(v.cuerpo || ''); const w = window.open(u, '_blank'); if (!w) { copiar(v.cuerpo || ''); toast('No se pudo abrir Gmail desde aquí: el mensaje quedó copiado', true); } } }); },
+    solCorreoCopiar: () => { const t = $('#solCorreoTxt'); if (t) copiar(t.value); },
+    solCorreoMailto: () => { const f = $('#mForm'); if (!f) return; const v = formValues(f); location.href = 'mailto:' + encodeURIComponent(v.para || '') + '?subject=' + encodeURIComponent(v.asunto || '') + '&body=' + encodeURIComponent(v.cuerpo || ''); }
+  };
   VIEWS.solicitudes = () => {
     if (!solDisponible()) return `<div class="glass panel">${emptyBox('Disponible con sesión en internet', 'Las solicitudes en línea se consultan en el servidor de ATRIX. Entra con tu usuario para verlas.')}</div>`;
     if (!SOL.lista) { if (!SOL.cargando) setTimeout(() => solCargar(), 0); return `<div class="glass panel">${emptyBox('Consultando solicitudes…', '')}</div>`; }
@@ -5027,6 +5147,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     openInfo('Exportar expediente ' + s.folio, `<p id="solExp" style="margin:0">Preparando…</p><p class="small muted" style="margin:8px 0 0">Se descargará un archivo .zip con la carátula en PDF y los documentos ordenados por carpeta. No cierres esta ventana hasta que termine.</p>`);
     await solArchivos(s); const fs = SOL.files[s.id] || []; const docs = solDocs(s); const entradas = []; const raiz = 'Expediente ' + s.folio + ' ' + solArchivoNombre(s.nombre);
     try { const doc = pdfDoc(solCaratulaSpec(s)); if (doc) entradas.push({ name: raiz + '/00 Caratula ' + s.folio + '.pdf', data: new Uint8Array(doc.output('arraybuffer')) }); } catch (e) { console.error(e); }
+    for (const tp of ['pre', 'apr']) { const pb = solPub(s, tp); if (!pb) continue; try { const dc = pdfDoc(solPropSpec(s, tp, pb)); if (dc) entradas.push({ name: raiz + '/00 ' + (tp === 'pre' ? 'Preaprobacion ' : 'Aprobacion ') + s.folio + '.pdf', data: new Uint8Array(dc.output('arraybuffer')) }); } catch (e) { console.error(e); } }
     if (fs.length) {
       const r = await Nube.req('POST', '/storage/v1/object/sign/solicitudes', JSON.stringify({ expiresIn: 900, paths: fs.map(f => f.ruta) }));
       if (r.status !== 200 || !Array.isArray(r.json)) { closeModal(); return toast('No se pudo exportar: ' + solErr(r), true); }
@@ -5095,7 +5216,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
 
   /* ---------- Acciones ---------- */
   const ACT = {
-    ...SOL_ACT,
+    ...SOL_ACT, ...SOL_PROP_ACT,
     nav: d => { S.view = d.view; render(); if (d.view === 'ajustes') pedirEstadoUpd(); },
     actualizarSistema: () => actualizarSistema(),
     portalCfgGuardar: async () => { const f = $('#portalForm'); if (!f) return; const v = formValues(f); const url = String(v.url || '').trim().replace(/\/+$/, ''); const pub = String(v.pub || '').trim(); const sec = String(v.secret || '').trim();
@@ -5205,10 +5326,11 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     else if (k === 'filtroCob') { S.filtro.cob = e.target.value; rerenderSoft(); }
     else if (k === 'filtroInv') { S.filtro.inv = e.target.value; rerenderSoft(); }
     else if (k === 'filtroSol') { SOL.q = e.target.value; rerenderSoft(); }
+    else if (k === 'solProp') { const s0 = solDe(f.dataset.id); if (s0 && e.target.tagName !== 'SELECT') { Object.assign(solProp(s0, f.dataset.tipo), rawValues(f)); rerenderSoft(); } }
   });
   document.addEventListener('change', e => {
     const el = e.target; if (el.dataset.actChange === 'corrAbrir') { const c = S.corridas.find(x => x.id === el.value); if (c) { S.corr = Object.assign(corrDefaults(), c.datos || {}, { id: c.id }); render(); } return; }
-    if (el.dataset.actChange === 'solProd') { SOL.fProd = el.value; render(); } else if (el.dataset.actChange === 'filtroProd') { S.filtro.prod = el.value; render(); } else if (el.dataset.actChange === 'filtroEst') { S.filtro.est = el.value; render(); }
+    if (el.tagName === 'SELECT' && el.closest('form[data-act-input="solProp"]')) { const fp = el.closest('form'); const s0 = solDe(fp.dataset.id); if (s0) { Object.assign(solProp(s0, fp.dataset.tipo), rawValues(fp)); render(); } } else if (el.dataset.actChange === 'solProd') { SOL.fProd = el.value; render(); } else if (el.dataset.actChange === 'filtroProd') { S.filtro.prod = el.value; render(); } else if (el.dataset.actChange === 'filtroEst') { S.filtro.est = el.value; render(); }
     else if (el.id === 'hoy') { if (el.value) { S.hoy = el.value; S.hoyManual = el.value !== E.todayISO(); render(); } }
     else if (el.closest('[data-act-input="cob"]') && el.name === 'contratoId') { S.cob.contratoId = el.value; render(); }
   });
