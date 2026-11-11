@@ -126,6 +126,13 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .doc{padding:14px 0;border-bottom:1px solid #ececf0}
 .doc:last-child{border-bottom:0}
 .doc.drop{background:#f3f6fb;box-shadow:0 0 0 2px var(--blue);border-radius:12px;border-bottom-color:transparent}
+.cfg{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:12.5px;color:var(--ink-2);background:var(--pearl);border-radius:12px;padding:10px 12px;margin:10px 0 2px}
+.seg2{display:inline-flex;background:#e3e3e8;border-radius:999px;padding:2px;margin-right:8px}
+.seg2 button{border:0;background:none;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.seg2 button.on{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.req{margin-top:26px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px 18px;max-width:52ch}
+.req b{display:block;color:var(--navy);font-size:13.5px;margin-bottom:6px}
+.req ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink-2);display:grid;gap:3px}
 .pbar{height:6px;border-radius:6px;background:#e3e3e8;overflow:hidden;margin:2px 0 6px}
 .pbar i{display:block;height:100%;background:var(--navy);border-radius:6px;transition:width .3s}
 .doc .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
@@ -177,6 +184,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
         <li><div><b>Cargue su expediente</b><span>Le mostramos la lista exacta de documentos para su caso. Súbalos a su ritmo, en PDF o foto.</span></div></li>
         <li><div><b>Dé seguimiento</b><span>Vea qué documentos fueron aceptados y en qué etapa va su solicitud. Preaprobación en 2 días hábiles con expediente completo.</span></div></li>
       </ol>
+      <div class="req"><b>Requisitos de la empresa</b><ul><li>Ventas anuales de $5 millones de pesos o más.</li><li>2 años o más de operación en México.</li><li>Constituida en México y con operación en Nuevo León.</li><li>Un aval, persona física o moral.</li></ul></div>
       <div class="seguro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f3a7a" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>Sus documentos se guardan en un espacio privado: solo usted y el área de Riesgos de ATRIX pueden verlos.</span></div>
     </div>
     <div class="card fm">
@@ -191,11 +199,17 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
             <div class="f"><label for="nombre" id="lNombre">Razón social</label><input id="nombre" name="nombre" autocomplete="organization" maxlength="160"></div>
             <div class="r2">
               <div class="f"><label for="rfc">RFC</label><input id="rfc" name="rfc" autocapitalize="characters" spellcheck="false" maxlength="13" placeholder="ABC123456XY9"></div>
-              <div class="f"><label for="antiguedad">Años de operación</label><select id="antiguedad" name="antiguedad"><option value="">Seleccione</option><option>Menos de 1 año</option><option>1 a 2 años</option><option>2 a 5 años</option><option>Más de 5 años</option></select></div>
+              <div class="f"><label for="giro">Giro o actividad</label><input id="giro" name="giro" maxlength="120" placeholder="Ej. Transporte de carga"></div>
             </div>
-            <div class="f"><label for="giro">Giro o actividad</label><input id="giro" name="giro" maxlength="120" placeholder="Ej. Transporte de carga"></div>
+            <div class="r2">
+              <div class="f"><label for="antiguedad">Años de operación en México</label><select id="antiguedad" name="antiguedad"><option value="">Seleccione</option><option value="MENOS">Menos de 2 años</option><option>2 a 5 años</option><option>5 a 10 años</option><option>Más de 10 años</option></select></div>
+              <div class="f"><label for="ventas">Ventas anuales</label><select id="ventas" name="ventas"><option value="">Seleccione</option><option value="MENOS">Menos de $5 millones</option><option>$5 a $10 millones</option><option>$10 a $25 millones</option><option>$25 a $50 millones</option><option>Más de $50 millones</option></select></div>
+            </div>
             <div class="f"><label for="municipio">Municipio donde opera</label><select id="municipio" name="municipio"><option value="">Seleccione</option><option>Monterrey</option><option>San Pedro Garza García</option><option>San Nicolás de los Garza</option><option>Guadalupe</option><option>Apodaca</option><option>General Escobedo</option><option>Santa Catarina</option><option>García</option><option>Juárez</option><option>Santiago</option><option>Cadereyta Jiménez</option><option>Pesquería</option><option>Salinas Victoria</option><option>Ciénega de Flores</option><option>General Zuazua</option><option>El Carmen</option><option>Allende</option><option>Montemorelos</option><option>Linares</option><option>Sabinas Hidalgo</option><option value="Otro municipio de Nuevo León">Otro municipio de Nuevo León</option><option value="FUERA">Fuera de Nuevo León</option></select></div>
-            <div class="f"><label>¿La empresa o sus accionistas mayoritarios son extranjeros?</label><div class="opt"><label><input type="radio" name="extranjero" value="no" checked><span>No</span></label><label><input type="radio" name="extranjero" value="si"><span>Sí</span></label></div></div>
+            <div class="r2">
+              <div class="f" id="fConst"><label>¿Sociedad constituida en México?</label><div class="opt"><label><input type="radio" name="constitucion" value="si" checked><span>Sí</span></label><label><input type="radio" name="constitucion" value="no"><span>No</span></label></div></div>
+              <div class="f"><label>¿Capital mayoritario extranjero?</label><div class="opt"><label><input type="radio" name="extranjero" value="no" checked><span>No</span></label><label><input type="radio" name="extranjero" value="si"><span>Sí</span></label></div></div>
+            </div>
           </div>
           <div data-paso="1" hidden>
             <h2>Lo que necesita</h2><p class="sub">Paso 2 de 3</p>
@@ -205,7 +219,8 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
               <div class="f"><label for="plazo">Plazo deseado</label><select id="plazo" name="plazo"><option value="">Seleccione</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="Por definir">Por definir</option></select></div>
             </div>
             <div class="f"><label for="activo" id="lActivo">Activo que desea arrendar</label><textarea id="activo" name="activo" maxlength="600" placeholder="Marca, modelo, año y proveedor, si ya lo tiene cotizado."></textarea></div>
-            <div class="f"><label for="ventas">Ventas mensuales aproximadas</label><select id="ventas" name="ventas"><option value="">Seleccione</option><option>Hasta $250,000</option><option>$250,000 a $500,000</option><option>$500,000 a $1,000,000</option><option>$1,000,000 a $3,000,000</option><option>Más de $3,000,000</option></select></div>
+            <div class="f"><label>Su aval será</label><div class="opt"><label><input type="radio" name="aval_tipo" value="PF" checked><span>Persona física</span></label><label><input type="radio" name="aval_tipo" value="PM"><span>Persona moral<small>Otra empresa</small></span></label></div></div>
+            <div class="f" id="fSocios"><label>¿La sociedad es de dos socios con 50 % de acciones cada uno?</label><div class="opt"><label><input type="radio" name="socios5050" value="no" checked><span>No</span></label><label><input type="radio" name="socios5050" value="si"><span>Sí<small>Pediremos documentos de ambos</small></span></label></div></div>
           </div>
           <div data-paso="2" hidden>
             <h2>Contacto y acceso</h2><p class="sub">Paso 3 de 3 · con su RFC y esta contraseña podrá regresar a su solicitud</p>
@@ -256,37 +271,44 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   const fdt = iso => { if (!iso) return '—'; try { return new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Monterrey' }); } catch (e) { return String(iso).slice(0, 10); } };
   const peso = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
   const emailDe = rfc => String(rfc || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, 'y').replace(/[^a-z0-9]/g, '') + DOM;
-  const st = { ses: null, sol: null, files: [], paso: 0, sub: {} };
+  const st = { ses: null, sol: null, files: [], paso: 0, sub: {}, claves: [] };
 
   /* ---------- Catálogos (los mismos que usa ATRIX Cartera para revisar el expediente) ---------- */
   const PROD = { AF: 'Arrendamiento financiero', AP: 'Arrendamiento puro', CGI: 'Crédito con garantía inmobiliaria', CE: 'Crédito estructurado' };
   const ETAPA = { recibida: ['Solicitud recibida', 'blue'], documentos: ['Integrando expediente', 'blue'], revision: ['En análisis de Riesgos', 'warn'], preaprobada: ['Preaprobada', 'ok'], aprobada: ['Aprobada', 'ok'], formalizada: ['Formalizada', 'ok'], rechazada: ['No aprobada', 'bad'], cancelada: ['Cancelada', ''] };
   const ORDEN = ['recibida', 'documentos', 'revision', 'preaprobada', 'aprobada', 'formalizada'];
   const PASOS = [['Solicitud', 'Datos y folio'], ['Expediente', 'Carga de documentos'], ['Análisis', 'Revisión de Riesgos'], ['Preaprobación', '2 días hábiles'], ['Aprobación', 'Comité y condiciones']];
-  const DOCS = [
-    { g: 'Empresa', c: 'acta', n: 'Acta constitutiva', a: 'Completa y con datos de inscripción en el Registro Público de Comercio.', t: ['PM'] },
-    { g: 'Empresa', c: 'poderes', n: 'Poderes del representante legal', a: 'Escritura donde consten sus facultades, si no están en el acta constitutiva.', t: ['PM'] },
-    { g: 'Empresa', c: 'reformas', n: 'Actas de asamblea o reformas', a: 'Solo si hubo cambios de accionistas, objeto social o administración.', t: ['PM'], o: 1 },
-    { g: 'Empresa', c: 'id_rep', n: 'Identificación oficial del representante legal', a: 'INE por ambos lados o pasaporte vigente.', t: ['PM'] },
-    { g: 'Titular', c: 'id_titular', n: 'Identificación oficial del titular', a: 'INE por ambos lados o pasaporte vigente.', t: ['PFAE'] },
-    { g: 'Titular', c: 'acta_mat', n: 'Acta de matrimonio', a: 'Solo si está casado(a), para conocer el régimen patrimonial.', t: ['PFAE'], o: 1 },
-    { g: 'Fiscal', c: 'csf', n: 'Constancia de Situación Fiscal', a: 'Emitida por el SAT, con antigüedad no mayor a 3 meses.' },
-    { g: 'Fiscal', c: 'opinion', n: 'Opinión de cumplimiento del SAT (32-D)', a: 'En sentido positivo y emitida en los últimos 30 días.' },
-    { g: 'Fiscal', c: 'declaracion', n: 'Declaración anual del último ejercicio', a: 'Con acuse de recibo del SAT.' },
-    { g: 'Fiscal', c: 'domicilio', n: 'Comprobante de domicilio del negocio', a: 'Luz, agua, teléfono o predial, no mayor a 3 meses.' },
-    { g: 'Financiera', c: 'edoscta', n: 'Estados de cuenta bancarios', a: 'Últimos 6 meses de la cuenta principal del negocio, completos (todas las hojas).' },
-    { g: 'Financiera', c: 'edosfin', n: 'Estados financieros', a: 'Último ejercicio y parcial reciente (balance y estado de resultados).', oSi: s => s.tipo === 'PFAE' },
-    { g: 'Operación', c: 'cotizacion', n: 'Cotización del activo', a: 'Emitida por el proveedor, a nombre del solicitante, con precio, marca, modelo y año.', p: ['AF', 'AP'] },
-    { g: 'Operación', c: 'proyecto', n: 'Descripción del destino del crédito', a: 'Qué necesita financiar, para qué y cómo lo pagará. Puede ser una carta o presentación breve.', p: ['CGI', 'CE'] },
-    { g: 'Garantía', c: 'escritura', n: 'Escritura del inmueble en garantía', a: 'Con datos de inscripción en el Registro Público de la Propiedad.', p: ['CGI', 'CE'], oSi: s => s.producto === 'CE' },
-    { g: 'Garantía', c: 'predial', n: 'Predial y certificado de libertad de gravamen', a: 'Boleta predial del año en curso y certificado reciente.', p: ['CGI', 'CE'], oSi: s => s.producto === 'CE' },
-    { g: 'Aval', c: 'id_aval', n: 'Identificación oficial del aval', a: 'INE por ambos lados o pasaporte vigente del obligado solidario.' },
-    { g: 'Aval', c: 'domicilio_aval', n: 'Comprobante de domicilio del aval', a: 'No mayor a 3 meses.' },
-    { g: 'Adicional', c: 'otros', n: 'Otros documentos', a: 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', o: 1 }
-  ];
+  /* Requisitos oficiales de ATRIX (nov 2026). El mismo catálogo vive en la página de solicitud y en ATRIX Cartera: si cambia uno, cambiar el otro. */
+  const CATALOGO = s => { const D = s.datos || {}; const pm = s.tipo === 'PM'; const cred = ['CGI', 'CE'].includes(s.producto); const L = []; const a = (g, c, n, ay, o) => L.push({ g, c, n, a: ay, opc: !!o });
+    const INE = 'INE vigente por ambos lados.', CSF = 'Constancia de Situación Fiscal emitida por el SAT, no mayor a 3 meses.', DOM = 'Luz, agua, teléfono o predial, no mayor a 3 meses.', BURO = 'Reporte de Crédito Especial de Buró de Crédito, reciente.', CTA = 'Últimos 4 meses, completos (todas las hojas).';
+    if (pm) {
+      a('Sociedad', 'acta', 'Acta constitutiva de la sociedad', 'Completa y con datos de inscripción en el Registro Público de Comercio.');
+      a('Sociedad', 'reformas', 'Asambleas', 'Actas de asamblea de la sociedad. Si no se ha celebrado ninguna, puede omitirlo.', 1);
+      a('Sociedad', 'poderes', 'Poder(es) de firmante(s)', 'Escritura donde consten las facultades de quien firmará. Si constan en el acta constitutiva, cárguela de nuevo aquí.');
+      a('Sociedad', 'buro', 'Buró de Crédito de la sociedad', BURO);
+      a('Sociedad', 'csf', 'CSF actualizada de la sociedad', CSF);
+      a('Sociedad', 'domicilio', 'Comprobante de domicilio de la sociedad', DOM);
+      a('Propietario real', 'pr_ine', 'INE del propietario real', INE); a('Propietario real', 'pr_csf', 'CSF actualizada del propietario real', CSF); a('Propietario real', 'pr_domicilio', 'Comprobante de domicilio del propietario real', DOM); a('Propietario real', 'pr_buro', 'Buró de Crédito del propietario real', BURO);
+      if (D.socios5050 === 'si') { a('Segundo socio (50 %)', 's2_ine', 'INE del segundo socio', INE); a('Segundo socio (50 %)', 's2_csf', 'CSF actualizada del segundo socio', CSF); a('Segundo socio (50 %)', 's2_domicilio', 'Comprobante de domicilio del segundo socio', DOM); a('Segundo socio (50 %)', 's2_buro', 'Buró de Crédito del segundo socio', BURO); }
+    } else {
+      a('Titular', 'id_titular', 'INE', INE); a('Titular', 'csf', 'CSF actualizada', CSF); a('Titular', 'domicilio', 'Comprobante de domicilio', DOM); a('Titular', 'buro', 'Buró de Crédito', BURO);
+    }
+    a('Información financiera', 'ef_3m', 'Estados financieros de los últimos 3 meses', pm ? 'Balance y estado de resultados.' : 'Balance y estado de resultados, en caso de tenerlos.', !pm);
+    a('Información financiera', 'edosfin', 'Estados financieros anuales (último año)', pm ? 'Balance y estado de resultados del último ejercicio.' : 'Del último ejercicio, en caso de tenerlos.', !pm);
+    a('Información financiera', 'edoscta', 'Estados de cuenta bancarios', CTA);
+    if (D.aval_tipo === 'PM') { const g = 'Aval · persona moral';
+      a(g, 'avm_acta', 'Acta constitutiva del aval', 'Completa y con datos de inscripción.'); a(g, 'avm_asambleas', 'Asambleas del aval', 'Si no se ha celebrado ninguna, puede omitirlo.', 1); a(g, 'avm_buro', 'Buró de Crédito de la sociedad aval', BURO); a(g, 'avm_poderes', 'Poder(es) del aval', 'Facultades del apoderado legal que firmará como aval.');
+      a(g, 'avm_csf', 'CSF actualizada de la sociedad aval', CSF); a(g, 'avm_csf_apod', 'CSF actualizada del apoderado legal', CSF); a(g, 'avm_ine_apod', 'INE del apoderado legal', INE); a(g, 'avm_domicilio', 'Comprobante de domicilio del aval', DOM);
+      a(g, 'avm_ef_anual', 'Estados financieros anuales del aval', 'Balance y estado de resultados del último ejercicio.'); a(g, 'avm_ef_3m', 'Estados financieros de los últimos 3 meses del aval', 'Balance y estado de resultados.'); a(g, 'avm_edoscta', 'Estados de cuenta bancarios del aval', CTA);
+    } else { const g = 'Aval · persona física';
+      a(g, 'id_aval', 'INE del aval', INE); a(g, 'aval_csf', 'CSF actualizada del aval', CSF); a(g, 'domicilio_aval', 'Comprobante de domicilio del aval', DOM); a(g, 'aval_edoscta', 'Estados de cuenta bancarios del aval', CTA); a(g, 'aval_buro', 'Buró de Crédito del aval', BURO);
+    }
+    if (cred) { a('Garantía inmobiliaria', 'escritura', 'Escritura del inmueble en garantía', 'Con datos de inscripción en el Registro Público de la Propiedad.', s.producto === 'CE'); a('Garantía inmobiliaria', 'predial', 'Predial y certificado de libertad de gravamen', 'Boleta predial del año en curso y certificado reciente.', s.producto === 'CE'); }
+    a('Solicitud', 'carta', 'Carta de Crédito', cred ? 'Carta firmada donde explique para qué requiere el crédito y qué tipo de crédito solicita.' : 'Carta firmada donde explique para qué requiere el arrendamiento y qué tipo de arrendamiento solicita (financiero o puro).');
+    a('Adicional', 'otros', 'Otros documentos', 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', 1);
+    return L; };
   const extrasDe = s => (Array.isArray((s.revision || {})._extra) ? s.revision._extra : []).filter(x => x && x.c && x.n).map(x => ({ g: 'Solicitados por ATRIX', c: String(x.c), n: String(x.n), a: x.a ? String(x.a) : 'Documento adicional solicitado por el área de Riesgos.', opc: false }));
-  const docsDe0 = s => DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) }));
-  const docsDe = s => extrasDe(s).concat(docsDe0(s));
+  const docsDe = s => extrasDe(s).concat(CATALOGO(s));
 
   /* ---------- Servidor ---------- */
   const guardar = s => { st.ses = s; try { if (s) sessionStorage.setItem(SKEY, JSON.stringify(s)); else sessionStorage.removeItem(SKEY); } catch (e) { } };
@@ -341,16 +363,20 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   $('#monto').addEventListener('input', e => { const d = e.target.value.replace(/[^\d]/g, '').slice(0, 9); e.target.value = d ? Number(d).toLocaleString('es-MX') : ''; });
   $('#rfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
   $('#lrfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
-  fN.addEventListener('change', () => { const pm = val('tipo') === 'PM'; $('#lNombre').textContent = pm ? 'Razón social' : 'Nombre completo'; $('#rfc').placeholder = pm ? 'ABC123456XY9' : 'ABCD123456XY9'; const arr = ['AF', 'AP'].includes(val('producto')); $('#lActivo').textContent = arr ? 'Activo que desea arrendar' : 'Destino del crédito y garantía'; $('#activo').placeholder = arr ? 'Marca, modelo, año y proveedor, si ya lo tiene cotizado.' : 'Para qué necesita el crédito y qué inmueble ofrecería en garantía.'; });
+  fN.addEventListener('change', () => { const pm = val('tipo') === 'PM'; $('#lNombre').textContent = pm ? 'Razón social' : 'Nombre completo'; $('#rfc').placeholder = pm ? 'ABC123456XY9' : 'ABCD123456XY9'; $('#fConst').hidden = !pm; $('#fSocios').hidden = !pm; const arr = ['AF', 'AP'].includes(val('producto')); $('#lActivo').textContent = arr ? 'Activo que desea arrendar' : 'Destino del crédito y garantía'; $('#activo').placeholder = arr ? 'Marca, modelo, año y proveedor, si ya lo tiene cotizado.' : 'Para qué necesita el crédito y qué inmueble ofrecería en garantía.'; });
   function validar(p) {
     if (p === 0) {
       const pm = val('tipo') === 'PM';
       if (val('nombre').length < 3) return ['nombre', pm ? 'Escriba la razón social de la empresa.' : 'Escriba su nombre completo.'];
       if (!(pm ? /^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/ : /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/).test(val('rfc'))) return ['rfc', pm ? 'El RFC de una persona moral tiene 12 caracteres. Revíselo.' : 'El RFC de una persona física tiene 13 caracteres. Revíselo.'];
-      if (!val('antiguedad')) return ['antiguedad', 'Indique los años de operación.'];
       if (!val('giro')) return ['giro', 'Indique el giro o actividad.'];
+      if (!val('antiguedad')) return ['antiguedad', 'Indique los años de operación en México.'];
+      if (val('antiguedad') === 'MENOS') return ['antiguedad', 'Por ahora atendemos empresas con 2 años o más de operación en México. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
+      if (!val('ventas')) return ['ventas', 'Indique las ventas anuales.'];
+      if (val('ventas') === 'MENOS') return ['ventas', 'Por ahora atendemos empresas con ventas anuales de $5 millones de pesos o más. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
       if (!val('municipio')) return ['municipio', 'Seleccione el municipio donde opera.'];
       if (val('municipio') === 'FUERA') return ['municipio', 'Por ahora ATRIX otorga financiamiento únicamente a empresas con operación en Nuevo León. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
+      if (pm && val('constitucion') === 'no') return ['constitucion', 'Por ahora atendemos únicamente sociedades constituidas en México. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
       if (val('extranjero') === 'si') return ['extranjero', 'Por política, por ahora no atendemos empresas con capital mayoritario extranjero. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
     } else if (p === 1) {
       const m = montoNum(); if (!(m >= MONTO_MIN && m <= MONTO_MAX)) return ['monto', 'Por ahora atendemos operaciones de $100,000 a $2,500,000 pesos.'];
@@ -380,6 +406,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; if (r.json && r.json.existe) { $('#lrfc').value = val('rfc'); } return; }
     const err = await entrar(val('rfc'), $('#pw1').value); b.disabled = false; b.textContent = 'Enviar solicitud';
     if (err) { $('#lrfc').value = val('rfc'); return mostrarLand('Su solicitud ' + r.json.folio + ' quedó registrada. Entre con su RFC y contraseña para cargar sus documentos.'); }
+    await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'datos', p: { aval_tipo: val('aval_tipo') === 'PM' ? 'PM' : 'PF', socios5050: val('tipo') === 'PM' && val('socios5050') === 'si' ? 'si' : 'no', constitucion_mx: val('tipo') === 'PM' ? 'si' : '' } } });
     st.nueva = true; fN.reset(); borrarBorrador(); irPaso(0); await cargar(); window.scrollTo(0, 0);
   });
   $('#fLogin').addEventListener('submit', async ev => {
@@ -391,7 +418,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 
   /* ---------- Panel del solicitante ---------- */
   function estadoDoc(d, S) {
-    const fs = st.files.filter(f => f.clave === d.c); const rv = (S.revision || {})[d.c] || {};
+    const fs = st.files.filter(f => f.clave === d.c || (d.c === 'otros' && !st.claves.includes(f.clave))); const rv = (S.revision || {})[d.c] || {};
     const nuevo = rv.fecha && fs.some(f => f.fecha > rv.fecha);
     if (rv.estado === 'aceptado') return { fs, e: 'aceptado', chip: ['Aceptado', 'ok'] };
     if (rv.estado === 'rechazado' && !nuevo) return { fs, e: 'rechazado', chip: ['Requiere corrección', 'bad'], motivo: rv.motivo };
@@ -401,7 +428,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   function pintar() {
     const S = st.sol, D = S.datos || {}, cerrada = ['formalizada', 'rechazada', 'cancelada'].includes(S.etapa);
     $('#vLand').hidden = true; $('#vPanel').hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true; $('#who').textContent = S.nombre;
-    const docs = docsDe(S).map(d => ({ ...d, x: estadoDoc(d, S) }));
+    const cat0 = docsDe(S); st.claves = cat0.map(d => d.c); const docs = cat0.map(d => ({ ...d, x: estadoDoc(d, S) }));
     const req = docs.filter(d => !d.opc), listos = req.filter(d => d.x.e === 'recibido' || d.x.e === 'aceptado').length, falt = req.length - listos, corr = docs.filter(d => d.x.e === 'rechazado').length;
     const idx = ORDEN.indexOf(S.etapa), et = ETAPA[S.etapa] || [S.etapa, ''];
     const pasos = PASOS.map((p, i) => `<div class="${idx > i || S.etapa === 'formalizada' ? 'done' : idx === i ? 'cur' : ''}"><i></i><b>${p[0]}</b><span>${p[1]}</span></div>`).join('');
@@ -425,6 +452,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       <div class="side"><div>
         ${envio}
         <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento${window.matchMedia('(hover:hover)').matches ? ' o arrastrarlos sobre cada renglón' : ''}.</div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="${req.length}" aria-valuenow="${listos}"><i style="width:${req.length ? Math.round(listos / req.length * 100) : 0}%"></i></div>
+          ${cerrada ? '' : `<div class="cfg"><span>Mi aval es</span><span class="seg2"><button type="button" data-cfg="aval_tipo" data-v="PF" class="${D.aval_tipo === 'PM' ? '' : 'on'}">Persona física</button><button type="button" data-cfg="aval_tipo" data-v="PM" class="${D.aval_tipo === 'PM' ? 'on' : ''}">Persona moral</button></span>${S.tipo === 'PM' ? `<span>Dos socios al 50 %</span><span class="seg2"><button type="button" data-cfg="socios5050" data-v="no" class="${D.socios5050 === 'si' ? '' : 'on'}">No</button><button type="button" data-cfg="socios5050" data-v="si" class="${D.socios5050 === 'si' ? 'on' : ''}">Sí</button></span>` : ''}</div>`}
           <div class="msg err" id="dErr" hidden></div>${lista}</div>
       </div><div>
         <div class="card box"><h3>Su solicitud</h3><div class="dl">
@@ -468,6 +496,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       const r = await api('/storage/v1/object/sign/' + BUCKET + '/' + ver.dataset.verArch.split('/').map(encodeURIComponent).join('/'), { method: 'POST', auth: true, body: { expiresIn: 300 } });
       if (r.ok && r.json && r.json.signedURL) { const u = SB + '/storage/v1' + r.json.signedURL; if (w) w.location = u; else location.href = u; } else { if (w) w.close(); dErr('No se pudo abrir el archivo. Intente de nuevo.'); } return; }
     if (del) { modal(`<h2>Quitar archivo</h2><p>Se eliminará «${esc(del.dataset.nom)}» de su expediente.</p><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="del" data-ruta="${esc(del.dataset.del)}">Quitar</button></div>`); return; }
+    const cfg = e.target.closest('[data-cfg]'); if (cfg) { if (cfg.classList.contains('on') || !(await sesionVigente())) return; const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'datos', p: { [cfg.dataset.cfg]: cfg.dataset.v } } }); if (r.ok && r.json) { st.sol = r.json; st.nueva = false; pintar(); } else dErr(errTxt(r.json)); return; }
     if (e.target.closest('#bEnviar')) { modal(`<h2>Enviar expediente a revisión</h2><p>El área de Riesgos de ATRIX comenzará el análisis. Podrá seguir cargando documentos si se le solicitan.</p><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="enviar">Enviar</button></div>`); return; }
     if (e.target.closest('#bPass')) { modal(`<h2>Cambiar contraseña</h2><p>Mínimo 8 caracteres, con letras y números.</p><div class="msg err" id="pErr" hidden></div><div class="f"><label for="np1">Nueva contraseña</label><input id="np1" type="password" autocomplete="new-password"></div><div class="f"><label for="np2">Confirmar contraseña</label><input id="np2" type="password" autocomplete="new-password"></div><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="pass">Guardar</button></div>`); const i = $('#np1'); if (i) i.focus(); }
   });
@@ -491,7 +520,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     vp.addEventListener('drop', e => { const d = zona(e); if (dz) dz.classList.remove('drop'); dz = null; if (!d) return; e.preventDefault(); if (e.dataTransfer && e.dataTransfer.files.length) subirVarios(d.dataset.doc, e.dataTransfer.files); });
     window.addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); window.addEventListener('drop', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); }
   /* Borrador: si el solicitante cierra la página a medias, al volver encuentra lo que ya había escrito (nunca la contraseña) */
-  const BKEY = 'atrix_solicitud_borrador', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'extranjero', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'cargo', 'telefono', 'correo'];
+  const BKEY = 'atrix_solicitud_borrador', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'extranjero', 'constitucion', 'aval_tipo', 'socios5050', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'cargo', 'telefono', 'correo'];
   const poner = (n, v) => { const el = fN.elements[n]; if (!el || v == null || v === '') return; if (el.length && el[0] && el[0].type === 'radio') { for (const r of el) r.checked = r.value === v; } else if (el.tagName === 'SELECT') { if ([...el.options].some(o => o.value === v || o.text === v)) el.value = v; } else el.value = v; };
   const guardarBorrador = () => { try { const o = {}; BCAMPOS.forEach(n => { const v = val(n); if (v) o[n] = v; }); o.t = Date.now(); localStorage.setItem(BKEY, JSON.stringify(o)); } catch (e) { } };
   const borrarBorrador = () => { try { localStorage.removeItem(BKEY); } catch (e) { } };
