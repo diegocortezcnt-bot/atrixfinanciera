@@ -133,6 +133,54 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .req{margin-top:26px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px 18px;max-width:52ch}
 .req b{display:block;color:var(--navy);font-size:13.5px;margin-bottom:6px}
 .req ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink-2);display:grid;gap:3px}
+.tabs2{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.tabs2 button{border:1px solid var(--line);background:var(--white);border-radius:999px;padding:9px 16px;font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.tabs2 button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.tabs2 button i{font-style:normal;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#e8f5ee;color:var(--ok)}
+.tabs2 button.on i{background:rgba(255,255,255,.2);color:#fff}
+.lock{padding:44px 26px;text-align:center;margin-bottom:16px;color:var(--ink-3)}
+.lock h2{font-size:19px;font-weight:600;color:var(--navy);margin:10px 0 6px}
+.lock p{font-size:13.5px;color:var(--ink-2);max-width:46ch;margin:0 auto 14px}
+.lock svg{margin:0 auto}
+.prop{margin-bottom:16px;overflow:hidden;border-top:6px solid var(--navy)}
+.prop .ph{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:20px 24px 16px;border-bottom:1px solid #ececf0}
+.prop .lg svg{height:40px;width:auto;display:block}
+.prop .pt{text-align:right;line-height:1.35}
+.prop .pt b{display:block;font-size:16px;font-weight:600;color:var(--navy)}
+.prop .pt span{display:block;font-size:12px;color:var(--ink-2)}
+.prop .pb{padding:18px 24px 20px}
+.prop .para{font-size:13.5px;color:var(--ink-2);margin-bottom:14px;overflow-wrap:anywhere}
+.prop .para b{color:var(--ink)}
+.prop h3{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:20px 0 8px}
+.prop h3 em{font-style:normal;color:var(--ink-3);letter-spacing:.04em;text-transform:none;font-size:11.5px;font-weight:500;margin-left:6px}
+.prop .vig{background:#eef3fb;border-radius:12px;padding:10px 14px;font-size:13px;color:var(--navy-2);margin-bottom:14px}
+.pg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 18px;padding:14px 0;border-top:1px solid #ececf0;border-bottom:1px solid #ececf0}
+.pg div{min-width:0}
+.pg span{display:block;font-size:11.5px;color:var(--ink-3)}
+.pg b{display:block;font-size:16px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.pg small{display:block;font-size:11.5px;color:var(--ink-2)}
+.tzs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tz{background:var(--pearl);border-radius:14px;padding:13px 15px;min-width:0}
+.tz span{display:block;font-size:11.5px;color:var(--ink-2)}
+.tz b{display:block;font-size:21px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums}
+.tz b em{font-style:normal;font-size:12px;font-weight:600;color:var(--ink-2)}
+.tz small{display:block;font-size:12px;color:var(--ink-2);margin-top:2px}
+.prop .tx{font-size:13.5px;color:var(--ink);line-height:1.55;overflow-wrap:anywhere}
+.prop .tw{overflow:auto;max-height:420px;border:1px solid #ececf0;border-radius:12px;-webkit-overflow-scrolling:touch}
+.prop table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.prop th{position:sticky;top:0;background:var(--navy);color:#fff;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;text-align:right;padding:8px 9px;white-space:nowrap}
+.prop td{padding:7px 9px;text-align:right;border-bottom:1px solid #f0f0f3;white-space:nowrap}
+.prop th.l,.prop td.l{text-align:left}
+.prop tr.tt td{font-weight:600;background:var(--pearl);border-bottom:0}
+.av2{margin:0;padding-left:18px;display:grid;gap:5px;font-size:12px;color:var(--ink-2);line-height:1.5}
+.acep{margin-top:20px;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.acep>b{display:block;font-size:15px;color:var(--navy);margin-bottom:4px}
+.acep>p{font-size:13px;color:var(--ink-2);margin-bottom:12px}
+.acep.ok{border-color:#bfe3cd;background:#e8f5ee}.acep.ok>b{color:var(--ok)}.acep.ok>p{margin:0;color:var(--ink)}
+.acep.bad{border-color:#f5c6c8;background:#fdecec}.acep.bad>b{color:var(--bad)}.acep.bad>p{margin:0}
+.pf{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:12px;border-top:1px solid #ececf0;font-size:11px;color:var(--ink-3)}
+@media (max-width:640px){.pg{grid-template-columns:repeat(2,minmax(0,1fr))}.tzs{grid-template-columns:1fr}.prop .ph,.prop .pb{padding-left:16px;padding-right:16px}.prop .pt{text-align:left}}
+@media print{body.printing *{visibility:hidden}body.printing #propDoc,body.printing #propDoc *{visibility:visible}body.printing #propDoc{position:absolute;left:0;top:0;width:100%;box-shadow:none;border-radius:0}body.printing .prop .tw{max-height:none;overflow:visible}body.printing #bImprimir,body.printing #acepBox{display:none}body.printing .prop th{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 .av{padding:18px 22px;margin-bottom:16px}
 .avt{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:10px}
 .avt b{display:block;font-size:14.5px;font-weight:600;color:var(--navy)}
@@ -283,7 +331,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   const fdt = iso => { if (!iso) return '—'; try { return new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Monterrey' }); } catch (e) { return String(iso).slice(0, 10); } };
   const peso = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
   const emailDe = rfc => String(rfc || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, 'y').replace(/[^a-z0-9]/g, '') + DOM;
-  const st = { ses: null, sol: null, files: [], paso: 0, sub: {}, claves: [] };
+  const st = { ses: null, sol: null, files: [], paso: 0, sub: {}, claves: [], tab: null };
 
   /* ---------- Catálogos (los mismos que usa ATRIX Cartera para revisar el expediente) ---------- */
   const PROD = { AF: 'Arrendamiento financiero', AP: 'Arrendamiento puro', CGI: 'Crédito con garantía inmobiliaria', CE: 'Crédito estructurado' };
@@ -426,8 +474,56 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const err = await entrar($('#lrfc').value, $('#lpw').value); b.disabled = false; b.textContent = 'Entrar';
     if (err) { e.textContent = err; e.hidden = false; return; } $('#lpw').value = ''; await cargar(); window.scrollTo(0, 0);
   });
-  $('#bSalir').addEventListener('click', async () => { try { await api('/auth/v1/logout', { method: 'POST', auth: true }); } catch (e) { } guardar(null); st.sol = null; mostrarLand(); tab('entrar'); });
+  $('#bSalir').addEventListener('click', async () => { try { await api('/auth/v1/logout', { method: 'POST', auth: true }); } catch (e) { } guardar(null); st.sol = null; st.tab = null; mostrarLand(); tab('entrar'); });
 
+  /* ---------- Preaprobación y aprobación: se desbloquean cuando ATRIX las carga desde su sistema ---------- */
+  const LOGO = '<svg class="atrix-logo" viewBox="244.809 299.191 419.1 104.9" role="img" aria-label="ATRIX Financiera"><polygon points="297.277,301.191 246.809,402.125 297.277,375.797" fill="rgb(231,25,34)"/><polygon points="297.277,301.191 281.918,388.961 297.277,375.797" fill="rgb(165,15,22)"/><polygon points="297.277,301.191 347.742,402.125 297.277,375.797" fill="rgb(13,42,82)"/><polygon points="297.277,301.191 312.637,388.961 297.277,375.797" fill="rgb(7,29,61)"/><path fill="#E71922" d="M 297.28 384.13 L 300.13 396.64 L 292.13 386.61 L 303.69 392.18 L 290.86 392.18 L 302.42 386.61 L 294.42 396.64 Z M 297.28 384.13"/><path fill="#071D3D" d="M 493.86 343.58 L 478.52 310.28 L 476.11 310.28 L 460.79 343.58 L 463.40 343.58 L 467.65 334.22 L 486.96 334.22 L 491.25 343.58 Z M 477.30 312.95 L 486.06 332.15 L 468.58 332.15 Z M 477.30 312.95"/><path fill="#071D3D" d="M 523.41 343.58 L 523.41 312.46 L 535.43 312.46 L 535.43 310.28 L 509.01 310.28 L 509.01 312.46 L 520.99 312.46 L 520.99 343.58 Z M 523.41 343.58"/><path fill="#071D3D" d="M 575.12 331.93 C 580.07 330.44 582.91 326.79 582.91 321.50 C 582.91 314.45 577.87 310.28 569.51 310.28 L 557.54 310.28 L 557.54 343.58 L 559.98 343.58 L 559.98 332.67 L 569.51 332.67 C 570.65 332.67 571.67 332.59 572.72 332.46 L 580.67 343.58 L 583.43 343.58 Z M 559.98 312.46 L 569.51 312.46 C 576.62 312.46 580.43 315.76 580.43 321.50 C 580.43 327.21 576.62 330.56 569.51 330.56 L 559.98 330.56 Z M 559.98 312.46"/><path fill="#071D3D" d="M 610.38 343.58 L 610.38 310.28 L 607.96 310.28 L 607.96 343.58 Z M 610.38 343.58"/><path fill="#071D3D" d="M 649.08 326.35 L 660.98 310.28 L 658.26 310.28 L 647.66 324.60 L 637.04 310.28 L 634.19 310.28 L 646.08 326.41 L 633.27 343.58 L 636.14 343.58 L 647.55 328.16 L 659.03 343.58 L 661.87 343.58 Z M 649.08 326.35"/><rect x="448.68" y="366.80" width="56.52" height="4.54" fill="#E71922"/><text x="454.73" y="397.08" font-family="Montserrat, \'Helvetica Neue\', Helvetica, Arial, sans-serif" font-size="15.86" fill="#071D3D" textLength="207.14" lengthAdjust="spacing">FINANCIERA</text></svg>';
+  const money2 = n => (Number(n) || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+  const pct2 = (n, d) => (Number(n) || 0).toLocaleString('es-MX', { minimumFractionDigits: d == null ? 2 : d, maximumFractionDigits: d == null ? 2 : d }) + ' %';
+  const fdia = iso => { if (!iso) return '—'; const [y, m, d] = String(iso).slice(0, 10).split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }); };
+  const pubDe = (S, t) => { const p = (S.revision || {})['_' + t]; return p && p.id ? p : null; };
+  const aceptDe = S => { const a = (S.datos || {}).aceptacion, p = pubDe(S, 'apr'); return a && a.fecha && p && a.oferta === p.id ? a : null; };
+  const AVISOS = {
+    pre: ['Esta preaprobación es una estimación preliminar elaborada con la información proporcionada por el solicitante. No constituye una aprobación, una oferta vinculante ni la obligación de otorgar financiamiento.', 'El monto, la tasa y el plazo son tentativos y pueden modificarse o dejarse sin efecto como resultado del análisis del área de Riesgos y de la resolución del Comité de Crédito.', 'Las tasas se expresan en términos anuales y sin IVA; el Impuesto al Valor Agregado se causa conforme a la ley vigente.'],
+    apr: ['Vigencia: esta propuesta tiene una vigencia de 30 días naturales contados a partir de su fecha de emisión. Transcurrido ese plazo queda sin efecto sin necesidad de aviso.', 'La aceptación de esta propuesta no representa una obligación entre las partes ni constituye un contrato. Los derechos y obligaciones nacerán únicamente con la firma del contrato correspondiente y de sus anexos.', 'El otorgamiento queda sujeto a la firma del contrato, pagaré y garantías; a la verificación de la documentación; a que no existan cambios adversos en la situación financiera, legal o crediticia del solicitante o de sus avales, y al cumplimiento de las disposiciones de prevención de operaciones con recursos de procedencia ilícita.', 'ATRIX podrá modificar o retirar esta propuesta si detecta información falsa, inexacta o incompleta, o si cambian las condiciones con las que fue evaluada.', 'Las tasas se expresan en términos anuales y sin IVA; el Impuesto al Valor Agregado se causa conforme a la ley vigente. La tabla de amortización es ilustrativa: los importes y fechas definitivos serán los del contrato, según la fecha de firma o disposición.'],
+    conf: ['Documento confidencial dirigido exclusivamente al solicitante. No debe compartirse con terceros sin autorización de ATRIX.', 'Los datos personales y la documentación del solicitante se tratan conforme al Aviso de Privacidad de COLIUM, S.A. de C.V., únicamente para analizar y, en su caso, formalizar la operación, y se resguardan en un espacio de acceso restringido.']
+  };
+  function propuesta(S, tipo) {
+    const p = pubDe(S, tipo); const esA = tipo === 'apr';
+    if (!p) return `<div class="card lock"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg><h2>${esA ? 'Aprobación' : 'Preaprobación'}</h2><p>${esA ? 'Aquí recibirá la propuesta formal de ATRIX con las condiciones autorizadas, su tabla de amortización y la opción de aceptarla en línea.' : 'Aquí verá el monto y la tasa tentativos cuando ATRIX concluya la revisión preliminar de su expediente.'}</p><span class="chip">Se habilitará cuando ATRIX la publique</span></div>`;
+    const esAP = p.producto === 'AP', k = 1 + (Number(p.iva) || 16) / 100; const vig = !p.vence || Date.now() <= Date.parse(p.vence); const a = esA ? aceptDe(S) : null; const cerrada = ['formalizada', 'rechazada', 'cancelada'].includes(S.etapa);
+    const txt = t => esc(t).replace(/\n/g, '<br>'); const fila = (l, v, s2) => `<div><span>${l}</span><b>${v}</b>${s2 ? `<small>${s2}</small>` : ''}</div>`;
+    const tasa = (l, an) => `<div class="tz"><span>${l}</span><b>${pct2(an)} <em>más IVA</em></b><small>Mensual: ${pct2(an / 12, 4)} más IVA</small><small>Con IVA: ${pct2(an * k)} anual · ${pct2(an / 12 * k, 4)} mensual</small></div>`;
+    const com = (Number(p.monto) || 0) * (Number(p.comision) || 0) / 100; const per = p.periodicidad && p.periodicidad !== 'mensual' ? p.periodicidad : 'mensual';
+    const tabla = esA && p.tabla && p.tabla.length ? `<h3>Tabla de amortización <em>ilustrativa</em></h3><div class="tw"><table><thead><tr><th>No.</th><th class="l">Fecha</th>${esAP ? '<th>Renta</th>' : '<th>Saldo inicial</th><th>Capital</th><th>Interés</th>'}<th>IVA</th><th>Pago total</th>${esAP ? '' : '<th>Saldo final</th>'}</tr></thead><tbody>${p.tabla.map(r => `<tr><td>${r.k}</td><td class="l">${fdia(r.f)}</td>${esAP ? `<td>${money2(r.c + r.i)}</td>` : `<td>${money2(r.si)}</td><td>${money2(r.c)}</td><td>${money2(r.i)}</td>`}<td>${money2(r.v)}</td><td><b>${money2(r.t)}</b></td>${esAP ? '' : `<td>${money2(r.sf)}</td>`}</tr>`).join('')}${p.tot ? `<tr class="tt"><td></td><td class="l">Total</td>${esAP ? `<td>${money2(p.tot.c + p.tot.i)}</td>` : `<td></td><td>${money2(p.tot.c)}</td><td>${money2(p.tot.i)}</td>`}<td>${money2(p.tot.v)}</td><td>${money2(p.tot.t)}</td>${esAP ? '' : '<td></td>'}</tr>` : ''}</tbody></table></div>` : '';
+    let pie = '';
+    if (esA) {
+      if (a) pie = `<div class="acep ok"><b>Propuesta aceptada</b><p>Aceptada en línea por ${esc(a.nombre)}${a.cargo ? ' (' + esc(a.cargo) + ')' : ''} el ${fdt(a.fecha)}. ATRIX le contactará para coordinar la firma del contrato. Esta aceptación no representa una obligación entre las partes: las obligaciones nacerán con la firma del contrato.</p></div>`;
+      else if (cerrada) pie = '';
+      else if (!vig) pie = `<div class="acep bad"><b>La vigencia de esta propuesta terminó el ${fdt(p.vence)}</b><p>Si sigue interesado, escríbanos para emitir una nueva propuesta.</p></div>`;
+      else pie = `<div class="acep" id="acepBox"><b>Aceptación de la línea</b><p>Si está de acuerdo con las condiciones, puede aceptarlas aquí. Tiene hasta el <b>${fdt(p.vence)}</b>.</p>
+          <div class="msg err" id="aErr" hidden></div>
+          <label class="chk"><input type="checkbox" id="ac1"><span>He leído y acepto los términos y condiciones de esta propuesta, y manifiesto bajo protesta de decir verdad que la información y los documentos que entregué a ATRIX son verídicos y están vigentes.</span></label>
+          <label class="chk"><input type="checkbox" id="ac2"><span>Entiendo que esta aceptación <b>no representa una obligación entre las partes</b> ni constituye un contrato: las obligaciones nacerán únicamente con la firma del contrato correspondiente.</span></label>
+          <div class="r2"><div class="f"><label for="acNom">Nombre de quien acepta</label><input id="acNom" maxlength="160" autocomplete="name" value="${esc((S.datos || {}).contacto || '')}"></div><div class="f"><label for="acCar">Cargo o carácter</label><input id="acCar" maxlength="120" placeholder="Ej. Representante legal" value="${esc((S.datos || {}).cargo || '')}"></div></div>
+          <button class="btn p big" type="button" id="bAceptar" data-oferta="${esc(p.id)}">Aceptar la línea de crédito</button></div>`;
+    }
+    return `<div class="card prop" id="propDoc"><div class="ph"><div class="lg">${LOGO}</div><div class="pt"><b>${esA ? 'Propuesta de aprobación' : 'Carta de preaprobación'}</b><span>${esA ? 'Términos y condiciones' : 'Condiciones tentativas'} · ${esc(S.folio)}</span><span>Emitida el ${fdt(p.publicado)}</span></div></div>
+      <div class="pb"><p class="para">Dirigida a <b>${esc(S.nombre)}</b> · RFC ${esc(S.rfc)}</p>
+        ${esA && !a && vig && !cerrada ? `<div class="vig">Esta oferta tiene una vigencia de <b>30 días naturales</b>: vence el <b>${fdt(p.vence)}</b>.</div>` : ''}
+        <div class="pg">${fila('Producto', esc(p.productoNombre || p.producto))}${fila(esA ? 'Monto autorizado' : 'Monto tentativo', money2(p.monto), 'sin IVA')}${fila(esA ? 'Plazo de la línea' : 'Plazo tentativo', esc(p.plazo) + ' meses')}${p.pago != null ? fila(esAP ? 'Renta mensual estimada' : 'Pago ' + per + ' estimado', money2(p.pago), 'más IVA' + (p.pagoIva ? ' · ' + money2(p.pagoIva) + ' con IVA el primero' : '')) : ''}${fila('Comisión por apertura', pct2(p.comision), money2(com) + ' más IVA, una sola vez')}${esAP && p.residualPct != null ? fila('Valor residual', pct2(p.residualPct, 1), money2(p.residual || 0)) : ''}</div>
+        <h3>${esA ? 'Tasas de interés' : 'Tasa tentativa'}</h3><div class="tzs">${tasa(esA ? 'Interés ordinario anual' : 'Tasa anual tentativa', p.tasa)}${esA ? tasa('Interés moratorio anual', p.tasaMora) : ''}</div>
+        ${esA && p.garantia ? `<h3>Garantía</h3><p class="tx">${txt(p.garantia)}</p>` : ''}
+        ${esA ? `<h3>Aval</h3><p class="tx">${p.aval === 'si' ? 'Sí se requiere' + (p.avales ? ': ' + txt(p.avales) : '.') : 'No se requiere.'}</p>` : ''}
+        ${esA && p.metodologia ? `<h3>Metodología de la línea</h3><p class="tx">${txt(p.metodologia)}</p>` : ''}
+        ${esA && p.condiciones ? `<h3>Condiciones adicionales</h3><p class="tx">${txt(p.condiciones)}</p>` : ''}
+        ${!esA && p.notas ? `<h3>Observaciones</h3><p class="tx">${txt(p.notas)}</p>` : ''}
+        ${tabla}
+        <h3>Avisos importantes</h3><ul class="av2">${AVISOS[tipo].map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+        <h3>Confidencialidad y datos personales</h3><ul class="av2">${AVISOS.conf.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+        ${pie}
+        <div class="pf"><span>ATRIX® es una marca comercial de COLIUM, S.A. de C.V. · Monterrey, Nuevo León · atencion@atrixfinanciera.com · 81 3412 7296</span><button class="btn sm" type="button" id="bImprimir">Imprimir o guardar en PDF</button></div></div></div>`;
+  }
   /* ---------- Panel del solicitante ---------- */
   function estadoDoc(d, S) {
     const fs = st.files.filter(f => f.clave === d.c || (d.c === 'otros' && !st.claves.includes(f.clave))); const rv = (S.revision || {})[d.c] || {};
@@ -442,12 +538,13 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     $('#vLand').hidden = true; $('#vPanel').hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true; $('#who').textContent = S.nombre;
     const cat0 = docsDe(S); st.claves = cat0.map(d => d.c); const docs = cat0.map(d => ({ ...d, x: estadoDoc(d, S) }));
     const req = docs.filter(d => !d.opc), listos = req.filter(d => d.x.e === 'recibido' || d.x.e === 'aceptado').length, falt = req.length - listos, corr = docs.filter(d => d.x.e === 'rechazado').length, acept = req.filter(d => d.x.e === 'aceptado').length, avPct = req.length ? Math.round(listos / req.length * 100) : 0;
-    const idx = ORDEN.indexOf(S.etapa), et = ETAPA[S.etapa] || [S.etapa, ''];
+    const idx = ORDEN.indexOf(S.etapa), et = ETAPA[S.etapa] || [S.etapa, '']; const pPre = pubDe(S, 'pre'), pApr = pubDe(S, 'apr'), aOk = aceptDe(S); if (!st.tab) st.tab = pApr && !aOk ? 'apr' : 'exp';
     const pasos = PASOS.map((p, i) => `<div class="${idx > i || S.etapa === 'formalizada' ? 'done' : idx === i ? 'cur' : ''}"><i></i><b>${p[0]}</b><span>${p[1]}</span></div>`).join('');
     let aviso = '';
     if (st.nueva) aviso += `<div class="card aviso ok"><b>Su solicitud quedó registrada con el folio ${esc(S.folio)}</b><p>Guarde su folio. Para regresar, entre a esta página con su RFC y la contraseña que acaba de crear. El siguiente paso es cargar los documentos de la lista.</p></div>`;
     if (S.etapa === 'rechazada') aviso += `<div class="card aviso bad"><b>Su solicitud no fue aprobada en esta ocasión</b><p>${esc(S.mensaje || 'Agradecemos su interés. Si su situación cambia, con gusto la revisamos de nuevo.')}</p></div>`;
-    else if (S.mensaje) aviso += `<div class="card aviso"><b>Mensaje de ATRIX</b><p>${esc(S.mensaje)}</p></div>`;
+    if (S.etapa !== 'rechazada' && S.etapa !== 'cancelada') { if (pApr && !aOk && st.tab !== 'apr') aviso += `<div class="card aviso ok"><b>Su propuesta de aprobación está disponible</b><p>Revise las condiciones autorizadas y, si está de acuerdo, acéptela en línea.</p><button class="btn p" type="button" data-tab="apr" style="margin-top:10px">Ver la aprobación</button></div>`; else if (pPre && !pApr && st.tab !== 'pre') aviso += `<div class="card aviso ok"><b>Su preaprobación está disponible</b><p>Ya puede consultar el monto y la tasa tentativos.</p><button class="btn p" type="button" data-tab="pre" style="margin-top:10px">Ver la preaprobación</button></div>`; }
+    if (S.etapa === 'rechazada') {} else if (S.mensaje) aviso += `<div class="card aviso"><b>Mensaje de ATRIX</b><p>${esc(S.mensaje)}</p></div>`;
     let envio = '';
     if (!cerrada && ['recibida', 'documentos'].includes(S.etapa)) envio = `<div class="card envio"><p>${falt ? `<b>Faltan ${falt} de ${req.length} documentos obligatorios.</b> Puede cargarlos en varias visitas; su avance se guarda solo.` : '<b>Su expediente está completo.</b> Envíelo a revisión para que el área de Riesgos inicie el análisis.'}</p><button class="btn p big" id="bEnviar" type="button" ${falt ? 'disabled' : ''}>Enviar expediente a revisión</button></div>`;
     else if (S.etapa === 'revision') envio = `<div class="card envio"><p><b>Expediente en análisis${S.enviado ? ' desde el ' + fdt(S.enviado) : ''}.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección: vuelva a cargarlo para continuar.' : 'Con el expediente completo, la preaprobación toma 2 días hábiles. Si Riesgos necesita algo más, lo verá aquí.'}</p><a class="btn" href="https://wa.me/528134127296?text=${encodeURIComponent('Hola, ' + (corr ? 'tengo una duda sobre' : 'ya envié a revisión') + ' el expediente de mi solicitud ' + S.folio + ' (' + S.nombre + ').')}" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>`;
@@ -461,11 +558,12 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       <div class="hd"><div><div class="k">Solicitud ${esc(S.folio)}</div><h1>${esc(S.nombre)}</h1><div class="s">${esc(PROD[S.producto] || S.producto)} · ${money(S.monto)} · iniciada el ${fdt(S.creado)}</div></div><span class="chip ${et[1]}" style="font-size:13px;padding:6px 14px">${et[0]}</span></div>
       ${aviso}
       ${S.etapa === 'rechazada' || S.etapa === 'cancelada' ? '' : `<div class="card steps">${pasos}</div><div class="card av"><div class="avt"><div><b>Expediente completo</b><span>${listos} de ${req.length} documentos obligatorios cargados${acept ? ' · ' + acept + (acept === 1 ? ' aceptado' : ' aceptados') : ''}${corr ? ' · ' + corr + ' por corregir' : ''}</span></div><strong>${avPct} %</strong></div><div class="avb" role="progressbar" aria-label="Avance del expediente" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${avPct}"><i class="a" style="width:${req.length ? acept / req.length * 100 : 0}%"></i><i class="r" style="width:${req.length ? (listos - acept) / req.length * 100 : 0}%"></i></div>${listos ? '<div class="avl"><span><i class="a"></i>Aceptado por ATRIX</span><span><i class="r"></i>Cargado, en revisión</span></div>' : ''}</div>`}
+      <div class="tabs2" role="tablist">${[['exp', 'Expediente', ''], ['pre', 'Preaprobación', pPre ? 'Disponible' : ''], ['apr', 'Aprobación', aOk ? 'Aceptada' : pApr ? 'Disponible' : '']].map(t => `<button type="button" role="tab" data-tab="${t[0]}" class="${st.tab === t[0] ? 'on' : ''}">${t[0] !== 'exp' && !t[2] ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>' : ''}${t[1]}${t[2] ? ' <i>' + t[2] + '</i>' : ''}</button>`).join('')}</div>
       <div class="side"><div>
-        ${envio}
+        ${st.tab !== 'exp' ? propuesta(S, st.tab) : `${envio}
         <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento${window.matchMedia('(hover:hover)').matches ? ' o arrastrarlos sobre cada renglón' : ''}.</div>
           ${cerrada ? '' : `<div class="cfg"><span>Mi aval es</span><span class="seg2"><button type="button" data-cfg="aval_tipo" data-v="PF" class="${D.aval_tipo === 'PM' ? '' : 'on'}">Persona física</button><button type="button" data-cfg="aval_tipo" data-v="PM" class="${D.aval_tipo === 'PM' ? 'on' : ''}">Persona moral</button></span>${S.tipo === 'PM' ? `<span>Dos socios al 50 %</span><span class="seg2"><button type="button" data-cfg="socios5050" data-v="no" class="${D.socios5050 === 'si' ? '' : 'on'}">No</button><button type="button" data-cfg="socios5050" data-v="si" class="${D.socios5050 === 'si' ? 'on' : ''}">Sí</button></span>` : ''}</div>`}
-          <div class="msg err" id="dErr" hidden></div>${lista}</div>
+          <div class="msg err" id="dErr" hidden></div>${lista}</div>`}
       </div><div>
         <div class="card box"><h3>Su solicitud</h3><div class="dl">
           <div><span>Folio</span><b>${esc(S.folio)}</b></div><div><span>RFC</span><b>${esc(S.rfc)}</b></div><div><span>Producto</span><b>${esc(PROD[S.producto] || S.producto)}</b></div><div><span>Monto</span><b>${money(S.monto)}</b></div>
@@ -508,6 +606,13 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       const r = await api('/storage/v1/object/sign/' + BUCKET + '/' + ver.dataset.verArch.split('/').map(encodeURIComponent).join('/'), { method: 'POST', auth: true, body: { expiresIn: 300 } });
       if (r.ok && r.json && r.json.signedURL) { const u = SB + '/storage/v1' + r.json.signedURL; if (w) w.location = u; else location.href = u; } else { if (w) w.close(); dErr('No se pudo abrir el archivo. Intente de nuevo.'); } return; }
     if (del) { modal(`<h2>Quitar archivo</h2><p>Se eliminará «${esc(del.dataset.nom)}» de su expediente.</p><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="del" data-ruta="${esc(del.dataset.del)}">Quitar</button></div>`); return; }
+    const tb = e.target.closest('[data-tab]'); if (tb) { st.tab = tb.dataset.tab; st.nueva = false; pintar(); const t2 = document.querySelector('.tabs2'); if (t2 && tb.closest('.aviso')) t2.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (e.target.closest('#bImprimir')) { document.body.classList.add('printing'); const fin = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', fin); }; window.addEventListener('afterprint', fin); window.print(); setTimeout(fin, 60000); return; }
+    const ba = e.target.closest('#bAceptar'); if (ba) { const er = $('#aErr'); const falla = m => { er.textContent = m; er.hidden = false; er.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+      if (!$('#ac1').checked || !$('#ac2').checked) return falla('Para aceptar la línea marque las dos casillas.'); const nom = $('#acNom').value.trim(); if (nom.length < 3) return falla('Escriba el nombre de quien acepta.');
+      if (!(await sesionVigente())) return mostrarLand('Su sesión terminó. Vuelva a entrar.'); ba.disabled = true; ba.innerHTML = '<span class="spin"></span> Registrando…';
+      const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'aceptar', p: { oferta: ba.dataset.oferta, nombre: nom, cargo: $('#acCar').value.trim() } } });
+      if (r.ok && r.json) { st.sol = r.json; pintar(); const d = $('#propDoc .acep'); if (d) d.scrollIntoView({ block: 'center', behavior: 'smooth' }); } else { ba.disabled = false; ba.textContent = 'Aceptar la línea de crédito'; falla(errTxt(r.json)); } return; }
     const cfg = e.target.closest('[data-cfg]'); if (cfg) { if (cfg.classList.contains('on') || !(await sesionVigente())) return; const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'datos', p: { [cfg.dataset.cfg]: cfg.dataset.v } } }); if (r.ok && r.json) { st.sol = r.json; st.nueva = false; pintar(); } else dErr(errTxt(r.json)); return; }
     if (e.target.closest('#bEnviar')) { modal(`<h2>Enviar expediente a revisión</h2><p>El área de Riesgos de ATRIX comenzará el análisis. Podrá seguir cargando documentos si se le solicitan.</p><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="enviar">Enviar</button></div>`); return; }
     if (e.target.closest('#bPass')) { modal(`<h2>Cambiar contraseña</h2><p>Mínimo 8 caracteres, con letras y números.</p><div class="msg err" id="pErr" hidden></div><div class="f"><label for="np1">Nueva contraseña</label><input id="np1" type="password" autocomplete="new-password"></div><div class="f"><label for="np2">Confirmar contraseña</label><input id="np2" type="password" autocomplete="new-password"></div><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="pass">Guardar</button></div>`); const i = $('#np1'); if (i) i.focus(); }
