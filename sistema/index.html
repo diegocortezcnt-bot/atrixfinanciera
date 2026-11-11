@@ -2219,7 +2219,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.25';
+  const SISTEMA_VERSION = '17.26';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -4830,7 +4830,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   function copiar(text) { const done = () => toast('Copiado'); const fb = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) { } document.body.removeChild(ta); done(); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fb); else fb(); }
   let toastT; function toast(msg, err) { const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : ''); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
 
-  /* ======== 17.25 · SOLICITUDES EN LÍNEA ========
+  /* ======== 17.26 · SOLICITUDES EN LÍNEA ========
      Prospectos que iniciaron su solicitud en www.atrixfinanciera.com/solicitud/. Viven en el servidor (tabla public.solicitudes y
      almacenamiento privado «solicitudes»); aquí se revisa el expediente, se califica cada documento y se mueve la etapa.
      No forman parte de datos.json: se consultan en línea con la sesión del administrador.
@@ -4841,20 +4841,37 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   const SOL_ETAPA = { recibida: ['Recibida', 'liquidado'], documentos: ['Integrando expediente', 'liquidado'], revision: ['En análisis de Riesgos', 'atrasado'], preaprobada: ['Preaprobada', 'ok'], aprobada: ['Aprobada', 'ok'], formalizada: ['Formalizada', 'ok'], rechazada: ['No aprobada', 'vencido'], cancelada: ['Cancelada', 'gray'] };
   const SOL_CERRADA = ['formalizada', 'rechazada', 'cancelada'];
   const SOL_GRUPO = { pendientes: 'Pendientes', atendidas: 'Atendidas', cerradas: 'Cerradas', todas: 'Todas' };
-  const SOL_DOCS = [
-    { g: 'Empresa', c: 'acta', n: 'Acta constitutiva', t: ['PM'] }, { g: 'Empresa', c: 'poderes', n: 'Poderes del representante legal', t: ['PM'] },
-    { g: 'Empresa', c: 'reformas', n: 'Actas de asamblea o reformas', t: ['PM'], o: 1 }, { g: 'Empresa', c: 'id_rep', n: 'Identificación oficial del representante legal', t: ['PM'] },
-    { g: 'Titular', c: 'id_titular', n: 'Identificación oficial del titular', t: ['PFAE'] }, { g: 'Titular', c: 'acta_mat', n: 'Acta de matrimonio', t: ['PFAE'], o: 1 },
-    { g: 'Fiscal', c: 'csf', n: 'Constancia de Situación Fiscal' }, { g: 'Fiscal', c: 'opinion', n: 'Opinión de cumplimiento del SAT (32-D)' },
-    { g: 'Fiscal', c: 'declaracion', n: 'Declaración anual del último ejercicio' }, { g: 'Fiscal', c: 'domicilio', n: 'Comprobante de domicilio del negocio' },
-    { g: 'Financiera', c: 'edoscta', n: 'Estados de cuenta bancarios (6 meses)' }, { g: 'Financiera', c: 'edosfin', n: 'Estados financieros', oSi: s => s.tipo === 'PFAE' },
-    { g: 'Operación', c: 'cotizacion', n: 'Cotización del activo', p: ['AF', 'AP'] }, { g: 'Operación', c: 'proyecto', n: 'Descripción del destino del crédito', p: ['CGI', 'CE'] },
-    { g: 'Garantía', c: 'escritura', n: 'Escritura del inmueble en garantía', p: ['CGI', 'CE'], oSi: s => s.producto === 'CE' }, { g: 'Garantía', c: 'predial', n: 'Predial y certificado de libertad de gravamen', p: ['CGI', 'CE'], oSi: s => s.producto === 'CE' },
-    { g: 'Aval', c: 'id_aval', n: 'Identificación oficial del aval' }, { g: 'Aval', c: 'domicilio_aval', n: 'Comprobante de domicilio del aval' },
-    { g: 'Adicional', c: 'otros', n: 'Otros documentos', o: 1 }
-  ];
+  /* Requisitos oficiales de ATRIX (nov 2026). El mismo catálogo vive en la página de solicitud y en ATRIX Cartera: si cambia uno, cambiar el otro. */
+  const CATALOGO = s => { const D = s.datos || {}; const pm = s.tipo === 'PM'; const cred = ['CGI', 'CE'].includes(s.producto); const L = []; const a = (g, c, n, ay, o) => L.push({ g, c, n, a: ay, opc: !!o });
+    const INE = 'INE vigente por ambos lados.', CSF = 'Constancia de Situación Fiscal emitida por el SAT, no mayor a 3 meses.', DOM = 'Luz, agua, teléfono o predial, no mayor a 3 meses.', BURO = 'Reporte de Crédito Especial de Buró de Crédito, reciente.', CTA = 'Últimos 4 meses, completos (todas las hojas).';
+    if (pm) {
+      a('Sociedad', 'acta', 'Acta constitutiva de la sociedad', 'Completa y con datos de inscripción en el Registro Público de Comercio.');
+      a('Sociedad', 'reformas', 'Asambleas', 'Actas de asamblea de la sociedad. Si no se ha celebrado ninguna, puede omitirlo.', 1);
+      a('Sociedad', 'poderes', 'Poder(es) de firmante(s)', 'Escritura donde consten las facultades de quien firmará. Si constan en el acta constitutiva, cárguela de nuevo aquí.');
+      a('Sociedad', 'buro', 'Buró de Crédito de la sociedad', BURO);
+      a('Sociedad', 'csf', 'CSF actualizada de la sociedad', CSF);
+      a('Sociedad', 'domicilio', 'Comprobante de domicilio de la sociedad', DOM);
+      a('Propietario real', 'pr_ine', 'INE del propietario real', INE); a('Propietario real', 'pr_csf', 'CSF actualizada del propietario real', CSF); a('Propietario real', 'pr_domicilio', 'Comprobante de domicilio del propietario real', DOM); a('Propietario real', 'pr_buro', 'Buró de Crédito del propietario real', BURO);
+      if (D.socios5050 === 'si') { a('Segundo socio (50 %)', 's2_ine', 'INE del segundo socio', INE); a('Segundo socio (50 %)', 's2_csf', 'CSF actualizada del segundo socio', CSF); a('Segundo socio (50 %)', 's2_domicilio', 'Comprobante de domicilio del segundo socio', DOM); a('Segundo socio (50 %)', 's2_buro', 'Buró de Crédito del segundo socio', BURO); }
+    } else {
+      a('Titular', 'id_titular', 'INE', INE); a('Titular', 'csf', 'CSF actualizada', CSF); a('Titular', 'domicilio', 'Comprobante de domicilio', DOM); a('Titular', 'buro', 'Buró de Crédito', BURO);
+    }
+    a('Información financiera', 'ef_3m', 'Estados financieros de los últimos 3 meses', pm ? 'Balance y estado de resultados.' : 'Balance y estado de resultados, en caso de tenerlos.', !pm);
+    a('Información financiera', 'edosfin', 'Estados financieros anuales (último año)', pm ? 'Balance y estado de resultados del último ejercicio.' : 'Del último ejercicio, en caso de tenerlos.', !pm);
+    a('Información financiera', 'edoscta', 'Estados de cuenta bancarios', CTA);
+    if (D.aval_tipo === 'PM') { const g = 'Aval · persona moral';
+      a(g, 'avm_acta', 'Acta constitutiva del aval', 'Completa y con datos de inscripción.'); a(g, 'avm_asambleas', 'Asambleas del aval', 'Si no se ha celebrado ninguna, puede omitirlo.', 1); a(g, 'avm_buro', 'Buró de Crédito de la sociedad aval', BURO); a(g, 'avm_poderes', 'Poder(es) del aval', 'Facultades del apoderado legal que firmará como aval.');
+      a(g, 'avm_csf', 'CSF actualizada de la sociedad aval', CSF); a(g, 'avm_csf_apod', 'CSF actualizada del apoderado legal', CSF); a(g, 'avm_ine_apod', 'INE del apoderado legal', INE); a(g, 'avm_domicilio', 'Comprobante de domicilio del aval', DOM);
+      a(g, 'avm_ef_anual', 'Estados financieros anuales del aval', 'Balance y estado de resultados del último ejercicio.'); a(g, 'avm_ef_3m', 'Estados financieros de los últimos 3 meses del aval', 'Balance y estado de resultados.'); a(g, 'avm_edoscta', 'Estados de cuenta bancarios del aval', CTA);
+    } else { const g = 'Aval · persona física';
+      a(g, 'id_aval', 'INE del aval', INE); a(g, 'aval_csf', 'CSF actualizada del aval', CSF); a(g, 'domicilio_aval', 'Comprobante de domicilio del aval', DOM); a(g, 'aval_edoscta', 'Estados de cuenta bancarios del aval', CTA); a(g, 'aval_buro', 'Buró de Crédito del aval', BURO);
+    }
+    if (cred) { a('Garantía inmobiliaria', 'escritura', 'Escritura del inmueble en garantía', 'Con datos de inscripción en el Registro Público de la Propiedad.', s.producto === 'CE'); a('Garantía inmobiliaria', 'predial', 'Predial y certificado de libertad de gravamen', 'Boleta predial del año en curso y certificado reciente.', s.producto === 'CE'); }
+    a('Solicitud', 'carta', 'Carta de Crédito', cred ? 'Carta firmada donde explique para qué requiere el crédito y qué tipo de crédito solicita.' : 'Carta firmada donde explique para qué requiere el arrendamiento y qué tipo de arrendamiento solicita (financiero o puro).');
+    a('Adicional', 'otros', 'Otros documentos', 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', 1);
+    return L; };
   const solExtras = s => Array.isArray((s.revision || {})._extra) ? s.revision._extra.filter(x => x && x.c && x.n) : [];
-  const solDocs = s => SOL_DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) })).concat(solExtras(s).map(x => ({ g: 'Solicitados por ATRIX', c: x.c, n: x.n, a: x.a || '', opc: false, extra: true })));
+  const solDocs = s => CATALOGO(s).concat(solExtras(s).map(x => ({ g: 'Solicitados por ATRIX', c: x.c, n: x.n, a: x.a || '', opc: false, extra: true })));
   const SOL = { lista: null, cargando: false, error: null, sel: null, files: {}, int: {}, grupo: 'pendientes', q: '', fProd: '', sy: 0, t: 0 };
   const solMs = iso => (iso ? Date.parse(iso) : 0) || 0;
   const solF = (iso, hora) => { if (!iso) return '—'; try { const d = new Date(iso); return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Monterrey' }) + (hora ? ' ' + d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Monterrey' }) : ''); } catch (e) { return String(iso).slice(0, 10); } };
@@ -4903,7 +4920,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     await solArchivos(s); if (S.view === 'solicitudes' && SOL.sel === id && !$('#modalRoot').innerHTML) render();
   }
   function solEstadoDoc(d, s) {
-    const fs = (SOL.files[s.id] || []).filter(f => f.clave === d.c); const rv = (s.revision || {})[d.c] || {}; const nuevo = rv.fecha && fs.some(f => solMs(f.fecha) > solMs(rv.fecha));
+    const cl = solDocs(s).map(x => x.c); const fs = (SOL.files[s.id] || []).filter(f => f.clave === d.c || (d.c === 'otros' && !cl.includes(f.clave))); const rv = (s.revision || {})[d.c] || {}; const nuevo = rv.fecha && fs.some(f => solMs(f.fecha) > solMs(rv.fecha));
     if (rv.estado === 'aceptado') return { fs, e: 'aceptado', txt: 'Aceptado', chip: chip('ok', 'Aceptado') };
     if (rv.estado === 'rechazado' && !nuevo) return { fs, e: 'rechazado', txt: 'Rechazado', chip: chip('vencido', 'Rechazado'), motivo: rv.motivo };
     if (fs.length) return { fs, e: 'revisar', txt: 'Por revisar', chip: chip('atrasado', nuevo ? 'Nueva versión por revisar' : 'Por revisar') };
@@ -4957,7 +4974,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
         <div class="kpis"><div class="kpi glass"><div class="k">Producto</div><div class="v" style="font-size:16px">${esc(SOL_PROD[s.producto] || s.producto)}</div><div class="s">${D.plazo ? esc(D.plazo) + (/^\d+$/.test(D.plazo) ? ' meses' : '') : 'plazo por definir'}</div></div><div class="kpi glass blue"><div class="k">Monto solicitado</div><div class="v">${money(s.monto)}</div><div class="s">sin IVA</div></div><div class="kpi glass green"><div class="k">Documentos aceptados</div><div class="v">${ok} de ${req.length}</div><div class="s"><span class="sol-pb"><i style="width:${req.length ? Math.round(ok / req.length * 100) : 0}%"></i></span></div></div><div class="kpi glass ${rev ? 'orange' : ''}"><div class="k">Por revisar</div><div class="v">${cargado ? rev : '…'}</div><div class="s">${cargado ? falta + ' sin cargar · ' + nArch + ' archivo' + (nArch === 1 ? '' : 's') : 'consultando expediente'}</div></div></div>
         ${s.mensaje ? `<div class="note"><b>Mensaje visible para el solicitante:</b> ${esc(s.mensaje)}</div>` : ''}</div>
       <div class="grid-side" style="margin-top:14px"><div>
-        <div class="glass panel"><h2>Datos del solicitante</h2><div class="kv">${kv('Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial')}${kv('RFC', s.rfc)}${kv('Giro', D.giro)}${kv('Años de operación', D.antiguedad)}${kv('Municipio', D.municipio)}${kv('Ventas mensuales', D.ventas)}${kv('Contacto', D.contacto)}${kv('Cargo', D.cargo)}${kv('Teléfono', D.telefono)}${kv('Correo', D.correo)}${kv('Promotor', s.promotor)}${kv('Recibida', solF(s.creado, true))}${kv('Enviada a revisión', s.enviado ? solF(s.enviado, true) : '')}${kv('Última carga', s.docs_cambio ? solF(s.docs_cambio, true) : '')}</div>
+        <div class="glass panel"><h2>Datos del solicitante</h2><div class="kv">${kv('Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial')}${kv('RFC', s.rfc)}${kv('Giro', D.giro)}${kv('Años de operación en México', D.antiguedad)}${kv('Municipio', D.municipio)}${kv(/mill/.test(D.ventas || '') ? 'Ventas anuales' : 'Ventas', D.ventas)}${kv('Aval', D.aval_tipo === 'PM' ? 'Persona moral' : 'Persona física')}${s.tipo === 'PM' ? kv('Dos socios al 50 %', D.socios5050 === 'si' ? 'Sí' : 'No') : ''}${kv('Contacto', D.contacto)}${kv('Cargo', D.cargo)}${kv('Teléfono', D.telefono)}${kv('Correo', D.correo)}${kv('Promotor', s.promotor)}${kv('Recibida', solF(s.creado, true))}${kv('Enviada a revisión', s.enviado ? solF(s.enviado, true) : '')}${kv('Última carga', s.docs_cambio ? solF(s.docs_cambio, true) : '')}</div>
           ${D.activo ? `<div class="note"><b>${['AF', 'AP'].includes(s.producto) ? 'Activo' : 'Destino y garantía'}:</b> ${esc(D.activo)}</div>` : ''}
           <div class="pill-row" style="margin-top:10px"><button class="btn sm primary" data-act="solAviso" data-id="${s.id}">Aviso por WhatsApp</button><button class="btn sm" data-act="portalCopiar" data-v="${esc([s.folio, s.nombre, s.rfc, D.contacto, D.telefono, D.correo].filter(Boolean).join(' · '))}">Copiar datos</button></div></div>
         <div class="glass panel" style="margin-top:14px"><h2>Notas internas de Riesgos</h2><div class="small" style="white-space:pre-line;overflow-wrap:anywhere">${N.notas ? esc(N.notas) : '<span class="muted">Sin notas. Solo las ve ATRIX; el solicitante no tiene acceso.</span>'}</div><div class="pill-row" style="margin-top:10px"><button class="btn sm" data-act="solNotas" data-id="${s.id}">${N.notas ? 'Editar notas' : 'Agregar nota'}</button></div></div>
@@ -4999,7 +5016,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const D = s.datos || {}; const N = SOL.int[s.id] || {}; const e = SOL_ETAPA[s.etapa] || [s.etapa]; const docs = solDocs(s).map(d => ({ ...d, x: solEstadoDoc(d, s) }));
     return { titulo: 'Expediente de solicitud', subtitulo: s.folio + ' · ' + s.nombre,
       secciones: [{ titulo: 'Solicitud', kv: [['Folio', s.folio], ['Etapa', e[0]], ['Producto', SOL_PROD[s.producto] || s.producto], ['Monto solicitado (sin IVA)', money(s.monto)], ['Plazo', D.plazo ? D.plazo + (/^\d+$/.test(D.plazo) ? ' meses' : '') : ''], ['Recibida', solF(s.creado, true)], ['Enviada a revisión', s.enviado ? solF(s.enviado, true) : ''], ['Promotor', s.promotor || '']].filter(x => x[1]) },
-        { titulo: 'Solicitante', kv: [['Nombre o razón social', s.nombre], ['Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial'], ['RFC', s.rfc], ['Giro', D.giro], ['Años de operación', D.antiguedad], ['Municipio', D.municipio], ['Ventas mensuales', D.ventas], ['Contacto', D.contacto], ['Cargo', D.cargo], ['Teléfono', D.telefono], ['Correo', D.correo]].filter(x => x[1]) }],
+        { titulo: 'Solicitante', kv: [['Nombre o razón social', s.nombre], ['Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial'], ['RFC', s.rfc], ['Giro', D.giro], ['Años de operación en México', D.antiguedad], ['Municipio', D.municipio], ['Ventas anuales', D.ventas], ['Aval', D.aval_tipo === 'PM' ? 'Persona moral' : 'Persona física'], ['Contacto', D.contacto], ['Cargo', D.cargo], ['Teléfono', D.telefono], ['Correo', D.correo]].filter(x => x[1]) }],
       bloques: [D.activo ? { tipo: 'bullets', titulo: ['AF', 'AP'].includes(s.producto) ? 'Activo solicitado' : 'Destino y garantía', items: [D.activo] } : null, N.notas ? { tipo: 'bullets', titulo: 'Notas internas de Riesgos', items: String(N.notas).split(/\n+/).filter(Boolean) } : null].filter(Boolean),
       tablas: [{ titulo: 'Documentos del expediente', head: ['Documento', 'Estado', 'Archivos', 'Observaciones'], align: ['l', 'l', 'r', 'l'], widths: [44, 20, 10, 36], rows: docs.map(d => [d.n + (d.opc ? ' (opcional)' : ''), d.x.txt, String(d.x.fs.length), d.x.e === 'rechazado' ? (d.x.motivo || '') : '']) }],
       nota: 'Documento interno de ' + (CFG().razonSocial || 'COLIUM, S.A. de C.V.') + '. Contiene datos personales y financieros del solicitante: su uso se limita al análisis de la solicitud conforme al Aviso de Privacidad.',
