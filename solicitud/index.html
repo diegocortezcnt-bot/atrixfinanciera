@@ -125,6 +125,9 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .grp{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 2px}
 .doc{padding:14px 0;border-bottom:1px solid #ececf0}
 .doc:last-child{border-bottom:0}
+.doc.drop{background:#f3f6fb;box-shadow:0 0 0 2px var(--blue);border-radius:12px;border-bottom-color:transparent}
+.pbar{height:6px;border-radius:6px;background:#e3e3e8;overflow:hidden;margin:2px 0 6px}
+.pbar i{display:block;height:100%;background:var(--navy);border-radius:6px;transition:width .3s}
 .doc .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
 .doc .top>div{min-width:0}
 .doc h4{margin:0;font-size:14.5px;font-weight:600;color:var(--ink)}
@@ -141,6 +144,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .envio{padding:18px 22px;margin-bottom:16px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .envio p{font-size:13.5px;color:var(--ink-2);flex:1;min-width:220px}
 .envio p b{color:var(--navy)}
+.grp:first-of-type{margin-top:10px}
 .foot{max-width:1120px;margin:0 auto;padding:0 var(--g) 40px;font-size:11.5px;color:var(--ink-3);line-height:1.6}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;padding:16px;z-index:30}
 .modal{width:100%;max-width:420px;padding:26px}
@@ -280,7 +284,9 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     { g: 'Aval', c: 'domicilio_aval', n: 'Comprobante de domicilio del aval', a: 'No mayor a 3 meses.' },
     { g: 'Adicional', c: 'otros', n: 'Otros documentos', a: 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', o: 1 }
   ];
-  const docsDe = s => DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) }));
+  const extrasDe = s => (Array.isArray((s.revision || {})._extra) ? s.revision._extra : []).filter(x => x && x.c && x.n).map(x => ({ g: 'Solicitados por ATRIX', c: String(x.c), n: String(x.n), a: x.a ? String(x.a) : 'Documento adicional solicitado por el área de Riesgos.', opc: false }));
+  const docsDe0 = s => DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) }));
+  const docsDe = s => extrasDe(s).concat(docsDe0(s));
 
   /* ---------- Servidor ---------- */
   const guardar = s => { st.ses = s; try { if (s) sessionStorage.setItem(SKEY, JSON.stringify(s)); else sessionStorage.removeItem(SKEY); } catch (e) { } };
@@ -374,7 +380,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; if (r.json && r.json.existe) { $('#lrfc').value = val('rfc'); } return; }
     const err = await entrar(val('rfc'), $('#pw1').value); b.disabled = false; b.textContent = 'Enviar solicitud';
     if (err) { $('#lrfc').value = val('rfc'); return mostrarLand('Su solicitud ' + r.json.folio + ' quedó registrada. Entre con su RFC y contraseña para cargar sus documentos.'); }
-    st.nueva = true; fN.reset(); irPaso(0); await cargar(); window.scrollTo(0, 0);
+    st.nueva = true; fN.reset(); borrarBorrador(); irPaso(0); await cargar(); window.scrollTo(0, 0);
   });
   $('#fLogin').addEventListener('submit', async ev => {
     ev.preventDefault(); const b = $('#bEntrar'), e = $('#lErr'); e.hidden = true; b.disabled = true; b.innerHTML = '<span class="spin"></span> Entrando…';
@@ -405,7 +411,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     else if (S.mensaje) aviso += `<div class="card aviso"><b>Mensaje de ATRIX</b><p>${esc(S.mensaje)}</p></div>`;
     let envio = '';
     if (!cerrada && ['recibida', 'documentos'].includes(S.etapa)) envio = `<div class="card envio"><p>${falt ? `<b>Faltan ${falt} de ${req.length} documentos obligatorios.</b> Puede cargarlos en varias visitas; su avance se guarda solo.` : '<b>Su expediente está completo.</b> Envíelo a revisión para que el área de Riesgos inicie el análisis.'}</p><button class="btn p big" id="bEnviar" type="button" ${falt ? 'disabled' : ''}>Enviar expediente a revisión</button></div>`;
-    else if (S.etapa === 'revision') envio = `<div class="card envio"><p><b>Expediente en análisis${S.enviado ? ' desde el ' + fdt(S.enviado) : ''}.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección: vuelva a cargarlo para continuar.' : 'Con el expediente completo, la preaprobación toma 2 días hábiles. Si Riesgos necesita algo más, lo verá aquí.'}</p></div>`;
+    else if (S.etapa === 'revision') envio = `<div class="card envio"><p><b>Expediente en análisis${S.enviado ? ' desde el ' + fdt(S.enviado) : ''}.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección: vuelva a cargarlo para continuar.' : 'Con el expediente completo, la preaprobación toma 2 días hábiles. Si Riesgos necesita algo más, lo verá aquí.'}</p><a class="btn" href="https://wa.me/528134127296?text=${encodeURIComponent('Hola, ' + (corr ? 'tengo una duda sobre' : 'ya envié a revisión') + ' el expediente de mi solicitud ' + S.folio + ' (' + S.nombre + ').')}" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>`;
     let grupo = ''; const lista = docs.map(d => { const x = d.x; const h = d.g !== grupo ? `<div class="grp">${esc(d.g)}</div>` : ''; grupo = d.g;
       const puede = !cerrada && x.e !== 'aceptado' && x.fs.length < MAX_ARCH; const sub = st.sub[d.c];
       return `${h}<div class="doc" data-doc="${d.c}"><div class="top"><div><h4>${esc(d.n)}${d.opc ? '<em>opcional</em>' : ''}</h4><div class="ay">${esc(d.a)}</div></div><span class="chip ${x.chip[1]}">${x.chip[0]}</span></div>
@@ -418,7 +424,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       ${S.etapa === 'rechazada' || S.etapa === 'cancelada' ? '' : `<div class="card steps">${pasos}</div>`}
       <div class="side"><div>
         ${envio}
-        <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento.</div>
+        <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento${window.matchMedia('(hover:hover)').matches ? ' o arrastrarlos sobre cada renglón' : ''}.</div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="${req.length}" aria-valuenow="${listos}"><i style="width:${req.length ? Math.round(listos / req.length * 100) : 0}%"></i></div>
           <div class="msg err" id="dErr" hidden></div>${lista}</div>
       </div><div>
         <div class="card box"><h3>Su solicitud</h3><div class="dl">
@@ -478,6 +484,21 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       modal(`<h2>Contraseña actualizada</h2><p>Úsela la próxima vez que entre a su solicitud.</p><div class="act"><button class="btn p" type="button" data-m="x">Listo</button></div>`); }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') modal(''); });
+  /* Arrastrar archivos sobre el renglón de un documento */
+  { const vp = $('#vPanel'); let dz = null; const zona = e => { const d = e.target.closest && e.target.closest('.doc'); return d && d.querySelector('[data-up]') ? d : null; };
+    vp.addEventListener('dragover', e => { const d = zona(e); if (!d) return; e.preventDefault(); if (dz !== d) { if (dz) dz.classList.remove('drop'); dz = d; d.classList.add('drop'); } });
+    vp.addEventListener('dragleave', e => { if (dz && !dz.contains(e.relatedTarget)) { dz.classList.remove('drop'); dz = null; } });
+    vp.addEventListener('drop', e => { const d = zona(e); if (dz) dz.classList.remove('drop'); dz = null; if (!d) return; e.preventDefault(); if (e.dataTransfer && e.dataTransfer.files.length) subirVarios(d.dataset.doc, e.dataTransfer.files); });
+    window.addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); window.addEventListener('drop', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); }
+  /* Borrador: si el solicitante cierra la página a medias, al volver encuentra lo que ya había escrito (nunca la contraseña) */
+  const BKEY = 'atrix_solicitud_borrador', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'extranjero', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'cargo', 'telefono', 'correo'];
+  const poner = (n, v) => { const el = fN.elements[n]; if (!el || v == null || v === '') return; if (el.length && el[0] && el[0].type === 'radio') { for (const r of el) r.checked = r.value === v; } else if (el.tagName === 'SELECT') { if ([...el.options].some(o => o.value === v || o.text === v)) el.value = v; } else el.value = v; };
+  const guardarBorrador = () => { try { const o = {}; BCAMPOS.forEach(n => { const v = val(n); if (v) o[n] = v; }); o.t = Date.now(); localStorage.setItem(BKEY, JSON.stringify(o)); } catch (e) { } };
+  const borrarBorrador = () => { try { localStorage.removeItem(BKEY); } catch (e) { } };
+  fN.addEventListener('input', guardarBorrador); fN.addEventListener('change', guardarBorrador);
+  try { const o = JSON.parse(localStorage.getItem(BKEY) || 'null'); if (o && Date.now() - (o.t || 0) < 30 * 86400000) BCAMPOS.forEach(n => poner(n, o[n])); else if (o) borrarBorrador(); } catch (e) { }
+  try { const q = new URLSearchParams(location.search); const pr = (q.get('prod') || '').toUpperCase(); if (PROD[pr]) poner('producto', pr); const m = Math.round(Number(q.get('monto')) || 0); if (m > 0) poner('monto', Math.min(m, 999999999).toLocaleString('es-MX')); const pl = q.get('plazo'); if (pl) poner('plazo', String(parseInt(pl, 10) || '')); } catch (e) { }
+  fN.dispatchEvent(new Event('change'));
 
   /* ---------- Arranque ---------- */
   try { const q = new URLSearchParams(location.search); const p = (q.get('p') || '').replace(/[^\w-]/g, '').slice(0, 40); if (p) sessionStorage.setItem('atrix_promotor', p); if (q.get('entrar') != null) tab('entrar'); } catch (e) { }
