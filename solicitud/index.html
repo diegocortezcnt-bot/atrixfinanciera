@@ -133,6 +133,18 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .req{margin-top:26px;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px 18px;max-width:52ch}
 .req b{display:block;color:var(--navy);font-size:13.5px;margin-bottom:6px}
 .req ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink-2);display:grid;gap:3px}
+.av{padding:18px 22px;margin-bottom:16px}
+.avt{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:10px}
+.avt b{display:block;font-size:14.5px;font-weight:600;color:var(--navy)}
+.avt span{display:block;font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.avt strong{font-size:26px;font-weight:600;color:var(--navy);letter-spacing:-.02em;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.avb{display:flex;height:8px;border-radius:8px;background:#e3e3e8;overflow:hidden}
+.avb i{display:block;height:100%;transition:width .35s}
+.avb .a,.avl .a{background:var(--navy)}
+.avb .r,.avl .r{background:#8fb0e6}
+.avl{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:9px;font-size:11.5px;color:var(--ink-3)}
+.avl i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+@media (max-width:480px){.av{padding-left:16px;padding-right:16px}}
 .pbar{height:6px;border-radius:6px;background:#e3e3e8;overflow:hidden;margin:2px 0 6px}
 .pbar i{display:block;height:100%;background:var(--navy);border-radius:6px;transition:width .3s}
 .doc .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
@@ -429,7 +441,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const S = st.sol, D = S.datos || {}, cerrada = ['formalizada', 'rechazada', 'cancelada'].includes(S.etapa);
     $('#vLand').hidden = true; $('#vPanel').hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true; $('#who').textContent = S.nombre;
     const cat0 = docsDe(S); st.claves = cat0.map(d => d.c); const docs = cat0.map(d => ({ ...d, x: estadoDoc(d, S) }));
-    const req = docs.filter(d => !d.opc), listos = req.filter(d => d.x.e === 'recibido' || d.x.e === 'aceptado').length, falt = req.length - listos, corr = docs.filter(d => d.x.e === 'rechazado').length;
+    const req = docs.filter(d => !d.opc), listos = req.filter(d => d.x.e === 'recibido' || d.x.e === 'aceptado').length, falt = req.length - listos, corr = docs.filter(d => d.x.e === 'rechazado').length, acept = req.filter(d => d.x.e === 'aceptado').length, avPct = req.length ? Math.round(listos / req.length * 100) : 0;
     const idx = ORDEN.indexOf(S.etapa), et = ETAPA[S.etapa] || [S.etapa, ''];
     const pasos = PASOS.map((p, i) => `<div class="${idx > i || S.etapa === 'formalizada' ? 'done' : idx === i ? 'cur' : ''}"><i></i><b>${p[0]}</b><span>${p[1]}</span></div>`).join('');
     let aviso = '';
@@ -448,10 +460,10 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     $('#vPanel').innerHTML = `
       <div class="hd"><div><div class="k">Solicitud ${esc(S.folio)}</div><h1>${esc(S.nombre)}</h1><div class="s">${esc(PROD[S.producto] || S.producto)} · ${money(S.monto)} · iniciada el ${fdt(S.creado)}</div></div><span class="chip ${et[1]}" style="font-size:13px;padding:6px 14px">${et[0]}</span></div>
       ${aviso}
-      ${S.etapa === 'rechazada' || S.etapa === 'cancelada' ? '' : `<div class="card steps">${pasos}</div>`}
+      ${S.etapa === 'rechazada' || S.etapa === 'cancelada' ? '' : `<div class="card steps">${pasos}</div><div class="card av"><div class="avt"><div><b>Expediente completo</b><span>${listos} de ${req.length} documentos obligatorios cargados${acept ? ' · ' + acept + (acept === 1 ? ' aceptado' : ' aceptados') : ''}${corr ? ' · ' + corr + ' por corregir' : ''}</span></div><strong>${avPct} %</strong></div><div class="avb" role="progressbar" aria-label="Avance del expediente" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${avPct}"><i class="a" style="width:${req.length ? acept / req.length * 100 : 0}%"></i><i class="r" style="width:${req.length ? (listos - acept) / req.length * 100 : 0}%"></i></div>${listos ? '<div class="avl"><span><i class="a"></i>Aceptado por ATRIX</span><span><i class="r"></i>Cargado, en revisión</span></div>' : ''}</div>`}
       <div class="side"><div>
         ${envio}
-        <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento${window.matchMedia('(hover:hover)').matches ? ' o arrastrarlos sobre cada renglón' : ''}.</div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="${req.length}" aria-valuenow="${listos}"><i style="width:${req.length ? Math.round(listos / req.length * 100) : 0}%"></i></div>
+        <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento${window.matchMedia('(hover:hover)').matches ? ' o arrastrarlos sobre cada renglón' : ''}.</div>
           ${cerrada ? '' : `<div class="cfg"><span>Mi aval es</span><span class="seg2"><button type="button" data-cfg="aval_tipo" data-v="PF" class="${D.aval_tipo === 'PM' ? '' : 'on'}">Persona física</button><button type="button" data-cfg="aval_tipo" data-v="PM" class="${D.aval_tipo === 'PM' ? 'on' : ''}">Persona moral</button></span>${S.tipo === 'PM' ? `<span>Dos socios al 50 %</span><span class="seg2"><button type="button" data-cfg="socios5050" data-v="no" class="${D.socios5050 === 'si' ? '' : 'on'}">No</button><button type="button" data-cfg="socios5050" data-v="si" class="${D.socios5050 === 'si' ? 'on' : ''}">Sí</button></span>` : ''}</div>`}
           <div class="msg err" id="dErr" hidden></div>${lista}</div>
       </div><div>
