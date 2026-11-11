@@ -112,6 +112,8 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .aviso p{font-size:13.5px;color:var(--ink-2);white-space:pre-line}
 .side{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
 .side>*{min-width:0}
+.side.full{grid-template-columns:1fr}.side.full>div:last-child{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;align-items:start}.side.full>div:last-child .box{margin-bottom:0;height:100%}
+@media (max-width:700px){.prop table{font-size:11.5px}.prop th{font-size:9.5px;padding:7px 6px}.prop td{padding:6px 6px}}
 .box{padding:20px 22px;margin-bottom:16px}
 .box h3{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:10px}
 .box p{font-size:13px;color:var(--ink-2);margin-bottom:10px}
@@ -559,7 +561,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       ${aviso}
       ${S.etapa === 'rechazada' || S.etapa === 'cancelada' ? '' : `<div class="card steps">${pasos}</div><div class="card av"><div class="avt"><div><b>Expediente completo</b><span>${listos} de ${req.length} documentos obligatorios cargados${acept ? ' · ' + acept + (acept === 1 ? ' aceptado' : ' aceptados') : ''}${corr ? ' · ' + corr + ' por corregir' : ''}</span></div><strong>${avPct} %</strong></div><div class="avb" role="progressbar" aria-label="Avance del expediente" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${avPct}"><i class="a" style="width:${req.length ? acept / req.length * 100 : 0}%"></i><i class="r" style="width:${req.length ? (listos - acept) / req.length * 100 : 0}%"></i></div>${listos ? '<div class="avl"><span><i class="a"></i>Aceptado por ATRIX</span><span><i class="r"></i>Cargado, en revisión</span></div>' : ''}</div>`}
       <div class="tabs2" role="tablist">${[['exp', 'Expediente', ''], ['pre', 'Preaprobación', pPre ? 'Disponible' : ''], ['apr', 'Aprobación', aOk ? 'Aceptada' : pApr ? 'Disponible' : '']].map(t => `<button type="button" role="tab" data-tab="${t[0]}" class="${st.tab === t[0] ? 'on' : ''}">${t[0] !== 'exp' && !t[2] ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>' : ''}${t[1]}${t[2] ? ' <i>' + t[2] + '</i>' : ''}</button>`).join('')}</div>
-      <div class="side"><div>
+      <div class="side${st.tab !== 'exp' ? ' full' : ''}"><div>
         ${st.tab !== 'exp' ? propuesta(S, st.tab) : `${envio}
         <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento${window.matchMedia('(hover:hover)').matches ? ' o arrastrarlos sobre cada renglón' : ''}.</div>
           ${cerrada ? '' : `<div class="cfg"><span>Mi aval es</span><span class="seg2"><button type="button" data-cfg="aval_tipo" data-v="PF" class="${D.aval_tipo === 'PM' ? '' : 'on'}">Persona física</button><button type="button" data-cfg="aval_tipo" data-v="PM" class="${D.aval_tipo === 'PM' ? 'on' : ''}">Persona moral</button></span>${S.tipo === 'PM' ? `<span>Dos socios al 50 %</span><span class="seg2"><button type="button" data-cfg="socios5050" data-v="no" class="${D.socios5050 === 'si' ? '' : 'on'}">No</button><button type="button" data-cfg="socios5050" data-v="si" class="${D.socios5050 === 'si' ? 'on' : ''}">Sí</button></span>` : ''}</div>`}
