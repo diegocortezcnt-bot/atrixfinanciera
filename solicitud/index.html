@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Inicie en línea su solicitud de arrendamiento o crédito con ATRIX Financiera y cargue sus documentos de forma segura.">
+<title>Solicitud en línea · ATRIX Financiera</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 101 101'%3E%3Cpolygon points='50.468,0 0,100.934 50.468,74.606' fill='%23E71922'/%3E%3Cpolygon points='50.468,0 35.109,87.770 50.468,74.606' fill='%23A50F16'/%3E%3Cpolygon points='50.468,0 100.933,100.934 50.468,74.606' fill='%230D2A52'/%3E%3Cpolygon points='50.468,0 65.828,87.770 50.468,74.606' fill='%23071D3D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<style>
+:root{--white:#fff;--pearl:#f5f5f7;--ink:#1d1d1f;--ink-2:#6e6e73;--ink-3:#86868b;--line:#d2d2d7;--navy:#071D3D;--navy-2:#0f3a7a;--blue:#1c5fc4;--red:#E71922;--ok:#1a7f45;--warn:#b26a00;--bad:#c4161c;
+  --f:'Montserrat',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;--g:max(16px,env(safe-area-inset-left,0px));color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--pearl);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,p,ul,ol{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
+.bar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(0,0,0,.08)}
+.bar .in{max-width:1120px;margin:0 auto;padding:10px var(--g);display:flex;align-items:center;gap:12px}
+.ttl{display:flex;align-items:center;gap:10px;text-decoration:none}
+.wm{display:flex;flex-direction:column;line-height:1}
+.wm b{font-weight:300;font-size:17px;letter-spacing:.42em;color:var(--navy)}
+.wm b sup{font-size:7px;letter-spacing:0;vertical-align:top}
+.wm i{display:block;width:18px;height:2px;background:var(--red);margin:4px 0 3px}
+.wm span{font-size:7.5px;font-weight:600;letter-spacing:.32em;color:var(--navy)}
+.bar .sp{flex:1}
+.bar .who{font-size:13px;color:var(--ink-2);text-align:right;line-height:1.3;max-width:40vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{appearance:none;border:1px solid var(--line);background:var(--white);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn:hover{background:#ececf0}
+.btn.p{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.p:hover{background:var(--navy-2)}
+.btn.big{padding:13px 22px;font-size:15px}
+.btn.sm{padding:5px 11px;font-size:12px}
+.btn.txt{border-color:transparent;background:none;color:var(--blue);padding:5px 8px}
+.btn.txt.bad{color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:default}
+main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
+.card{background:var(--white);border-radius:22px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 40px rgba(7,29,61,.08)}
+.k{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+/* entrada */
+.land{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,470px);gap:40px;align-items:start;padding-top:14px}
+.land>*{min-width:0}
+.hero h1{font-size:clamp(30px,4.6vw,46px);font-weight:600;letter-spacing:-.03em;line-height:1.06;color:var(--navy);margin:10px 0 14px;text-wrap:balance}
+.hero p.s{font-size:16px;color:var(--ink-2);max-width:46ch}
+.pasos{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:18px;counter-reset:p}
+.pasos li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:14px;counter-increment:p}
+.pasos li::before{content:counter(p);width:34px;height:34px;border-radius:50%;background:var(--white);border:1px solid var(--line);display:grid;place-items:center;font-weight:600;color:var(--navy);font-size:14px}
+.pasos b{display:block;color:var(--navy);font-weight:600}
+.pasos span{font-size:13.5px;color:var(--ink-2)}
+.seguro{margin-top:28px;display:flex;gap:10px;font-size:12.5px;color:var(--ink-2);max-width:50ch}
+.seguro svg{flex:0 0 18px;margin-top:1px}
+.fm{padding:26px 26px 24px}
+.seg{display:flex;background:#e8e8ed;border-radius:999px;padding:3px;margin:0 0 20px;gap:2px}
+.seg button{flex:1;border:0;background:none;padding:9px 10px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.seg button.on{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.fm h2{font-size:20px;font-weight:600;color:var(--navy);letter-spacing:-.01em}
+.fm .sub{font-size:13px;color:var(--ink-2);margin:4px 0 18px}
+.dots{display:flex;gap:6px;margin-bottom:16px}
+.dots i{height:4px;flex:1;border-radius:4px;background:#e3e3e8}
+.dots i.on{background:var(--navy)}
+.f{margin-bottom:13px;min-width:0}
+.f label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.f input,.f select,.f textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--white);font-size:15px}
+.f textarea{min-height:76px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,95,196,.15)}
+.f small{display:block;font-size:11.5px;color:var(--ink-3);margin-top:5px}
+.r2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+.opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opt label{margin:0;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;display:flex;gap:8px;align-items:flex-start;line-height:1.3}
+.opt label small{font-weight:400;color:var(--ink-2);margin-top:2px}
+.opt input{width:auto;margin:2px 0 0;accent-color:var(--navy);flex:0 0 auto}
+.opt label:has(input:checked){border-color:var(--navy);background:#f3f6fb}
+.chk{display:flex;gap:10px;font-size:12.5px;color:var(--ink-2);line-height:1.45;margin:4px 0 14px}
+.chk input{margin-top:2px;accent-color:var(--navy);flex:0 0 auto;width:16px;height:16px}
+.chk a{color:var(--navy);font-weight:600}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:6px}
+.nav .btn.p{flex:1}
+.msg{font-size:13px;border-radius:10px;padding:10px 12px;margin-bottom:14px}
+.msg.err{background:#fdecec;color:var(--bad)}
+.msg.ok{background:#e8f5ee;color:var(--ok)}
+.msg.inf{background:#eef3fb;color:var(--navy-2)}
+.help{margin-top:16px;font-size:12.5px;color:var(--ink-2);text-align:center;line-height:1.6}
+.help a{color:var(--navy);font-weight:600}
+.pw{position:relative}
+.pw button{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--ink-2);font-size:12px;font-weight:600;cursor:pointer;padding:6px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* panel */
+.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.hd h1{font-size:clamp(22px,3vw,30px);font-weight:600;color:var(--navy);letter-spacing:-.02em;overflow-wrap:anywhere}
+.hd .s{color:var(--ink-2);font-size:13px;margin-top:4px}
+.chip{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:#eef0f5;color:var(--navy);white-space:nowrap}
+.chip.ok{background:#e8f5ee;color:var(--ok)}
+.chip.warn{background:#fff4e0;color:var(--warn)}
+.chip.bad{background:#fdecec;color:var(--bad)}
+.chip.blue{background:#eef3fb;color:var(--blue)}
+.steps{padding:20px 22px;margin-bottom:16px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.steps div{min-width:0}
+.steps i{display:block;height:5px;border-radius:5px;background:#e3e3e8;margin-bottom:9px}
+.steps .done i{background:var(--navy)}
+.steps .cur i{background:linear-gradient(90deg,var(--navy) 50%,#e3e3e8 50%)}
+.steps b{display:block;font-size:12.5px;font-weight:600;color:var(--ink-3)}
+.steps .done b,.steps .cur b{color:var(--navy)}
+.steps span{display:block;font-size:11.5px;color:var(--ink-3);line-height:1.35;margin-top:2px}
+.aviso{padding:16px 20px;margin-bottom:16px;border-left:4px solid var(--navy)}
+.aviso.bad{border-left-color:var(--bad)}
+.aviso.ok{border-left-color:var(--ok)}
+.aviso b{display:block;color:var(--navy);font-size:14px;margin-bottom:2px}
+.aviso p{font-size:13.5px;color:var(--ink-2);white-space:pre-line}
+.side{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.side>*{min-width:0}
+.box{padding:20px 22px;margin-bottom:16px}
+.box h3{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:10px}
+.box p{font-size:13px;color:var(--ink-2);margin-bottom:10px}
+.dl{display:grid;gap:9px;font-size:13px}
+.dl div{display:flex;justify-content:space-between;gap:12px}
+.dl span{color:var(--ink-3);flex:0 0 auto}
+.dl b{font-weight:600;text-align:right;overflow-wrap:anywhere;min-width:0}
+.sec{padding:20px 22px 8px;margin-bottom:16px}
+.sec>h2{font-size:17px;font-weight:600;color:var(--navy)}
+.sec>.sub{font-size:13px;color:var(--ink-2);margin:2px 0 10px}
+.grp{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 2px}
+.doc{padding:14px 0;border-bottom:1px solid #ececf0}
+.doc:last-child{border-bottom:0}
+.doc .top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.doc .top>div{min-width:0}
+.doc h4{margin:0;font-size:14.5px;font-weight:600;color:var(--ink)}
+.doc h4 em{font-style:normal;font-weight:500;color:var(--ink-3);font-size:12px;margin-left:6px}
+.doc .ay{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+.doc .mot{font-size:12.5px;color:var(--bad);background:#fdecec;border-radius:10px;padding:8px 10px;margin-top:8px}
+.files{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.files li{display:flex;align-items:center;gap:8px;background:var(--pearl);border-radius:10px;padding:7px 8px 7px 12px;font-size:12.5px}
+.files .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.files .m{color:var(--ink-3);flex:0 0 auto}
+.doc .act{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prog{flex:1;min-width:120px;height:5px;border-radius:5px;background:#e3e3e8;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--navy);transition:width .2s}
+.envio{padding:18px 22px;margin-bottom:16px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.envio p{font-size:13.5px;color:var(--ink-2);flex:1;min-width:220px}
+.envio p b{color:var(--navy)}
+.foot{max-width:1120px;margin:0 auto;padding:0 var(--g) 40px;font-size:11.5px;color:var(--ink-3);line-height:1.6}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;padding:16px;z-index:30}
+.modal{width:100%;max-width:420px;padding:26px}
+.modal h2{font-size:19px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.modal p{font-size:13px;color:var(--ink-2);margin-bottom:16px}
+.modal .act{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:900px){.land{grid-template-columns:1fr;gap:26px}.side{grid-template-columns:1fr}.bar .who{display:none}.steps{grid-template-columns:1fr;gap:12px}.steps i{margin-bottom:6px}}
+@media (max-width:480px){.r2,.opt{grid-template-columns:1fr}.fm{padding:22px 18px}.sec,.box,.envio{padding-left:16px;padding-right:16px}.bar #bSitio{display:none}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="in">
+  <a class="ttl" href="https://www.atrixfinanciera.com/" aria-label="ATRIX Financiera, inicio"><svg width="26" height="26" viewBox="0 0 101 101" aria-hidden="true"><polygon points="50.468,0 0,100.934 50.468,74.606" fill="#E71922"/><polygon points="50.468,0 35.109,87.770 50.468,74.606" fill="#A50F16"/><polygon points="50.468,0 100.933,100.934 50.468,74.606" fill="#0D2A52"/><polygon points="50.468,0 65.828,87.770 50.468,74.606" fill="#071D3D"/></svg><span class="wm"><b>ATRIX<sup>®</sup></b><i></i><span>FINANCIERA</span></span></a>
+  <span class="sp"></span>
+  <span class="who" id="who"></span>
+  <button class="btn" id="bSalir" type="button" hidden>Cerrar sesión</button>
+  <a class="btn" id="bSitio" href="https://www.atrixfinanciera.com/">Ir al sitio</a>
+</div></header>
+
+<main>
+  <section class="land" id="vLand">
+    <div class="hero">
+      <div class="k">Solicitud en línea</div>
+      <h1>Inicie su solicitud y cargue sus documentos desde aquí.</h1>
+      <p class="s">Arrendamiento y crédito para empresas en Nuevo León. Empiece en dos minutos, guarde su avance y regrese cuando quiera con su RFC.</p>
+      <ol class="pasos">
+        <li><div><b>Cuéntenos de su empresa</b><span>Datos básicos, el producto y el monto que necesita. Recibe un folio al instante.</span></div></li>
+        <li><div><b>Cargue su expediente</b><span>Le mostramos la lista exacta de documentos para su caso. Súbalos a su ritmo, en PDF o foto.</span></div></li>
+        <li><div><b>Dé seguimiento</b><span>Vea qué documentos fueron aceptados y en qué etapa va su solicitud. Preaprobación en 2 días hábiles con expediente completo.</span></div></li>
+      </ol>
+      <div class="seguro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f3a7a" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>Sus documentos se guardan en un espacio privado: solo usted y el área de Riesgos de ATRIX pueden verlos.</span></div>
+    </div>
+    <div class="card fm">
+      <div class="seg" role="tablist"><button type="button" id="tNueva" class="on">Nueva solicitud</button><button type="button" id="tEntrar">Continuar mi solicitud</button></div>
+      <div id="pNueva">
+        <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
+        <div class="msg err" id="nErr" hidden></div>
+        <form id="fNueva" novalidate autocomplete="on">
+          <div data-paso="0">
+            <h2>Su empresa</h2><p class="sub">Paso 1 de 3</p>
+            <div class="f"><label>Tipo de solicitante</label><div class="opt"><label><input type="radio" name="tipo" value="PM" checked><span>Persona moral<small>Empresa constituida</small></span></label><label><input type="radio" name="tipo" value="PFAE"><span>Persona física<small>Con actividad empresarial</small></span></label></div></div>
+            <div class="f"><label for="nombre" id="lNombre">Razón social</label><input id="nombre" name="nombre" autocomplete="organization" maxlength="160"></div>
+            <div class="r2">
+              <div class="f"><label for="rfc">RFC</label><input id="rfc" name="rfc" autocapitalize="characters" spellcheck="false" maxlength="13" placeholder="ABC123456XY9"></div>
+              <div class="f"><label for="antiguedad">Años de operación</label><select id="antiguedad" name="antiguedad"><option value="">Seleccione</option><option>Menos de 1 año</option><option>1 a 2 años</option><option>2 a 5 años</option><option>Más de 5 años</option></select></div>
+            </div>
+            <div class="f"><label for="giro">Giro o actividad</label><input id="giro" name="giro" maxlength="120" placeholder="Ej. Transporte de carga"></div>
+            <div class="f"><label for="municipio">Municipio donde opera</label><select id="municipio" name="municipio"><option value="">Seleccione</option><option>Monterrey</option><option>San Pedro Garza García</option><option>San Nicolás de los Garza</option><option>Guadalupe</option><option>Apodaca</option><option>General Escobedo</option><option>Santa Catarina</option><option>García</option><option>Juárez</option><option>Santiago</option><option>Cadereyta Jiménez</option><option>Pesquería</option><option>Salinas Victoria</option><option>Ciénega de Flores</option><option>General Zuazua</option><option>El Carmen</option><option>Allende</option><option>Montemorelos</option><option>Linares</option><option>Sabinas Hidalgo</option><option value="Otro municipio de Nuevo León">Otro municipio de Nuevo León</option><option value="FUERA">Fuera de Nuevo León</option></select></div>
+            <div class="f"><label>¿La empresa o sus accionistas mayoritarios son extranjeros?</label><div class="opt"><label><input type="radio" name="extranjero" value="no" checked><span>No</span></label><label><input type="radio" name="extranjero" value="si"><span>Sí</span></label></div></div>
+          </div>
+          <div data-paso="1" hidden>
+            <h2>Lo que necesita</h2><p class="sub">Paso 2 de 3</p>
+            <div class="f"><label>Producto</label><div class="opt"><label><input type="radio" name="producto" value="AF" checked><span>Arrendamiento financiero<small>El activo es suyo al final</small></span></label><label><input type="radio" name="producto" value="AP"><span>Arrendamiento puro<small>Renta deducible, con valor residual</small></span></label><label><input type="radio" name="producto" value="CGI"><span>Crédito con garantía inmobiliaria<small>Simple o revolvente</small></span></label><label><input type="radio" name="producto" value="CE"><span>Crédito estructurado<small>A la medida de su operación</small></span></label></div></div>
+            <div class="r2">
+              <div class="f"><label for="monto">Monto sin IVA (MXN)</label><input id="monto" name="monto" inputmode="numeric" placeholder="Ej. 850,000"><small>De $100,000 a $2,500,000</small></div>
+              <div class="f"><label for="plazo">Plazo deseado</label><select id="plazo" name="plazo"><option value="">Seleccione</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="Por definir">Por definir</option></select></div>
+            </div>
+            <div class="f"><label for="activo" id="lActivo">Activo que desea arrendar</label><textarea id="activo" name="activo" maxlength="600" placeholder="Marca, modelo, año y proveedor, si ya lo tiene cotizado."></textarea></div>
+            <div class="f"><label for="ventas">Ventas mensuales aproximadas</label><select id="ventas" name="ventas"><option value="">Seleccione</option><option>Hasta $250,000</option><option>$250,000 a $500,000</option><option>$500,000 a $1,000,000</option><option>$1,000,000 a $3,000,000</option><option>Más de $3,000,000</option></select></div>
+          </div>
+          <div data-paso="2" hidden>
+            <h2>Contacto y acceso</h2><p class="sub">Paso 3 de 3 · con su RFC y esta contraseña podrá regresar a su solicitud</p>
+            <div class="r2">
+              <div class="f"><label for="contacto">Nombre de contacto</label><input id="contacto" name="contacto" autocomplete="name" maxlength="120"></div>
+              <div class="f"><label for="cargo">Cargo</label><input id="cargo" name="cargo" autocomplete="organization-title" maxlength="80" placeholder="Ej. Representante legal"></div>
+            </div>
+            <div class="r2">
+              <div class="f"><label for="telefono">Teléfono (WhatsApp)</label><input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="10 dígitos"></div>
+              <div class="f"><label for="correo">Correo electrónico</label><input id="correo" name="correo" type="email" autocomplete="email" maxlength="120"></div>
+            </div>
+            <div class="r2">
+              <div class="f"><label for="pw1">Cree una contraseña</label><div class="pw"><input id="pw1" name="new-password" type="password" autocomplete="new-password"><button type="button" data-ver="pw1">Ver</button></div><small>Mínimo 8 caracteres, con letras y números</small></div>
+              <div class="f"><label for="pw2">Confirme la contraseña</label><input id="pw2" type="password" autocomplete="new-password"></div>
+            </div>
+            <div class="hp" aria-hidden="true"><label>Sitio web<input name="web" tabindex="-1" autocomplete="off"></label></div>
+            <label class="chk"><input type="checkbox" id="acepto"><span>He leído y acepto el <a href="https://www.atrixfinanciera.com/#privacidad" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="https://www.atrixfinanciera.com/#terminos" target="_blank" rel="noopener">Términos y Condiciones</a>, y autorizo a COLIUM, S.A. de C.V. a tratar los datos y documentos que comparta para analizar mi solicitud y a contactarme al respecto.</span></label>
+          </div>
+          <div class="nav"><button class="btn big" type="button" id="bAtras" hidden>Atrás</button><button class="btn p big" type="submit" id="bSig">Continuar</button></div>
+        </form>
+      </div>
+      <div id="pEntrar" hidden>
+        <form id="fLogin" autocomplete="on">
+          <h2>Continuar mi solicitud</h2><p class="sub">Entre con el RFC y la contraseña que creó al iniciar su solicitud.</p>
+          <div class="msg err" id="lErr" hidden></div>
+          <div class="f"><label for="lrfc">RFC</label><input id="lrfc" name="username" autocomplete="username" autocapitalize="characters" spellcheck="false" maxlength="13" required></div>
+          <div class="f"><label for="lpw">Contraseña</label><div class="pw"><input id="lpw" name="password" type="password" autocomplete="current-password" required><button type="button" data-ver="lpw">Ver</button></div></div>
+          <div class="nav"><button class="btn p big" id="bEntrar" type="submit">Entrar</button></div>
+        </form>
+        <div class="help">¿Olvidó su contraseña? Escríbanos a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> o por <a href="https://wa.me/528134127296" target="_blank" rel="noopener">WhatsApp 81 3412 7296</a> y le generamos una nueva.<br>¿Ya es cliente? Consulte su crédito en el <a href="/portal/">Portal de Clientes</a>.</div>
+      </div>
+    </div>
+  </section>
+  <section id="vPanel" hidden></section>
+</main>
+<div class="foot">ATRIX® es una marca comercial de COLIUM, S.A. de C.V. El inicio de una solicitud y la carga de documentos no constituyen una oferta ni la aprobación de un financiamiento; toda operación está sujeta al análisis del área de Riesgos y a la firma del contrato correspondiente. Los créditos se otorgan únicamente en Nuevo León.</div>
+<div id="modal"></div>
+
+<script>
+(() => {
+  const SB = 'https://sikxhcbxtgpuxoxxqona.supabase.co';
+  const KEY = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
+  const SKEY = 'atrix_solicitud_sesion', DOM = '@solicitud.atrixfinanciera.com', BUCKET = 'solicitudes';
+  const MAX_MB = 15, MAX_ARCH = 12, MONTO_MIN = 100000, MONTO_MAX = 2500000;
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const money = n => (Number(n) || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
+  const fdt = iso => { if (!iso) return '—'; try { return new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Monterrey' }); } catch (e) { return String(iso).slice(0, 10); } };
+  const peso = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+  const emailDe = rfc => String(rfc || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, 'y').replace(/[^a-z0-9]/g, '') + DOM;
+  const st = { ses: null, sol: null, files: [], paso: 0, sub: {} };
+
+  /* ---------- Catálogos (los mismos que usa ATRIX Cartera para revisar el expediente) ---------- */
+  const PROD = { AF: 'Arrendamiento financiero', AP: 'Arrendamiento puro', CGI: 'Crédito con garantía inmobiliaria', CE: 'Crédito estructurado' };
+  const ETAPA = { recibida: ['Solicitud recibida', 'blue'], documentos: ['Integrando expediente', 'blue'], revision: ['En análisis de Riesgos', 'warn'], preaprobada: ['Preaprobada', 'ok'], aprobada: ['Aprobada', 'ok'], formalizada: ['Formalizada', 'ok'], rechazada: ['No aprobada', 'bad'], cancelada: ['Cancelada', ''] };
+  const ORDEN = ['recibida', 'documentos', 'revision', 'preaprobada', 'aprobada', 'formalizada'];
+  const PASOS = [['Solicitud', 'Datos y folio'], ['Expediente', 'Carga de documentos'], ['Análisis', 'Revisión de Riesgos'], ['Preaprobación', '2 días hábiles'], ['Aprobación', 'Comité y condiciones']];
+  const DOCS = [
+    { g: 'Empresa', c: 'acta', n: 'Acta constitutiva', a: 'Completa y con datos de inscripción en el Registro Público de Comercio.', t: ['PM'] },
+    { g: 'Empresa', c: 'poderes', n: 'Poderes del representante legal', a: 'Escritura donde consten sus facultades, si no están en el acta constitutiva.', t: ['PM'] },
+    { g: 'Empresa', c: 'reformas', n: 'Actas de asamblea o reformas', a: 'Solo si hubo cambios de accionistas, objeto social o administración.', t: ['PM'], o: 1 },
+    { g: 'Empresa', c: 'id_rep', n: 'Identificación oficial del representante legal', a: 'INE por ambos lados o pasaporte vigente.', t: ['PM'] },
+    { g: 'Titular', c: 'id_titular', n: 'Identificación oficial del titular', a: 'INE por ambos lados o pasaporte vigente.', t: ['PFAE'] },
+    { g: 'Titular', c: 'acta_mat', n: 'Acta de matrimonio', a: 'Solo si está casado(a), para conocer el régimen patrimonial.', t: ['PFAE'], o: 1 },
+    { g: 'Fiscal', c: 'csf', n: 'Constancia de Situación Fiscal', a: 'Emitida por el SAT, con antigüedad no mayor a 3 meses.' },
+    { g: 'Fiscal', c: 'opinion', n: 'Opinión de cumplimiento del SAT (32-D)', a: 'En sentido positivo y emitida en los últimos 30 días.' },
+    { g: 'Fiscal', c: 'declaracion', n: 'Declaración anual del último ejercicio', a: 'Con acuse de recibo del SAT.' },
+    { g: 'Fiscal', c: 'domicilio', n: 'Comprobante de domicilio del negocio', a: 'Luz, agua, teléfono o predial, no mayor a 3 meses.' },
+    { g: 'Financiera', c: 'edoscta', n: 'Estados de cuenta bancarios', a: 'Últimos 6 meses de la cuenta principal del negocio, completos (todas las hojas).' },
+    { g: 'Financiera', c: 'edosfin', n: 'Estados financieros', a: 'Último ejercicio y parcial reciente (balance y estado de resultados).', oSi: s => s.tipo === 'PFAE' },
+    { g: 'Operación', c: 'cotizacion', n: 'Cotización del activo', a: 'Emitida por el proveedor, a nombre del solicitante, con precio, marca, modelo y año.', p: ['AF', 'AP'] },
+    { g: 'Operación', c: 'proyecto', n: 'Descripción del destino del crédito', a: 'Qué necesita financiar, para qué y cómo lo pagará. Puede ser una carta o presentación breve.', p: ['CGI', 'CE'] },
+    { g: 'Garantía', c: 'escritura', n: 'Escritura del inmueble en garantía', a: 'Con datos de inscripción en el Registro Público de la Propiedad.', p: ['CGI', 'CE'], oSi: s => s.producto === 'CE' },
+    { g: 'Garantía', c: 'predial', n: 'Predial y certificado de libertad de gravamen', a: 'Boleta predial del año en curso y certificado reciente.', p: ['CGI', 'CE'], oSi: s => s.producto === 'CE' },
+    { g: 'Aval', c: 'id_aval', n: 'Identificación oficial del aval', a: 'INE por ambos lados o pasaporte vigente del obligado solidario.' },
+    { g: 'Aval', c: 'domicilio_aval', n: 'Comprobante de domicilio del aval', a: 'No mayor a 3 meses.' },
+    { g: 'Adicional', c: 'otros', n: 'Otros documentos', a: 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', o: 1 }
+  ];
+  const docsDe = s => DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) }));
+
+  /* ---------- Servidor ---------- */
+  const guardar = s => { st.ses = s; try { if (s) sessionStorage.setItem(SKEY, JSON.stringify(s)); else sessionStorage.removeItem(SKEY); } catch (e) { } };
+  const leer = () => { try { return JSON.parse(sessionStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } };
+  const errTxt = j => { const c = j && (j.error_code || j.code); const m = (j && (j.msg || j.message || j.error_description || (typeof j.error === 'string' ? j.error : ''))) || '';
+    if (c === 'invalid_credentials' || /invalid login/i.test(m)) return 'RFC o contraseña incorrectos.';
+    if (c === 'user_banned' || /banned/i.test(m)) return 'Su acceso está suspendido. Contacte a ATRIX.';
+    if (/rate limit/i.test(m) || /rate_limit/.test(c || '')) return 'Demasiados intentos. Espere unos minutos e intente de nuevo.';
+    if (c === 'weak_password' || /weak|at least/i.test(m)) return 'La contraseña es muy débil: use al menos 8 caracteres combinando letras y números.';
+    if (c === 'same_password') return 'La nueva contraseña debe ser distinta a la actual.';
+    return m || 'No fue posible completar la operación. Intente de nuevo.'; };
+  async function api(path, opt) {
+    opt = opt || {}; const h = { apikey: KEY, 'Content-Type': 'application/json' }; if (opt.auth && st.ses) h.Authorization = 'Bearer ' + st.ses.access_token;
+    let r; try { r = await fetch(SB + path, { method: opt.method || 'GET', headers: h, body: opt.body ? JSON.stringify(opt.body) : undefined, cache: 'no-store' }); } catch (e) { return { ok: false, status: 0, json: { msg: 'Sin conexión. Revise su internet e intente de nuevo.' } }; }
+    let j = null; try { j = await r.json(); } catch (e) { } return { ok: r.ok, status: r.status, json: j };
+  }
+  async function sesionVigente() {
+    if (!st.ses) return false;
+    if (st.ses.expires_at && st.ses.expires_at * 1000 > Date.now() + 60000) return true;
+    const r = await api('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: st.ses.refresh_token } });
+    if (!r.ok) { guardar(null); return false; } guardar(r.json); return true;
+  }
+  async function entrar(rfc, pass) {
+    const r = await api('/auth/v1/token?grant_type=password', { method: 'POST', body: { email: emailDe(rfc), password: pass } });
+    if (!r.ok) return errTxt(r.json); guardar(r.json); return null;
+  }
+  async function listar() {
+    const r = await api('/storage/v1/object/list/' + BUCKET, { method: 'POST', auth: true, body: { prefix: st.ses.user.id + '/', limit: 500, sortBy: { column: 'created_at', order: 'asc' } } });
+    st.files = r.ok && Array.isArray(r.json) ? r.json.filter(o => o && o.id).map(o => { const p = o.name.split('__'); return { ruta: st.ses.user.id + '/' + o.name, clave: p[0], nombre: p.slice(2).join('__') || o.name, fecha: o.created_at, tam: (o.metadata && o.metadata.size) || 0 }; }) : [];
+  }
+  async function cargar() {
+    if (!(await sesionVigente())) return mostrarLand('Su sesión terminó. Vuelva a entrar.');
+    const r = await api('/rest/v1/solicitudes?select=*&limit=1', { auth: true });
+    if (r.status === 401) { guardar(null); return mostrarLand('Su sesión terminó. Vuelva a entrar.'); }
+    if (!r.ok) return mostrarLand(errTxt(r.json));
+    st.sol = (r.json || [])[0] || null;
+    if (!st.sol) { guardar(null); return mostrarLand('Este usuario no tiene una solicitud en línea. Si ya es cliente, entre al Portal de Clientes.'); }
+    await listar(); pintar();
+  }
+
+  /* ---------- Entrada: nueva solicitud y continuar ---------- */
+  function mostrarLand(msg) {
+    $('#vPanel').hidden = true; $('#vLand').hidden = false; $('#bSalir').hidden = true; $('#bSitio').hidden = false; $('#who').textContent = '';
+    if (msg) { tab('entrar'); const e = $('#lErr'); e.textContent = msg; e.hidden = false; }
+  }
+  function tab(t) { const n = t === 'nueva'; $('#tNueva').classList.toggle('on', n); $('#tEntrar').classList.toggle('on', !n); $('#pNueva').hidden = !n; $('#pEntrar').hidden = n; }
+  $('#tNueva').addEventListener('click', () => tab('nueva')); $('#tEntrar').addEventListener('click', () => tab('entrar'));
+  document.addEventListener('click', e => { const b = e.target.closest('[data-ver]'); if (!b) return; const i = document.getElementById(b.dataset.ver); i.type = i.type === 'password' ? 'text' : 'password'; b.textContent = i.type === 'password' ? 'Ver' : 'Ocultar'; });
+  const fN = $('#fNueva');
+  const val = n => { const el = fN.elements[n]; return el ? String(el.value || '').trim() : ''; };
+  const montoNum = () => Number(val('monto').replace(/[^\d.]/g, '')) || 0;
+  $('#monto').addEventListener('input', e => { const d = e.target.value.replace(/[^\d]/g, '').slice(0, 9); e.target.value = d ? Number(d).toLocaleString('es-MX') : ''; });
+  $('#rfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
+  $('#lrfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
+  fN.addEventListener('change', () => { const pm = val('tipo') === 'PM'; $('#lNombre').textContent = pm ? 'Razón social' : 'Nombre completo'; $('#rfc').placeholder = pm ? 'ABC123456XY9' : 'ABCD123456XY9'; const arr = ['AF', 'AP'].includes(val('producto')); $('#lActivo').textContent = arr ? 'Activo que desea arrendar' : 'Destino del crédito y garantía'; $('#activo').placeholder = arr ? 'Marca, modelo, año y proveedor, si ya lo tiene cotizado.' : 'Para qué necesita el crédito y qué inmueble ofrecería en garantía.'; });
+  function validar(p) {
+    if (p === 0) {
+      const pm = val('tipo') === 'PM';
+      if (val('nombre').length < 3) return ['nombre', pm ? 'Escriba la razón social de la empresa.' : 'Escriba su nombre completo.'];
+      if (!(pm ? /^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/ : /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/).test(val('rfc'))) return ['rfc', pm ? 'El RFC de una persona moral tiene 12 caracteres. Revíselo.' : 'El RFC de una persona física tiene 13 caracteres. Revíselo.'];
+      if (!val('antiguedad')) return ['antiguedad', 'Indique los años de operación.'];
+      if (!val('giro')) return ['giro', 'Indique el giro o actividad.'];
+      if (!val('municipio')) return ['municipio', 'Seleccione el municipio donde opera.'];
+      if (val('municipio') === 'FUERA') return ['municipio', 'Por ahora ATRIX otorga financiamiento únicamente a empresas con operación en Nuevo León. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
+      if (val('extranjero') === 'si') return ['extranjero', 'Por política, por ahora no atendemos empresas con capital mayoritario extranjero. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
+    } else if (p === 1) {
+      const m = montoNum(); if (!(m >= MONTO_MIN && m <= MONTO_MAX)) return ['monto', 'Por ahora atendemos operaciones de $100,000 a $2,500,000 pesos.'];
+      if (!val('plazo')) return ['plazo', 'Seleccione el plazo deseado.'];
+      if (val('activo').length < 5) return ['activo', ['AF', 'AP'].includes(val('producto')) ? 'Describa brevemente el activo que desea arrendar.' : 'Describa brevemente el destino del crédito.'];
+    } else {
+      if (!val('contacto')) return ['contacto', 'Escriba el nombre de la persona de contacto.'];
+      if (val('telefono').replace(/\D/g, '').slice(-10).length !== 10) return ['telefono', 'Escriba un teléfono de 10 dígitos.'];
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('correo'))) return ['correo', 'Escriba un correo electrónico válido.'];
+      const p1 = $('#pw1').value; if (p1.length < 8 || !/[A-Za-z]/.test(p1) || !/\d/.test(p1)) return ['pw1', 'La contraseña debe tener al menos 8 caracteres, con letras y números.'];
+      if (p1 !== $('#pw2').value) return ['pw2', 'Las contraseñas no coinciden.'];
+      if (!$('#acepto').checked) return ['acepto', 'Para continuar es necesario aceptar el Aviso de Privacidad.'];
+    }
+    return null;
+  }
+  function irPaso(p) { st.paso = p; fN.querySelectorAll('[data-paso]').forEach(d => { d.hidden = Number(d.dataset.paso) !== p; }); document.querySelectorAll('#dots i').forEach((d, i) => d.classList.toggle('on', i <= p)); $('#bAtras').hidden = p === 0; $('#bSig').textContent = p === 2 ? 'Enviar solicitud' : 'Continuar'; $('#nErr').hidden = true; const f = fN.querySelector('[data-paso="' + p + '"] input:not([type=radio]),[data-paso="' + p + '"] select'); if (f && window.matchMedia('(min-width:900px)').matches) f.focus(); }
+  $('#bAtras').addEventListener('click', () => irPaso(st.paso - 1));
+  fN.addEventListener('submit', async ev => {
+    ev.preventDefault(); const e = $('#nErr'); const v = validar(st.paso);
+    if (v) { e.textContent = v[1]; e.hidden = false; const el = document.getElementById(v[0]) || fN.elements[v[0]]; if (el && el.focus) el.focus(); e.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+    e.hidden = true; if (st.paso < 2) return irPaso(st.paso + 1);
+    const b = $('#bSig'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Enviando…';
+    let prom = ''; try { prom = sessionStorage.getItem('atrix_promotor') || ''; } catch (x) { }
+    const cuerpo = { accion: 'alta', tipo: val('tipo'), rfc: val('rfc'), nombre: val('nombre'), producto: val('producto'), monto: montoNum(), nuevoLeon: true, extranjero: false, privacidad: true, password: $('#pw1').value, promotor: prom, web: val('web'),
+      datos: { contacto: val('contacto'), cargo: val('cargo'), telefono: val('telefono'), correo: val('correo'), giro: val('giro'), antiguedad: val('antiguedad'), municipio: val('municipio'), activo: val('activo'), plazo: val('plazo'), ventas: val('ventas') } };
+    const r = await api('/functions/v1/solicitud-alta', { method: 'POST', body: cuerpo });
+    if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; if (r.json && r.json.existe) { $('#lrfc').value = val('rfc'); } return; }
+    const err = await entrar(val('rfc'), $('#pw1').value); b.disabled = false; b.textContent = 'Enviar solicitud';
+    if (err) { $('#lrfc').value = val('rfc'); return mostrarLand('Su solicitud ' + r.json.folio + ' quedó registrada. Entre con su RFC y contraseña para cargar sus documentos.'); }
+    st.nueva = true; fN.reset(); irPaso(0); await cargar(); window.scrollTo(0, 0);
+  });
+  $('#fLogin').addEventListener('submit', async ev => {
+    ev.preventDefault(); const b = $('#bEntrar'), e = $('#lErr'); e.hidden = true; b.disabled = true; b.innerHTML = '<span class="spin"></span> Entrando…';
+    const err = await entrar($('#lrfc').value, $('#lpw').value); b.disabled = false; b.textContent = 'Entrar';
+    if (err) { e.textContent = err; e.hidden = false; return; } $('#lpw').value = ''; await cargar(); window.scrollTo(0, 0);
+  });
+  $('#bSalir').addEventListener('click', async () => { try { await api('/auth/v1/logout', { method: 'POST', auth: true }); } catch (e) { } guardar(null); st.sol = null; mostrarLand(); tab('entrar'); });
+
+  /* ---------- Panel del solicitante ---------- */
+  function estadoDoc(d, S) {
+    const fs = st.files.filter(f => f.clave === d.c); const rv = (S.revision || {})[d.c] || {};
+    const nuevo = rv.fecha && fs.some(f => f.fecha > rv.fecha);
+    if (rv.estado === 'aceptado') return { fs, e: 'aceptado', chip: ['Aceptado', 'ok'] };
+    if (rv.estado === 'rechazado' && !nuevo) return { fs, e: 'rechazado', chip: ['Requiere corrección', 'bad'], motivo: rv.motivo };
+    if (fs.length) return { fs, e: 'recibido', chip: ['Recibido · en revisión', 'blue'] };
+    return { fs, e: 'pendiente', chip: d.opc ? ['Opcional', ''] : ['Pendiente', 'warn'] };
+  }
+  function pintar() {
+    const S = st.sol, D = S.datos || {}, cerrada = ['formalizada', 'rechazada', 'cancelada'].includes(S.etapa);
+    $('#vLand').hidden = true; $('#vPanel').hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true; $('#who').textContent = S.nombre;
+    const docs = docsDe(S).map(d => ({ ...d, x: estadoDoc(d, S) }));
+    const req = docs.filter(d => !d.opc), listos = req.filter(d => d.x.e === 'recibido' || d.x.e === 'aceptado').length, falt = req.length - listos, corr = docs.filter(d => d.x.e === 'rechazado').length;
+    const idx = ORDEN.indexOf(S.etapa), et = ETAPA[S.etapa] || [S.etapa, ''];
+    const pasos = PASOS.map((p, i) => `<div class="${idx > i || S.etapa === 'formalizada' ? 'done' : idx === i ? 'cur' : ''}"><i></i><b>${p[0]}</b><span>${p[1]}</span></div>`).join('');
+    let aviso = '';
+    if (st.nueva) aviso += `<div class="card aviso ok"><b>Su solicitud quedó registrada con el folio ${esc(S.folio)}</b><p>Guarde su folio. Para regresar, entre a esta página con su RFC y la contraseña que acaba de crear. El siguiente paso es cargar los documentos de la lista.</p></div>`;
+    if (S.etapa === 'rechazada') aviso += `<div class="card aviso bad"><b>Su solicitud no fue aprobada en esta ocasión</b><p>${esc(S.mensaje || 'Agradecemos su interés. Si su situación cambia, con gusto la revisamos de nuevo.')}</p></div>`;
+    else if (S.mensaje) aviso += `<div class="card aviso"><b>Mensaje de ATRIX</b><p>${esc(S.mensaje)}</p></div>`;
+    let envio = '';
+    if (!cerrada && ['recibida', 'documentos'].includes(S.etapa)) envio = `<div class="card envio"><p>${falt ? `<b>Faltan ${falt} de ${req.length} documentos obligatorios.</b> Puede cargarlos en varias visitas; su avance se guarda solo.` : '<b>Su expediente está completo.</b> Envíelo a revisión para que el área de Riesgos inicie el análisis.'}</p><button class="btn p big" id="bEnviar" type="button" ${falt ? 'disabled' : ''}>Enviar expediente a revisión</button></div>`;
+    else if (S.etapa === 'revision') envio = `<div class="card envio"><p><b>Expediente en análisis${S.enviado ? ' desde el ' + fdt(S.enviado) : ''}.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección: vuelva a cargarlo para continuar.' : 'Con el expediente completo, la preaprobación toma 2 días hábiles. Si Riesgos necesita algo más, lo verá aquí.'}</p></div>`;
+    let grupo = ''; const lista = docs.map(d => { const x = d.x; const h = d.g !== grupo ? `<div class="grp">${esc(d.g)}</div>` : ''; grupo = d.g;
+      const puede = !cerrada && x.e !== 'aceptado' && x.fs.length < MAX_ARCH; const sub = st.sub[d.c];
+      return `${h}<div class="doc" data-doc="${d.c}"><div class="top"><div><h4>${esc(d.n)}${d.opc ? '<em>opcional</em>' : ''}</h4><div class="ay">${esc(d.a)}</div></div><span class="chip ${x.chip[1]}">${x.chip[0]}</span></div>
+        ${x.e === 'rechazado' ? `<div class="mot"><b>Motivo:</b> ${esc(x.motivo || 'El documento no cumple con lo solicitado.')} Cargue una nueva versión.</div>` : ''}
+        ${x.fs.length ? `<ul class="files">${x.fs.map(f => `<li><span class="n" title="${esc(f.nombre)}">${esc(f.nombre)}</span><span class="m">${peso(f.tam)} · ${fdt(f.fecha)}</span><button class="btn txt sm" type="button" data-ver-arch="${esc(f.ruta)}">Ver</button>${!cerrada && x.e !== 'aceptado' ? `<button class="btn txt sm bad" type="button" data-del="${esc(f.ruta)}" data-nom="${esc(f.nombre)}">Quitar</button>` : ''}</li>`).join('')}</ul>` : ''}
+        ${sub ? `<div class="act"><span style="font-size:12.5px;color:var(--ink-2)">${esc(sub.txt)}</span><span class="prog"><i style="width:${sub.pct}%"></i></span></div>` : puede ? `<div class="act"><label class="btn sm"><input type="file" hidden multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp,application/pdf,image/*" data-up="${d.c}">${x.fs.length ? 'Agregar archivo' : 'Subir archivo'}</label></div>` : ''}</div>`; }).join('');
+    $('#vPanel').innerHTML = `
+      <div class="hd"><div><div class="k">Solicitud ${esc(S.folio)}</div><h1>${esc(S.nombre)}</h1><div class="s">${esc(PROD[S.producto] || S.producto)} · ${money(S.monto)} · iniciada el ${fdt(S.creado)}</div></div><span class="chip ${et[1]}" style="font-size:13px;padding:6px 14px">${et[0]}</span></div>
+      ${aviso}
+      ${S.etapa === 'rechazada' || S.etapa === 'cancelada' ? '' : `<div class="card steps">${pasos}</div>`}
+      <div class="side"><div>
+        ${envio}
+        <div class="card sec"><h2>Documentos de su expediente</h2><div class="sub">${listos} de ${req.length} obligatorios cargados · PDF o foto legible (JPG, PNG, HEIC), hasta ${MAX_MB} MB por archivo. Puede subir varios archivos por documento.</div>
+          <div class="msg err" id="dErr" hidden></div>${lista}</div>
+      </div><div>
+        <div class="card box"><h3>Su solicitud</h3><div class="dl">
+          <div><span>Folio</span><b>${esc(S.folio)}</b></div><div><span>RFC</span><b>${esc(S.rfc)}</b></div><div><span>Producto</span><b>${esc(PROD[S.producto] || S.producto)}</b></div><div><span>Monto</span><b>${money(S.monto)}</b></div>
+          ${D.plazo ? `<div><span>Plazo</span><b>${esc(D.plazo)}${/^\d+$/.test(D.plazo) ? ' meses' : ''}</b></div>` : ''}${D.municipio ? `<div><span>Municipio</span><b>${esc(D.municipio)}</b></div>` : ''}${D.contacto ? `<div><span>Contacto</span><b>${esc(D.contacto)}</b></div>` : ''}${D.telefono ? `<div><span>Teléfono</span><b>${esc(D.telefono)}</b></div>` : ''}</div></div>
+        <div class="card box"><h3>¿Necesita ayuda?</h3><p>Si tiene dudas sobre algún documento o quiere corregir un dato de su solicitud, escríbanos indicando su folio.</p><a class="btn p" href="https://wa.me/528134127296?text=${encodeURIComponent('Hola, tengo una duda sobre mi solicitud ' + S.folio + '.')}" target="_blank" rel="noopener">WhatsApp 81 3412 7296</a><a class="btn" style="margin-top:8px" href="mailto:atencion@atrixfinanciera.com?subject=${encodeURIComponent('Solicitud ' + S.folio)}">Escribir un correo</a></div>
+        <div class="card box"><h3>Su acceso</h3><p>Usuario: su RFC. Puede cambiar su contraseña cuando quiera.</p><button class="btn" type="button" id="bPass">Cambiar contraseña</button></div>
+      </div></div>`;
+  }
+  const dErr = m => { const e = $('#dErr'); if (!e) return; e.textContent = m || ''; e.hidden = !m; if (m) e.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+  const limpio = n => { n = String(n || 'archivo').normalize('NFD').replace(/[̀-ͯ]/g, ''); const i = n.lastIndexOf('.'); const ext = i > 0 ? n.slice(i + 1).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5) : ''; const base = (i > 0 ? n.slice(0, i) : n).replace(/[^A-Za-z0-9._-]+/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '').slice(0, 70) || 'archivo'; return base + (ext ? '.' + ext : ''); };
+  const MIME = { pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', heic: 'image/heic', heif: 'image/heif', webp: 'image/webp' };
+  function subir(ruta, file, tipo, onPct) {
+    return new Promise(res => { const x = new XMLHttpRequest(); x.open('POST', SB + '/storage/v1/object/' + BUCKET + '/' + ruta); x.setRequestHeader('apikey', KEY); x.setRequestHeader('Authorization', 'Bearer ' + st.ses.access_token); x.setRequestHeader('Content-Type', tipo); x.setRequestHeader('cache-control', 'no-cache');
+      x.upload.onprogress = e => { if (e.lengthComputable) onPct(Math.round(e.loaded / e.total * 100)); };
+      x.onload = () => { let j = null; try { j = JSON.parse(x.responseText); } catch (e) { } res({ ok: x.status >= 200 && x.status < 300, status: x.status, json: j }); };
+      x.onerror = () => res({ ok: false, status: 0, json: null }); x.send(file); });
+  }
+  async function subirVarios(clave, archivos) {
+    dErr(''); const ya = st.files.filter(f => f.clave === clave).length; const errores = []; let hechos = 0;
+    if (!(await sesionVigente())) return mostrarLand('Su sesión terminó. Vuelva a entrar.');
+    const lista = Array.from(archivos).slice(0, Math.max(0, MAX_ARCH - ya));
+    if (archivos.length > lista.length) errores.push('Se permite un máximo de ' + MAX_ARCH + ' archivos por documento.');
+    for (let i = 0; i < lista.length; i++) { const f = lista[i]; const nom = limpio(f.name); const ext = nom.split('.').pop(); const tipo = MIME[ext];
+      if (!tipo) { errores.push('«' + f.name + '»: formato no admitido. Use PDF, JPG, PNG o HEIC.'); continue; }
+      if (f.size > MAX_MB * 1048576) { errores.push('«' + f.name + '» pesa ' + peso(f.size) + '; el máximo es ' + MAX_MB + ' MB.'); continue; }
+      if (!f.size) { errores.push('«' + f.name + '» está vacío.'); continue; }
+      st.sub[clave] = { txt: 'Subiendo ' + (i + 1) + ' de ' + lista.length + '…', pct: 0 }; pintar();
+      const r = await subir(st.ses.user.id + '/' + clave + '__' + Date.now().toString(36) + '__' + nom, f, tipo, p => { const b = document.querySelector('[data-doc="' + clave + '"] .prog i'); if (b) b.style.width = p + '%'; });
+      if (r.ok) hechos++; else errores.push('«' + f.name + '»: ' + (r.status === 0 ? 'se perdió la conexión.' : r.status === 413 ? 'el archivo es demasiado grande.' : r.status === 415 ? 'formato no admitido.' : 'no se pudo subir (' + r.status + ').'));
+    }
+    delete st.sub[clave];
+    if (hechos) { const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'docs' } }); if (r.ok && r.json) st.sol = r.json; await listar(); }
+    st.nueva = false; pintar(); if (errores.length) dErr(errores.join(' '));
+  }
+  function modal(html) { $('#modal').innerHTML = html ? `<div class="modal-bg"><div class="card modal" role="dialog" aria-modal="true">${html}</div></div>` : ''; }
+  $('#vPanel').addEventListener('change', e => { const i = e.target.closest('[data-up]'); if (i && i.files && i.files.length) subirVarios(i.dataset.up, i.files); });
+  $('#vPanel').addEventListener('click', async e => {
+    const ver = e.target.closest('[data-ver-arch]'), del = e.target.closest('[data-del]');
+    if (ver) { const w = window.open('', '_blank'); if (!(await sesionVigente())) { if (w) w.close(); return mostrarLand('Su sesión terminó. Vuelva a entrar.'); }
+      const r = await api('/storage/v1/object/sign/' + BUCKET + '/' + ver.dataset.verArch.split('/').map(encodeURIComponent).join('/'), { method: 'POST', auth: true, body: { expiresIn: 300 } });
+      if (r.ok && r.json && r.json.signedURL) { const u = SB + '/storage/v1' + r.json.signedURL; if (w) w.location = u; else location.href = u; } else { if (w) w.close(); dErr('No se pudo abrir el archivo. Intente de nuevo.'); } return; }
+    if (del) { modal(`<h2>Quitar archivo</h2><p>Se eliminará «${esc(del.dataset.nom)}» de su expediente.</p><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="del" data-ruta="${esc(del.dataset.del)}">Quitar</button></div>`); return; }
+    if (e.target.closest('#bEnviar')) { modal(`<h2>Enviar expediente a revisión</h2><p>El área de Riesgos de ATRIX comenzará el análisis. Podrá seguir cargando documentos si se le solicitan.</p><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="enviar">Enviar</button></div>`); return; }
+    if (e.target.closest('#bPass')) { modal(`<h2>Cambiar contraseña</h2><p>Mínimo 8 caracteres, con letras y números.</p><div class="msg err" id="pErr" hidden></div><div class="f"><label for="np1">Nueva contraseña</label><input id="np1" type="password" autocomplete="new-password"></div><div class="f"><label for="np2">Confirmar contraseña</label><input id="np2" type="password" autocomplete="new-password"></div><div class="act"><button class="btn" type="button" data-m="x">Cancelar</button><button class="btn p" type="button" data-m="pass">Guardar</button></div>`); const i = $('#np1'); if (i) i.focus(); }
+  });
+  $('#modal').addEventListener('click', async e => {
+    const b = e.target.closest('[data-m]'); if (!b) { if (e.target.classList.contains('modal-bg')) modal(''); return; }
+    const m = b.dataset.m; if (m === 'x') return modal('');
+    if (!(await sesionVigente())) { modal(''); return mostrarLand('Su sesión terminó. Vuelva a entrar.'); }
+    b.disabled = true;
+    if (m === 'del') { const r = await api('/storage/v1/object/' + BUCKET, { method: 'DELETE', auth: true, body: { prefixes: [b.dataset.ruta] } }); modal(''); await listar(); pintar(); if (!r.ok || !(r.json || []).length) dErr('No se pudo quitar el archivo: el documento ya fue aceptado o la solicitud está cerrada.'); else api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'docs' } }); }
+    else if (m === 'enviar') { const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'enviar' } }); modal(''); if (r.ok && r.json) { st.sol = r.json; st.nueva = false; pintar(); window.scrollTo({ top: 0, behavior: 'smooth' }); } else dErr(errTxt(r.json)); }
+    else if (m === 'pass') { const p1 = $('#np1').value, pe = $('#pErr'); const mal = p1.length < 8 || !/[A-Za-z]/.test(p1) || !/\d/.test(p1) ? 'La contraseña debe tener al menos 8 caracteres, con letras y números.' : p1 !== $('#np2').value ? 'Las contraseñas no coinciden.' : '';
+      if (mal) { pe.textContent = mal; pe.hidden = false; b.disabled = false; return; }
+      const r = await api('/auth/v1/user', { method: 'PUT', auth: true, body: { password: p1 } }); if (!r.ok) { pe.textContent = errTxt(r.json); pe.hidden = false; b.disabled = false; return; }
+      modal(`<h2>Contraseña actualizada</h2><p>Úsela la próxima vez que entre a su solicitud.</p><div class="act"><button class="btn p" type="button" data-m="x">Listo</button></div>`); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') modal(''); });
+
+  /* ---------- Arranque ---------- */
+  try { const q = new URLSearchParams(location.search); const p = (q.get('p') || '').replace(/[^\w-]/g, '').slice(0, 40); if (p) sessionStorage.setItem('atrix_promotor', p); if (q.get('entrar') != null) tab('entrar'); } catch (e) { }
+  st.ses = leer(); if (st.ses) cargar();
+})();
+</script>
+</body>
+</html>
