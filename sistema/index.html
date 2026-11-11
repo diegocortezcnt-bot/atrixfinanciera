@@ -378,6 +378,18 @@
   .sol-file { display: flex; align-items: center; gap: 8px; margin-top: 7px; padding: 6px 6px 6px 11px; border-radius: 10px; background: #fff; border: 1px solid var(--line); min-width: 0; }
   .sol-file .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; font-size: 12.5px; } .sol-file .muted { flex: none; }
   @media (max-width: 620px) { .sol-file .muted { display: none; } }
+  /* 17.24 · solicitudes: lista por atención, página de detalle y exportación */
+  .sol-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 2px 0 12px; } .sol-bar .search { flex: 1 1 260px; min-width: 0; } .sol-bar select { flex: 0 1 auto; max-width: 100%; font: inherit; font-size: 13px; color: var(--fg); background: var(--field); border: 1px solid var(--field-border); border-radius: 9px; padding: 7px 10px; }
+  .sol-bar .seg button i { font-style: normal; font-weight: 800; font-size: 11px; opacity: .65; margin-left: 3px; }
+  .sol-list { display: flex; flex-direction: column; gap: 7px; }
+  .sol-row { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.25fr) minmax(0, 1.5fr) minmax(0, 1.45fr) auto; gap: 6px 16px; align-items: center; padding: 11px 12px 11px 14px; border-radius: 13px; background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--line-2); cursor: pointer; transition: background .12s, border-color .12s; min-width: 0; }
+  .sol-row:hover { background: var(--row-hover); } .sol-row.pendientes { border-left-color: var(--orange); } .sol-row.atendidas { border-left-color: var(--green); }
+  .sol-row > div { min-width: 0; } .sol-row .t { font-weight: 800; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .sol-row .s { color: var(--muted); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sol-row .b b, .sol-row .d b { display: block; font-size: 13px; font-variant-numeric: tabular-nums; } .sol-row .b span, .sol-row .c span, .sol-row .d span { display: block; color: var(--muted); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .sol-row .c span { margin-top: 3px; } .sol-row .c .chip { display: inline-block; }
+  .sol-row .e { display: flex; gap: 6px; } .sol-row .d b.neg { color: var(--red); }
+  .sol-back { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; } .sol-back .btn { display: inline-flex; align-items: center; gap: 6px; }
+  .sol-pb { display: block; height: 5px; border-radius: 5px; background: var(--line); overflow: hidden; margin-top: 4px; } .sol-pb i { display: block; height: 100%; background: var(--green); border-radius: 5px; }
+  @media (max-width: 1180px) { .sol-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .sol-row .a { grid-column: 1 / -1; } .sol-row .e { grid-column: 1 / -1; justify-content: flex-end; } }
 </style>
 
 <div class="app">
@@ -2201,7 +2213,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.23';
+  const SISTEMA_VERSION = '17.24';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -4812,14 +4824,17 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   function copiar(text) { const done = () => toast('Copiado'); const fb = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) { } document.body.removeChild(ta); done(); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fb); else fb(); }
   let toastT; function toast(msg, err) { const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : ''); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
 
-  /* ======== 17.23 · SOLICITUDES EN LÍNEA ========
+  /* ======== 17.24 · SOLICITUDES EN LÍNEA ========
      Prospectos que iniciaron su solicitud en www.atrixfinanciera.com/solicitud/. Viven en el servidor (tabla public.solicitudes y
      almacenamiento privado «solicitudes»); aquí se revisa el expediente, se califica cada documento y se mueve la etapa.
-     No forman parte de datos.json: se consultan en línea con la sesión del administrador. */
+     No forman parte de datos.json: se consultan en línea con la sesión del administrador.
+     Pendiente / Atendida: una solicitud está pendiente cuando el último movimiento fue del solicitante (inició, cargó documentos o
+     envió su expediente) y ATRIX no ha respondido después. La marca de atención se guarda en solicitudes_interno (solo ATRIX). */
   const SOL_WEB = 'https://www.atrixfinanciera.com/solicitud/';
   const SOL_PROD = { AF: 'Arrendamiento financiero', AP: 'Arrendamiento puro', CGI: 'Crédito con garantía inmobiliaria', CE: 'Crédito estructurado' };
   const SOL_ETAPA = { recibida: ['Recibida', 'liquidado'], documentos: ['Integrando expediente', 'liquidado'], revision: ['En análisis de Riesgos', 'atrasado'], preaprobada: ['Preaprobada', 'ok'], aprobada: ['Aprobada', 'ok'], formalizada: ['Formalizada', 'ok'], rechazada: ['No aprobada', 'vencido'], cancelada: ['Cancelada', 'gray'] };
   const SOL_CERRADA = ['formalizada', 'rechazada', 'cancelada'];
+  const SOL_GRUPO = { pendientes: 'Pendientes', atendidas: 'Atendidas', cerradas: 'Cerradas', todas: 'Todas' };
   const SOL_DOCS = [
     { g: 'Empresa', c: 'acta', n: 'Acta constitutiva', t: ['PM'] }, { g: 'Empresa', c: 'poderes', n: 'Poderes del representante legal', t: ['PM'] },
     { g: 'Empresa', c: 'reformas', n: 'Actas de asamblea o reformas', t: ['PM'], o: 1 }, { g: 'Empresa', c: 'id_rep', n: 'Identificación oficial del representante legal', t: ['PM'] },
@@ -4832,77 +4847,115 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     { g: 'Aval', c: 'id_aval', n: 'Identificación oficial del aval' }, { g: 'Aval', c: 'domicilio_aval', n: 'Comprobante de domicilio del aval' },
     { g: 'Adicional', c: 'otros', n: 'Otros documentos', o: 1 }
   ];
-  const solDocs = s => SOL_DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) }));
-  const SOL = { lista: null, cargando: false, error: null, sel: null, files: {}, notas: {}, filtro: 'activas', q: '', t: 0 };
+  const solExtras = s => Array.isArray((s.revision || {})._extra) ? s.revision._extra.filter(x => x && x.c && x.n) : [];
+  const solDocs = s => SOL_DOCS.filter(d => (!d.t || d.t.includes(s.tipo)) && (!d.p || d.p.includes(s.producto))).map(d => ({ ...d, opc: !!(d.o || (d.oSi && d.oSi(s))) })).concat(solExtras(s).map(x => ({ g: 'Solicitados por ATRIX', c: x.c, n: x.n, a: x.a || '', opc: false, extra: true })));
+  const SOL = { lista: null, cargando: false, error: null, sel: null, files: {}, int: {}, grupo: 'pendientes', q: '', fProd: '', sy: 0, t: 0 };
+  const solMs = iso => (iso ? Date.parse(iso) : 0) || 0;
   const solF = (iso, hora) => { if (!iso) return '—'; try { const d = new Date(iso); return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Monterrey' }) + (hora ? ' ' + d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Monterrey' }) : ''); } catch (e) { return String(iso).slice(0, 10); } };
   const solPeso = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round((b || 0) / 1024)) + ' KB';
+  const solNorm = t => String(t == null ? '' : t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const solDe = id => (SOL.lista || []).find(x => x.id === id) || null;
-  const solNueva = s => !SOL_CERRADA.includes(s.etapa) && (!s.visto || (s.docs_cambio && Date.parse(s.docs_cambio) > Date.parse(s.visto)));
+  const solCliMov = s => Math.max(solMs(s.creado), solMs(s.docs_cambio), solMs(s.enviado));
+  const solAt = s => solMs((SOL.int[s.id] || {}).atendido);
+  const solGrupo = s => SOL_CERRADA.includes(s.etapa) ? 'cerradas' : solAt(s) >= solCliMov(s) ? 'atendidas' : 'pendientes';
+  const solMotivo = s => { const at = solAt(s); if (solMs(s.enviado) > at) return 'Envió su expediente a revisión'; if (solMs(s.docs_cambio) > at) return 'Cargó documentos'; return 'Solicitud nueva'; };
+  const solDias = ms => Math.max(0, Math.floor((Date.now() - ms) / 86400000));
+  const solHace = ms => { const d = solDias(ms); return d === 0 ? 'hoy' : d === 1 ? 'hace 1 día' : 'hace ' + d + ' días'; };
   const solDisponible = () => Nube.activo && Nube._dentro && !Nube.soloLectura && !!Nube.sesion;
-  const solBadge = () => { const n = (SOL.lista || []).filter(solNueva).length; return n ? `<i class="sol-n" title="Solicitudes con novedades">${n}</i>` : ''; };
+  const solBadge = () => { const n = (SOL.lista || []).filter(s => solGrupo(s) === 'pendientes').length; return n ? `<i class="sol-n" title="Solicitudes pendientes de atender">${n}</i>` : ''; };
   const solErr = r => r.status === 0 ? 'Sin conexión con el servidor' : r.status === 401 ? 'Sesión vencida' : ((r.json && (r.json.message || r.json.error || r.json.msg)) || ('Error ' + r.status));
+  const solArchivoNombre = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9._ -]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 70).replace(/[. ]+$/, '');
+  Object.defineProperty(TITLES, 'solicitudes', { configurable: true, enumerable: true, get: () => { const s = SOL.sel && solDe(SOL.sel); return s ? ['Solicitud ' + s.folio, s.nombre] : ['Solicitudes en línea', 'Prospectos que iniciaron su solicitud en el sitio: expediente, revisión y etapa']; } });
   async function solCargar(silencio) {
     if (!solDisponible() || SOL.cargando) return; SOL.cargando = true; SOL.t = Date.now();
-    const r = await Nube.req('GET', '/rest/v1/solicitudes?select=*&order=creado.desc', null); SOL.cargando = false;
-    if (r.status === 200 && Array.isArray(r.json)) { const antes = JSON.stringify(SOL.lista); SOL.lista = r.json; SOL.error = null; if (silencio && antes === JSON.stringify(SOL.lista)) return; }
+    const [r, ri] = await Promise.all([Nube.req('GET', '/rest/v1/solicitudes?select=*&order=creado.desc', null), Nube.req('GET', '/rest/v1/solicitudes_interno?select=solicitud_id,datos', null)]); SOL.cargando = false;
+    if (r.status === 200 && Array.isArray(r.json)) { const antes = JSON.stringify([SOL.lista, SOL.int]); SOL.lista = r.json; SOL.error = null;
+      if (ri.status === 200 && Array.isArray(ri.json)) { const m = {}; ri.json.forEach(x => { m[x.solicitud_id] = x.datos || {}; }); SOL.int = m; }
+      if (silencio && antes === JSON.stringify([SOL.lista, SOL.int])) return; }
     else { SOL.error = solErr(r); if (silencio) return; if (!SOL.lista) SOL.lista = []; }
     renderNav(); if (S.view === 'solicitudes' && !(silencio && ($('#modalRoot').innerHTML || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))))) render();
   }
   setInterval(() => { if (solDisponible() && !document.hidden && Date.now() - SOL.t > 120000) solCargar(true); }, 20000);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.view === 'solicitudes' && SOL.sel && !$('#modalRoot').innerHTML && !(S.ficha && S.ficha.length)) SOL_ACT.solVolver(); });
   async function solArchivos(s) {
     const r = await Nube.req('POST', '/storage/v1/object/list/solicitudes', JSON.stringify({ prefix: s.user_id + '/', limit: 500, sortBy: { column: 'created_at', order: 'asc' } }));
     SOL.files[s.id] = r.status === 200 && Array.isArray(r.json) ? r.json.filter(o => o && o.id).map(o => { const p = o.name.split('__'); return { ruta: s.user_id + '/' + o.name, clave: p[0], nombre: p.slice(2).join('__') || o.name, fecha: o.created_at, tam: (o.metadata && o.metadata.size) || 0, mime: (o.metadata && o.metadata.mimetype) || '' }; }) : [];
   }
-  async function solNotas(s) { const r = await Nube.req('GET', '/rest/v1/solicitudes_interno?select=datos&solicitud_id=eq.' + s.id, null); SOL.notas[s.id] = r.status === 200 && r.json && r.json[0] ? (r.json[0].datos || {}) : {}; }
-  async function solPatch(s, cambios, callado) {
-    const r = await Nube.req('PATCH', '/rest/v1/solicitudes?id=eq.' + s.id + '&select=*', JSON.stringify(Object.assign({}, cambios, callado ? {} : { actualizado: new Date().toISOString() })), { Prefer: 'return=representation' });
+  async function solPatch(s, cambios) {
+    const r = await Nube.req('PATCH', '/rest/v1/solicitudes?id=eq.' + s.id + '&select=*', JSON.stringify(Object.assign({}, cambios, { actualizado: new Date().toISOString() })), { Prefer: 'return=representation' });
     if (r.status >= 200 && r.status < 300 && Array.isArray(r.json) && r.json[0]) { const i = SOL.lista.findIndex(x => x.id === s.id); if (i >= 0) SOL.lista[i] = r.json[0]; return true; }
-    if (!callado) toast('No se pudo guardar: ' + solErr(r), true); return false;
+    toast('No se pudo guardar: ' + solErr(r), true); return false;
   }
+  async function solInterno(s, cambios) { // notas y marca de atención: solo ATRIX
+    const datos = Object.assign({}, SOL.int[s.id] || {}, cambios);
+    const r = await Nube.req('POST', '/rest/v1/solicitudes_interno?on_conflict=solicitud_id', JSON.stringify({ solicitud_id: s.id, datos, actualizado: new Date().toISOString() }), { Prefer: 'resolution=merge-duplicates,return=minimal' });
+    if (r.status >= 200 && r.status < 300) { SOL.int[s.id] = datos; return true; } toast('No se pudo guardar: ' + solErr(r), true); return false;
+  }
+  const solAtender = s => solInterno(s, { atendido: new Date().toISOString() });
   async function solAbrir(id) {
-    const s = solDe(id); if (!s) return; SOL.sel = id; render(); window.scrollTo(0, 0);
-    await Promise.all([solArchivos(s), solNotas(s)]); if (solNueva(s)) await solPatch(s, { visto: new Date().toISOString() }, true);
-    renderNav(); if (S.view === 'solicitudes' && SOL.sel === id && !$('#modalRoot').innerHTML) render();
+    const s = solDe(id); if (!s) return; if (!SOL.sel) SOL.sy = window.scrollY; SOL.sel = id; render(); window.scrollTo(0, 0);
+    await solArchivos(s); if (S.view === 'solicitudes' && SOL.sel === id && !$('#modalRoot').innerHTML) render();
   }
   function solEstadoDoc(d, s) {
-    const fs = (SOL.files[s.id] || []).filter(f => f.clave === d.c); const rv = (s.revision || {})[d.c] || {}; const nuevo = rv.fecha && fs.some(f => Date.parse(f.fecha) > Date.parse(rv.fecha));
-    if (rv.estado === 'aceptado') return { fs, e: 'aceptado', chip: chip('ok', 'Aceptado') };
-    if (rv.estado === 'rechazado' && !nuevo) return { fs, e: 'rechazado', chip: chip('vencido', 'Rechazado'), motivo: rv.motivo };
-    if (fs.length) return { fs, e: 'revisar', chip: chip('atrasado', nuevo ? 'Nueva versión por revisar' : 'Por revisar') };
-    return { fs, e: 'falta', chip: chip('gray', d.opc ? 'Opcional · sin cargar' : 'Sin cargar') };
+    const fs = (SOL.files[s.id] || []).filter(f => f.clave === d.c); const rv = (s.revision || {})[d.c] || {}; const nuevo = rv.fecha && fs.some(f => solMs(f.fecha) > solMs(rv.fecha));
+    if (rv.estado === 'aceptado') return { fs, e: 'aceptado', txt: 'Aceptado', chip: chip('ok', 'Aceptado') };
+    if (rv.estado === 'rechazado' && !nuevo) return { fs, e: 'rechazado', txt: 'Rechazado', chip: chip('vencido', 'Rechazado'), motivo: rv.motivo };
+    if (fs.length) return { fs, e: 'revisar', txt: 'Por revisar', chip: chip('atrasado', nuevo ? 'Nueva versión por revisar' : 'Por revisar') };
+    return { fs, e: 'falta', txt: d.opc ? 'Opcional, sin cargar' : 'Sin cargar', chip: chip('gray', d.opc ? 'Opcional · sin cargar' : 'Sin cargar') };
   }
-  const solAvance = s => { const req = solDocs(s).filter(d => !d.opc); const ok = req.filter(d => ((s.revision || {})[d.c] || {}).estado === 'aceptado').length; return ok + ' de ' + req.length; };
+  const solAvance = s => { const req = solDocs(s).filter(d => !d.opc); const ok = req.filter(d => ((s.revision || {})[d.c] || {}).estado === 'aceptado').length; return [ok, req.length]; };
+  async function solTrasCalificar(s) { // si ya no queda nada por revisar, la solicitud pasa sola a «Atendidas»
+    const s2 = solDe(s.id); if (!s2 || !SOL.files[s2.id]) return; if (!solDocs(s2).some(d => solEstadoDoc(d, s2).e === 'revisar') && solGrupo(s2) === 'pendientes') { await solAtender(s2); renderNav(); }
+  }
+  function solBuscar(L) {
+    const tk = solNorm(SOL.q).split(/\s+/).filter(Boolean); if (!tk.length) return null;
+    const pajar = x => { const D = x.datos || {}; return solNorm([x.folio, x.folio.replace(/\D/g, ''), x.rfc, x.nombre, D.contacto, D.telefono, D.correo, D.giro, D.municipio, D.activo, x.promotor, SOL_PROD[x.producto], (SOL_ETAPA[x.etapa] || [])[0], Math.round(Number(x.monto) || 0)].filter(Boolean).join(' · ')); };
+    const exacto = x => { const q = solNorm(SOL.q).trim(); return solNorm(x.folio) === q || solNorm(x.rfc) === q || x.folio.split('-').pop() === q.padStart(4, '0') ? 0 : 1; };
+    return L.filter(x => { const p = pajar(x); return tk.every(t => p.includes(t)); }).sort((a, b) => exacto(a) - exacto(b));
+  }
   function solVistaLista() {
-    const L = SOL.lista || []; const q = SOL.q.toLowerCase(); const cuenta = e => L.filter(x => x.etapa === e).length;
-    const activas = L.filter(x => !SOL_CERRADA.includes(x.etapa));
-    const ver = L.filter(x => (SOL.filtro === 'todas' ? true : SOL.filtro === 'activas' ? !SOL_CERRADA.includes(x.etapa) : SOL.filtro === 'cerradas' ? SOL_CERRADA.includes(x.etapa) : x.etapa === SOL.filtro) && (!q || (x.nombre + ' ' + x.rfc + ' ' + x.folio).toLowerCase().includes(q)));
-    const k = (f, t, v, s2, c) => `<div class="kpi glass click ${c || ''} ${SOL.filtro === f ? 'on' : ''}" data-act="solFiltro" data-v="${f}"><div class="k">${t}</div><div class="v">${v}</div><div class="s">${s2}</div></div>`;
-    return `<div class="kpis" style="margin-bottom:14px">${k('activas', 'En proceso', activas.length, money(sum(activas, x => Number(x.monto) || 0)) + ' solicitados', '')}${k('documentos', 'Integrando expediente', cuenta('recibida') + cuenta('documentos'), 'aún no envían a revisión', 'blue')}${k('revision', 'En análisis de Riesgos', cuenta('revision'), 'expediente enviado', 'orange')}${k('preaprobada', 'Preaprobadas y aprobadas', cuenta('preaprobada') + cuenta('aprobada'), 'por formalizar', 'green')}${k('cerradas', 'Cerradas', L.length - activas.length, cuenta('formalizada') + ' formalizadas', 'teal')}</div>
-      <div class="glass panel"><div class="ph"><h2>Solicitudes en línea <span class="muted small">${ver.length} de ${L.length}</span></h2><div class="pill-row"><input class="search" placeholder="Buscar nombre, RFC o folio" data-act-input="filtroSol" value="${esc(SOL.q)}"><button class="btn sm" data-act="solRecargar">Actualizar</button><button class="btn sm" data-act="solLiga">Liga para promotor</button><button class="btn primary" data-act="solCopiarLiga">Copiar liga de solicitud</button></div></div>
+    const L = SOL.lista || []; const cuenta = { pendientes: 0, atendidas: 0, cerradas: 0, todas: L.length }; L.forEach(x => { cuenta[solGrupo(x)]++; });
+    const hallados = solBuscar(L); const base = hallados || L.filter(x => SOL.grupo === 'todas' || solGrupo(x) === SOL.grupo);
+    const ver = base.filter(x => !SOL.fProd || x.producto === SOL.fProd); if (!hallados) ver.sort((a, b) => SOL.grupo === 'pendientes' ? solCliMov(a) - solCliMov(b) : solMs(b.actualizado || b.creado) - solMs(a.actualizado || a.creado));
+    const pend = L.filter(x => solGrupo(x) === 'pendientes'); const viejas = pend.filter(x => solDias(solCliMov(x)) >= 2).length; const activas = L.filter(x => !SOL_CERRADA.includes(x.etapa));
+    const fila = x => { const e = SOL_ETAPA[x.etapa] || [x.etapa, 'gray']; const g = solGrupo(x); const D = x.datos || {}; const av = solAvance(x); const mov = solCliMov(x); const tarde = g === 'pendientes' && solDias(mov) >= 2;
+      const estado = g === 'pendientes' ? `<b class="${tarde ? 'neg' : ''}">${esc(solMotivo(x))}</b><span>${solHace(mov)}${tarde ? ' · fuera del plazo de 2 días' : ''}</span>` : g === 'atendidas' ? `<b>Atendida ${solF((SOL.int[x.id] || {}).atendido)}</b><span>${['recibida', 'documentos'].includes(x.etapa) ? 'en espera del solicitante' : x.etapa === 'revision' ? 'en análisis interno' : 'por formalizar'}</span>` : `<b>Cerrada</b><span>${solF(x.actualizado)}</span>`;
+      return `<div class="sol-row ${g}" data-act="solAbrir" data-id="${x.id}" tabindex="0"><div class="a"><div class="t">${esc(x.nombre)}</div><div class="s">${esc(x.folio)} · ${esc(x.rfc)}${D.municipio ? ' · ' + esc(D.municipio) : ''}${x.promotor ? ' · promotor ' + esc(x.promotor) : ''}</div></div>
+        <div class="b"><b>${money(x.monto)}</b><span>${esc(SOL_PROD[x.producto] || x.producto)}</span></div>
+        <div class="c">${chip(e[1], e[0])}${hallados ? ' ' + chip('gray', SOL_GRUPO[g].replace(/s$/, '')) : ''}<span>${av[0]} de ${av[1]} documentos aceptados</span></div>
+        <div class="d">${estado}</div>
+        <div class="e"><button class="btn sm" data-act="solAbrir" data-id="${x.id}">Abrir</button><button class="btn sm danger" data-act="solEliminar" data-id="${x.id}" title="Borrar solicitud">Borrar</button></div></div>`; };
+    const vacio = hallados ? emptyBox('Sin resultados para «' + SOL.q + '»', 'Busca por folio, RFC, nombre, contacto, teléfono, correo, giro, municipio o promotor. Puedes combinar palabras.') : !L.length ? emptyBox('Aún no hay solicitudes', 'Comparte la liga ' + SOL_WEB + ' con tus prospectos: aquí aparecerán en cuanto inicien su solicitud.') : SOL.grupo === 'pendientes' ? emptyBox('Nada pendiente', 'Todas las solicitudes están atendidas. Aquí aparecerán cuando un prospecto inicie su solicitud, cargue documentos o envíe su expediente.') : emptyBox('Sin solicitudes en «' + SOL_GRUPO[SOL.grupo] + '»', '');
+    return `<div class="kpis" style="margin-bottom:14px"><div class="kpi glass ${pend.length ? 'orange' : 'green'}"><div class="k">Pendientes de atender</div><div class="v">${pend.length}</div><div class="s">${viejas ? viejas + ' con más de 2 días esperando' : pend.length ? 'dentro del plazo de respuesta' : 'todo atendido'}</div></div><div class="kpi glass blue"><div class="k">En proceso</div><div class="v">${activas.length}</div><div class="s">${money(sum(activas, x => Number(x.monto) || 0))} solicitados</div></div><div class="kpi glass"><div class="k">En análisis de Riesgos</div><div class="v">${L.filter(x => x.etapa === 'revision').length}</div><div class="s">expediente enviado</div></div><div class="kpi glass green"><div class="k">Preaprobadas y aprobadas</div><div class="v">${L.filter(x => x.etapa === 'preaprobada' || x.etapa === 'aprobada').length}</div><div class="s">por formalizar</div></div></div>
+      <div class="glass panel"><div class="ph"><h2>Solicitudes</h2><div class="pill-row"><button class="btn sm" data-act="solRecargar">Actualizar</button><button class="btn sm" data-act="solLiga">Liga para promotor</button><button class="btn primary" data-act="solCopiarLiga">Copiar liga de solicitud</button></div></div>
+      <div class="sol-bar"><div class="seg">${Object.keys(SOL_GRUPO).map(g => `<button type="button" class="${!hallados && SOL.grupo === g ? 'on' : ''}" data-act="solGrupo" data-v="${g}">${SOL_GRUPO[g]} <i>${cuenta[g]}</i></button>`).join('')}</div>
+        <input class="search" placeholder="Buscar expediente: folio, RFC, nombre, teléfono, correo…" data-act-input="filtroSol" value="${esc(SOL.q)}"><select data-act-change="solProd" aria-label="Producto"><option value="">Todos los productos</option>${Object.keys(SOL_PROD).map(k => `<option value="${k}" ${SOL.fProd === k ? 'selected' : ''}>${SOL_PROD[k]}</option>`).join('')}</select></div>
       ${SOL.error ? `<div class="note" style="color:var(--red)">No se pudo consultar el servidor: ${esc(SOL.error)}.</div>` : ''}
-      ${ver.length ? `<div class="tscroll"><table><thead><tr><th class="l">Folio</th><th class="l">Solicitante</th><th class="l">Producto</th><th>Monto</th><th class="l">Etapa</th><th class="l">Docs aceptados</th><th class="l">Recibida</th></tr></thead><tbody>${ver.map(x => { const e = SOL_ETAPA[x.etapa] || [x.etapa, 'gray']; return `<tr class="click" data-act="solAbrir" data-id="${x.id}"><td class="l b">${esc(x.folio)}${solNueva(x) ? ' <span class="chip vencido" style="font-size:10px;padding:1px 6px">Nuevo</span>' : ''}</td><td class="l"><a href="#" class="lnk" data-act="solAbrir" data-id="${x.id}">${esc(x.nombre)}</a><div class="muted small">${esc(x.rfc)}${x.promotor ? ' · promotor ' + esc(x.promotor) : ''}</div></td><td class="l">${esc(SOL_PROD[x.producto] || x.producto)}</td><td>${money(x.monto)}</td><td class="l">${chip(e[1], e[0])}</td><td class="l">${solAvance(x)}</td><td class="l">${solF(x.creado)}</td></tr>`; }).join('')}</tbody></table></div>` : emptyBox(L.length ? 'Sin solicitudes en este filtro' : 'Aún no hay solicitudes', L.length ? 'Cambia el filtro de arriba para ver las demás.' : 'Comparte la liga ' + SOL_WEB + ' con tus prospectos: aquí aparecerán en cuanto inicien su solicitud.')}
-      <div class="note">Cada prospecto inicia su solicitud en ${SOL_WEB}, recibe un folio y carga sus documentos con su RFC y contraseña. Toca una solicitud para revisar su expediente, aceptar o rechazar documentos y cambiar la etapa; el prospecto ve el resultado en su página.</div></div>`;
+      ${hallados ? `<div class="small muted" style="margin:0 0 8px">${ver.length} resultado${ver.length === 1 ? '' : 's'} en todas las solicitudes · <a href="#" class="lnk" data-act="solLimpiar">Limpiar búsqueda</a></div>` : ''}
+      ${ver.length ? `<div class="sol-list">${ver.map(fila).join('')}</div>` : vacio}
+      <div class="note">Una solicitud está <b>pendiente</b> cuando el prospecto la inició, cargó documentos o envió su expediente y ATRIX aún no responde. Pasa a <b>atendidas</b> al calificar todos sus documentos, cambiar su etapa, pedirle un documento o marcarla como atendida, y regresa sola a pendientes si el prospecto vuelve a cargar algo. Liga para prospectos: ${SOL_WEB}</div></div>`;
   }
   function solVistaDetalle(s) {
-    const D = s.datos || {}; const e = SOL_ETAPA[s.etapa] || [s.etapa, 'gray']; const cargado = !!SOL.files[s.id]; const docs = solDocs(s).map(d => ({ ...d, x: solEstadoDoc(d, s) }));
-    const req = docs.filter(d => !d.opc); const ok = req.filter(d => d.x.e === 'aceptado').length; const rev = docs.filter(d => d.x.e === 'revisar').length; const falta = req.filter(d => d.x.e === 'falta').length;
-    const cli = S.clientes.find(c => c.rfc && String(c.rfc).toUpperCase() === s.rfc); const N = SOL.notas[s.id] || {};
+    const D = s.datos || {}; const e = SOL_ETAPA[s.etapa] || [s.etapa, 'gray']; const cargado = !!SOL.files[s.id]; const docs = solDocs(s).map(d => ({ ...d, x: solEstadoDoc(d, s) })); const g = solGrupo(s);
+    const req = docs.filter(d => !d.opc); const ok = req.filter(d => d.x.e === 'aceptado').length; const rev = docs.filter(d => d.x.e === 'revisar').length; const falta = req.filter(d => d.x.e === 'falta').length; const nArch = (SOL.files[s.id] || []).length;
+    const cli = S.clientes.find(c => c.rfc && String(c.rfc).toUpperCase() === s.rfc); const N = SOL.int[s.id] || {};
     const kv = (a, b) => b ? `<span>${a}</span><span>${esc(b)}</span>` : '';
-    let g = ''; const lista = docs.map(d => { const x = d.x; const h = d.g !== g ? `<div class="sol-g">${esc(d.g)}</div>` : ''; g = d.g;
-      return `${h}<div class="sol-doc"><div class="sol-top"><div><b>${esc(d.n)}</b>${x.e === 'rechazado' && x.motivo ? `<div class="small" style="color:var(--red)">Motivo: ${esc(x.motivo)}</div>` : ''}</div>${x.chip}</div>
+    let gr = ''; const lista = docs.map(d => { const x = d.x; const h = d.g !== gr ? `<div class="sol-g">${esc(d.g)}</div>` : ''; gr = d.g;
+      return `${h}<div class="sol-doc"><div class="sol-top"><div><b>${esc(d.n)}</b>${d.extra && d.a ? `<div class="small muted">${esc(d.a)}</div>` : ''}${x.e === 'rechazado' && x.motivo ? `<div class="small" style="color:var(--red)">Motivo: ${esc(x.motivo)}</div>` : ''}</div>${x.chip}</div>
         ${x.fs.map(f => `<div class="sol-file"><span class="n" title="${esc(f.nombre)}">${esc(f.nombre)}</span><span class="muted small">${solPeso(f.tam)} · ${solF(f.fecha, true)}</span><button class="btn sm" data-act="solVer" data-ruta="${esc(f.ruta)}" data-nom="${esc(f.nombre)}" data-mime="${esc(f.mime)}">Ver</button></div>`).join('')}
-        ${x.fs.length || x.e === 'aceptado' || x.e === 'rechazado' ? `<div class="pill-row" style="margin-top:8px">${x.e !== 'aceptado' ? `<button class="btn sm primary" data-act="solDocOk" data-id="${s.id}" data-c="${d.c}">Aceptar</button>` : ''}${x.e !== 'rechazado' ? `<button class="btn sm danger" data-act="solDocNo" data-id="${s.id}" data-c="${d.c}">Rechazar</button>` : ''}${x.e === 'aceptado' || x.e === 'rechazado' ? `<button class="btn sm" data-act="solDocLimpiar" data-id="${s.id}" data-c="${d.c}">Quitar calificación</button>` : ''}</div>` : ''}</div>`; }).join('');
-    return `<div class="glass panel"><div class="ph"><h2><a href="#" class="lnk" data-act="solVolver">Solicitudes</a> › ${esc(s.folio)} ${chip(e[1], e[0])}</h2><div class="pill-row"><button class="btn primary" data-act="solEtapa" data-id="${s.id}">Etapa y mensaje</button>${cli ? `<button class="btn" data-act="selCliente" data-id="${cli.id}">Abrir acreditado</button>` : `<button class="btn" data-act="solConvertir" data-id="${s.id}">Convertir en acreditado</button>`}</div></div>
+        ${x.fs.length || x.e === 'aceptado' || x.e === 'rechazado' || d.extra ? `<div class="pill-row" style="margin-top:8px">${x.fs.length && x.e !== 'aceptado' ? `<button class="btn sm primary" data-act="solDocOk" data-id="${s.id}" data-c="${d.c}">Aceptar</button>` : ''}${x.fs.length && x.e !== 'rechazado' ? `<button class="btn sm danger" data-act="solDocNo" data-id="${s.id}" data-c="${d.c}">Rechazar</button>` : ''}${x.e === 'aceptado' || x.e === 'rechazado' ? `<button class="btn sm" data-act="solDocLimpiar" data-id="${s.id}" data-c="${d.c}">Quitar calificación</button>` : ''}${d.extra && !x.fs.length ? `<button class="btn sm" data-act="solExtraQuitar" data-id="${s.id}" data-c="${d.c}">Ya no pedirlo</button>` : ''}</div>` : ''}</div>`; }).join('');
+    return `<div class="sol-back"><button class="btn" data-act="solVolver"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Atrás · Solicitudes</button><span class="muted small">${g === 'pendientes' ? esc(solMotivo(s)) + ' · ' + solHace(solCliMov(s)) : g === 'atendidas' ? 'Atendida el ' + solF(N.atendido, true) : 'Solicitud cerrada'}</span></div>
+      <div class="glass panel"><div class="ph"><h2>${esc(s.folio)} ${chip(e[1], e[0])} ${chip(g === 'pendientes' ? 'atrasado' : g === 'atendidas' ? 'ok' : 'gray', g === 'pendientes' ? 'Pendiente' : g === 'atendidas' ? 'Atendida' : 'Cerrada')}</h2><div class="pill-row"><button class="btn primary" data-act="solEtapa" data-id="${s.id}">Etapa y mensaje</button><button class="btn" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>${g === 'pendientes' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="1">Marcar atendida</button>` : g === 'atendidas' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="0">Regresar a pendientes</button>` : ''}${cli ? `<button class="btn" data-act="selCliente" data-id="${cli.id}">Abrir acreditado</button>` : `<button class="btn" data-act="solConvertir" data-id="${s.id}">Convertir en acreditado</button>`}<button class="btn danger" data-act="solEliminar" data-id="${s.id}">Borrar solicitud</button></div></div>
         <div style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:2px 0 12px;overflow-wrap:anywhere">${esc(s.nombre)}</div>
-        <div class="kpis"><div class="kpi glass"><div class="k">Producto</div><div class="v" style="font-size:16px">${esc(SOL_PROD[s.producto] || s.producto)}</div><div class="s">${D.plazo ? esc(D.plazo) + (/^\d+$/.test(D.plazo) ? ' meses' : '') : 'plazo por definir'}</div></div><div class="kpi glass blue"><div class="k">Monto solicitado</div><div class="v">${money(s.monto)}</div><div class="s">sin IVA</div></div><div class="kpi glass green"><div class="k">Documentos aceptados</div><div class="v">${ok} de ${req.length}</div><div class="s">obligatorios</div></div><div class="kpi glass ${rev ? 'orange' : ''}"><div class="k">Por revisar</div><div class="v">${cargado ? rev : '…'}</div><div class="s">${cargado ? falta + ' sin cargar' : 'consultando expediente'}</div></div></div>
+        <div class="kpis"><div class="kpi glass"><div class="k">Producto</div><div class="v" style="font-size:16px">${esc(SOL_PROD[s.producto] || s.producto)}</div><div class="s">${D.plazo ? esc(D.plazo) + (/^\d+$/.test(D.plazo) ? ' meses' : '') : 'plazo por definir'}</div></div><div class="kpi glass blue"><div class="k">Monto solicitado</div><div class="v">${money(s.monto)}</div><div class="s">sin IVA</div></div><div class="kpi glass green"><div class="k">Documentos aceptados</div><div class="v">${ok} de ${req.length}</div><div class="s"><span class="sol-pb"><i style="width:${req.length ? Math.round(ok / req.length * 100) : 0}%"></i></span></div></div><div class="kpi glass ${rev ? 'orange' : ''}"><div class="k">Por revisar</div><div class="v">${cargado ? rev : '…'}</div><div class="s">${cargado ? falta + ' sin cargar · ' + nArch + ' archivo' + (nArch === 1 ? '' : 's') : 'consultando expediente'}</div></div></div>
         ${s.mensaje ? `<div class="note"><b>Mensaje visible para el solicitante:</b> ${esc(s.mensaje)}</div>` : ''}</div>
       <div class="grid-side" style="margin-top:14px"><div>
         <div class="glass panel"><h2>Datos del solicitante</h2><div class="kv">${kv('Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial')}${kv('RFC', s.rfc)}${kv('Giro', D.giro)}${kv('Años de operación', D.antiguedad)}${kv('Municipio', D.municipio)}${kv('Ventas mensuales', D.ventas)}${kv('Contacto', D.contacto)}${kv('Cargo', D.cargo)}${kv('Teléfono', D.telefono)}${kv('Correo', D.correo)}${kv('Promotor', s.promotor)}${kv('Recibida', solF(s.creado, true))}${kv('Enviada a revisión', s.enviado ? solF(s.enviado, true) : '')}${kv('Última carga', s.docs_cambio ? solF(s.docs_cambio, true) : '')}</div>
           ${D.activo ? `<div class="note"><b>${['AF', 'AP'].includes(s.producto) ? 'Activo' : 'Destino y garantía'}:</b> ${esc(D.activo)}</div>` : ''}
-          <div class="pill-row" style="margin-top:10px">${D.telefono ? `<a class="btn sm" href="https://wa.me/52${esc(D.telefono)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}<button class="btn sm" data-act="portalCopiar" data-v="${esc([s.folio, s.nombre, s.rfc, D.contacto, D.telefono, D.correo].filter(Boolean).join(' · '))}">Copiar datos</button></div></div>
+          <div class="pill-row" style="margin-top:10px"><button class="btn sm primary" data-act="solAviso" data-id="${s.id}">Aviso por WhatsApp</button><button class="btn sm" data-act="portalCopiar" data-v="${esc([s.folio, s.nombre, s.rfc, D.contacto, D.telefono, D.correo].filter(Boolean).join(' · '))}">Copiar datos</button></div></div>
         <div class="glass panel" style="margin-top:14px"><h2>Notas internas de Riesgos</h2><div class="small" style="white-space:pre-line;overflow-wrap:anywhere">${N.notas ? esc(N.notas) : '<span class="muted">Sin notas. Solo las ve ATRIX; el solicitante no tiene acceso.</span>'}</div><div class="pill-row" style="margin-top:10px"><button class="btn sm" data-act="solNotas" data-id="${s.id}">${N.notas ? 'Editar notas' : 'Agregar nota'}</button></div></div>
-        <div class="glass panel" style="margin-top:14px"><h2>Acceso del solicitante</h2><div class="small muted">Entra en ${SOL_WEB} con su RFC y la contraseña que creó.</div><div class="pill-row" style="margin-top:10px"><button class="btn sm" data-act="solPass" data-id="${s.id}">Nueva contraseña</button><button class="btn sm danger" data-act="solEliminar" data-id="${s.id}">Eliminar solicitud</button></div></div>
-      </div><div class="glass panel"><div class="ph"><h2>Expediente</h2><div class="pill-row"><button class="btn sm" data-act="solAbrir" data-id="${s.id}">Actualizar</button></div></div>${cargado ? lista : emptyBox('Consultando expediente…', '')}</div></div>`;
+        <div class="glass panel" style="margin-top:14px"><h2>Acceso del solicitante</h2><div class="small muted">Entra en ${SOL_WEB} con su RFC y la contraseña que creó.</div><div class="pill-row" style="margin-top:10px"><button class="btn sm" data-act="solPass" data-id="${s.id}">Nueva contraseña</button></div></div>
+      </div><div class="glass panel"><div class="ph"><h2>Expediente</h2><div class="pill-row"><button class="btn sm" data-act="solExtra" data-id="${s.id}">Pedir otro documento</button><button class="btn sm" data-act="solAbrir" data-id="${s.id}">Actualizar</button></div></div>${cargado ? lista : emptyBox('Consultando expediente…', '')}</div></div>`;
   }
   VIEWS.solicitudes = () => {
     if (!solDisponible()) return `<div class="glass panel">${emptyBox('Disponible con sesión en internet', 'Las solicitudes en línea se consultan en el servidor de ATRIX. Entra con tu usuario para verlas.')}</div>`;
@@ -4911,31 +4964,97 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const s = SOL.sel && solDe(SOL.sel); if (SOL.sel && !s) SOL.sel = null;
     return s ? solVistaDetalle(s) : solVistaLista();
   };
+  /* ---- Exportar expediente: un .zip con carátula en PDF y todos los documentos, ordenados por carpeta ---- */
+  const SOL_CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function solZip(files) {
+    const enc = new TextEncoder(); const d = new Date(); const time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1); const date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    const parts = [], central = []; let off = 0;
+    for (const f of files) { const nm = enc.encode(f.name); const u = f.data; let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = SOL_CRC[(c ^ u[i]) & 0xFF] ^ (c >>> 8); const crc = (c ^ 0xFFFFFFFF) >>> 0; const sz = u.length;
+      const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true);
+      const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true); ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+      parts.push(new Uint8Array(lh.buffer), nm, u); central.push(new Uint8Array(ch.buffer), nm); off += 30 + nm.length + sz; }
+    const cs = central.reduce((a, x) => a + x.length, 0); const end = new DataView(new ArrayBuffer(22)); end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+    const out = new Uint8Array(off + cs + 22); let p = 0; for (const x of parts.concat(central, [new Uint8Array(end.buffer)])) { out.set(x, p); p += x.length; } return out.buffer;
+  }
+  function solCaratulaSpec(s) {
+    const D = s.datos || {}; const N = SOL.int[s.id] || {}; const e = SOL_ETAPA[s.etapa] || [s.etapa]; const docs = solDocs(s).map(d => ({ ...d, x: solEstadoDoc(d, s) }));
+    return { titulo: 'Expediente de solicitud', subtitulo: s.folio + ' · ' + s.nombre,
+      secciones: [{ titulo: 'Solicitud', kv: [['Folio', s.folio], ['Etapa', e[0]], ['Producto', SOL_PROD[s.producto] || s.producto], ['Monto solicitado (sin IVA)', money(s.monto)], ['Plazo', D.plazo ? D.plazo + (/^\d+$/.test(D.plazo) ? ' meses' : '') : ''], ['Recibida', solF(s.creado, true)], ['Enviada a revisión', s.enviado ? solF(s.enviado, true) : ''], ['Promotor', s.promotor || '']].filter(x => x[1]) },
+        { titulo: 'Solicitante', kv: [['Nombre o razón social', s.nombre], ['Tipo', s.tipo === 'PM' ? 'Persona moral' : 'Persona física con actividad empresarial'], ['RFC', s.rfc], ['Giro', D.giro], ['Años de operación', D.antiguedad], ['Municipio', D.municipio], ['Ventas mensuales', D.ventas], ['Contacto', D.contacto], ['Cargo', D.cargo], ['Teléfono', D.telefono], ['Correo', D.correo]].filter(x => x[1]) }],
+      bloques: [D.activo ? { tipo: 'bullets', titulo: ['AF', 'AP'].includes(s.producto) ? 'Activo solicitado' : 'Destino y garantía', items: [D.activo] } : null, N.notas ? { tipo: 'bullets', titulo: 'Notas internas de Riesgos', items: String(N.notas).split(/\n+/).filter(Boolean) } : null].filter(Boolean),
+      tablas: [{ titulo: 'Documentos del expediente', head: ['Documento', 'Estado', 'Archivos', 'Observaciones'], align: ['l', 'l', 'r', 'l'], widths: [44, 20, 10, 36], rows: docs.map(d => [d.n + (d.opc ? ' (opcional)' : ''), d.x.txt, String(d.x.fs.length), d.x.e === 'rechazado' ? (d.x.motivo || '') : '']) }],
+      nota: 'Documento interno de ' + (CFG().razonSocial || 'COLIUM, S.A. de C.V.') + '. Contiene datos personales y financieros del solicitante: su uso se limita al análisis de la solicitud conforme al Aviso de Privacidad.',
+      pie: 'ATRIX es una marca comercial de ' + (CFG().razonSocial || 'COLIUM, S.A. de C.V.') + '. Expediente generado el ' + solF(new Date().toISOString(), true) + '.' };
+  }
+  async function solExportar(s) {
+    const paso = t => { const el = $('#solExp'); if (el) el.textContent = t; };
+    openInfo('Exportar expediente ' + s.folio, `<p id="solExp" style="margin:0">Preparando…</p><p class="small muted" style="margin:8px 0 0">Se descargará un archivo .zip con la carátula en PDF y los documentos ordenados por carpeta. No cierres esta ventana hasta que termine.</p>`);
+    await solArchivos(s); const fs = SOL.files[s.id] || []; const docs = solDocs(s); const entradas = []; const raiz = 'Expediente ' + s.folio + ' ' + solArchivoNombre(s.nombre);
+    try { const doc = pdfDoc(solCaratulaSpec(s)); if (doc) entradas.push({ name: raiz + '/00 Caratula ' + s.folio + '.pdf', data: new Uint8Array(doc.output('arraybuffer')) }); } catch (e) { console.error(e); }
+    if (fs.length) {
+      const r = await Nube.req('POST', '/storage/v1/object/sign/solicitudes', JSON.stringify({ expiresIn: 900, paths: fs.map(f => f.ruta) }));
+      if (r.status !== 200 || !Array.isArray(r.json)) { closeModal(); return toast('No se pudo exportar: ' + solErr(r), true); }
+      const url = {}; r.json.forEach(x => { if (x && x.signedURL) url[x.path] = NUBE_URL + '/storage/v1' + x.signedURL; }); const usados = {}; let fallas = 0;
+      for (let i = 0; i < fs.length; i++) { const f = fs[i]; paso('Descargando ' + (i + 1) + ' de ' + fs.length + ': ' + f.nombre);
+        const k = docs.findIndex(d => d.c === f.clave); const carpeta = k >= 0 ? String(k + 1).padStart(2, '0') + ' ' + solArchivoNombre(docs[k].n) : '99 Otros';
+        let nombre = raiz + '/' + carpeta + '/' + (solArchivoNombre(f.nombre) || 'archivo'); if (usados[nombre]) { const p = nombre.lastIndexOf('.'); nombre = (p > 0 ? nombre.slice(0, p) : nombre) + ' (' + (++usados[nombre]) + ')' + (p > 0 ? nombre.slice(p) : ''); } else usados[nombre] = 1;
+        try { if (!url[f.ruta]) throw new Error('sin enlace'); const resp = await fetch(url[f.ruta], { cache: 'no-store' }); if (!resp.ok) throw new Error('HTTP ' + resp.status); entradas.push({ name: nombre, data: new Uint8Array(await resp.arrayBuffer()) }); } catch (e) { fallas++; console.error('exportar', f.ruta, e); }
+      }
+      if (fallas === fs.length) { closeModal(); return openInfo('No se pudo exportar', `<p style="margin:0">No fue posible descargar los documentos desde ${NATIVO ? 'la app de Mac. Exporta este expediente desde ' + SISTEMA_WEB + ' en tu navegador.' : 'el servidor. Revisa tu conexión e intenta de nuevo.'}</p>`); }
+      if (fallas) toast(fallas + ' archivo(s) no se pudieron descargar', true);
+    }
+    if (!entradas.length) { closeModal(); return toast('El expediente no tiene documentos', true); }
+    paso('Armando el archivo .zip…'); await new Promise(r2 => setTimeout(r2, 30));
+    const zip = solZip(entradas); closeModal(); await descargar('Expediente_' + s.folio + '_' + solArchivoNombre(s.nombre).replace(/\s+/g, '_') + '.zip', zip);
+  }
+  function solAvisoTexto(s) {
+    const D = s.datos || {}; const docs = solDocs(s).map(d => ({ ...d, x: solEstadoDoc(d, s) })); const rech = docs.filter(d => d.x.e === 'rechazado'); const falt = docs.filter(d => !d.opc && d.x.e === 'falta');
+    const hola = 'Hola' + (D.contacto ? ' ' + String(D.contacto).split(' ')[0] : '') + ', le escribe ATRIX Financiera sobre su solicitud ' + s.folio + '.'; const liga = '\n\nPuede entrar con su RFC y contraseña en ' + SOL_WEB + '?entrar';
+    if (s.etapa === 'rechazada') return hola + ' Después de analizarla, en esta ocasión no fue posible aprobarla. Agradecemos su interés y quedamos a sus órdenes.';
+    if (s.etapa === 'aprobada') return hola + ' Nos da gusto informarle que fue aprobada. Le contactaremos para coordinar la firma y la entrega.';
+    if (s.etapa === 'preaprobada') return hola + ' Nos da gusto informarle que fue preaprobada. Le contactaremos para presentarle las condiciones.';
+    if (rech.length) return hola + ' Revisamos su expediente y para continuar necesitamos que corrija:\n' + rech.map(d => '• ' + d.n + (d.x.motivo ? ': ' + d.x.motivo : '')).join('\n') + (falt.length ? '\n\nAdemás faltan por cargar:\n' + falt.map(d => '• ' + d.n).join('\n') : '') + liga;
+    if (falt.length) return hola + ' Para iniciar el análisis nos falta que cargue:\n' + falt.map(d => '• ' + d.n).join('\n') + liga;
+    if (s.etapa === 'revision') return hola + ' Recibimos su expediente completo y ya está en análisis del área de Riesgos. Le daremos respuesta de preaprobación en 2 días hábiles.';
+    return hola + ' Su expediente está completo. Cuando guste, envíelo a revisión desde su página para iniciar el análisis.' + liga;
+  }
   const SOL_ACT = {
-    solAbrir: d => solAbrir(d.id), solVolver: () => { SOL.sel = null; render(); }, solRecargar: async () => { await solCargar(); toast(SOL.error ? 'No se pudo actualizar' : 'Solicitudes al día', !!SOL.error); },
-    solFiltro: d => { SOL.filtro = SOL.filtro === d.v && d.v !== 'activas' ? 'todas' : d.v; render(); },
+    solAbrir: d => solAbrir(d.id), solVolver: () => { SOL.sel = null; render(); window.scrollTo(0, SOL.sy || 0); }, solRecargar: async () => { await solCargar(); toast(SOL.error ? 'No se pudo actualizar' : 'Solicitudes al día', !!SOL.error); },
+    solGrupo: d => { SOL.grupo = d.v; SOL.q = ''; render(); }, solLimpiar: () => { SOL.q = ''; render(); },
     solCopiarLiga: () => copiar(SOL_WEB),
     solLiga: () => openModal('Liga para promotor', `<p class="small muted" style="margin:0 0 10px">Cada promotor comparte su propia liga. Las solicitudes que entren por ella quedan marcadas con su clave, para su comisión de colocación.</p>${F('Clave del promotor (sin espacios)', 'clave', 'text', '', 'placeholder="Ej. JPEREZ" maxlength="40"')}`, { submitText: 'Copiar liga', onSubmit: async v => { const c = String(v.clave || '').trim().replace(/[^\w-]/g, ''); if (!c) return toast('Escribe la clave del promotor', true); closeModal(); copiar(SOL_WEB + '?p=' + c); } }),
     solVer: async d => { toast('Abriendo documento…'); const r = await Nube.req('POST', '/storage/v1/object/sign/solicitudes/' + d.ruta.split('/').map(encodeURIComponent).join('/'), JSON.stringify({ expiresIn: 3600 }));
       if (r.status !== 200 || !r.json || !r.json.signedURL) return toast('No se pudo abrir: ' + solErr(r), true); const u = NUBE_URL + '/storage/v1' + r.json.signedURL; const img = /^image\//.test(d.mime) || /\.(jpe?g|png|webp|heic|heif)$/i.test(d.nom);
       openInfo(d.nom, img ? `<div style="max-height:72vh;overflow:auto;text-align:center;border-radius:12px;background:#f2f2f5"><img src="${esc(u)}" alt="" style="max-width:100%;display:block;margin:0 auto"></div>` : `<iframe src="${esc(u)}" title="Documento" style="width:100%;height:72vh;border:1px solid var(--line);border-radius:12px;background:#fff"></iframe>`, `<button class="btn" type="button" data-act="portalCopiar" data-v="${esc(u)}">Copiar enlace (1 hora)</button>${NATIVO ? '' : `<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">Abrir en otra pestaña</a>`}`); },
-    solDocOk: async d => { const s = solDe(d.id); if (!s) return; if (await solPatch(s, { revision: Object.assign({}, s.revision || {}, { [d.c]: { estado: 'aceptado', fecha: new Date().toISOString() } }) })) { toast('Documento aceptado'); render(); } },
-    solDocNo: d => { const s = solDe(d.id); if (!s) return; const doc = SOL_DOCS.find(x => x.c === d.c) || { n: d.c };
-      openModal('Rechazar: ' + doc.n, `<div class="f"><label>Motivo (lo verá el solicitante para corregirlo)</label><textarea name="motivo" placeholder="Ej. El documento tiene más de 3 meses de antigüedad."></textarea></div>`, { submitText: 'Rechazar documento', onSubmit: async v => { if (!v.motivo) return toast('Escribe el motivo para que el solicitante sepa qué corregir', true); const ok = await solPatch(solDe(d.id), { revision: Object.assign({}, solDe(d.id).revision || {}, { [d.c]: { estado: 'rechazado', motivo: v.motivo.slice(0, 400), fecha: new Date().toISOString() } }) }); closeModal(); if (ok) toast('Documento rechazado: el solicitante verá el motivo'); render(); } }); },
+    solDocOk: async d => { const s = solDe(d.id); if (!s) return; if (await solPatch(s, { revision: Object.assign({}, s.revision || {}, { [d.c]: { estado: 'aceptado', fecha: new Date().toISOString() } }) })) { toast('Documento aceptado'); await solTrasCalificar(s); render(); } },
+    solDocNo: d => { const s = solDe(d.id); if (!s) return; const doc = solDocs(s).find(x => x.c === d.c) || { n: d.c };
+      openModal('Rechazar: ' + doc.n, `<div class="f"><label>Motivo (lo verá el solicitante para corregirlo)</label><textarea name="motivo" placeholder="Ej. El documento tiene más de 3 meses de antigüedad."></textarea></div>`, { submitText: 'Rechazar documento', onSubmit: async v => { if (!v.motivo) return toast('Escribe el motivo para que el solicitante sepa qué corregir', true); const ok = await solPatch(solDe(d.id), { revision: Object.assign({}, solDe(d.id).revision || {}, { [d.c]: { estado: 'rechazado', motivo: v.motivo.slice(0, 400), fecha: new Date().toISOString() } }) }); closeModal(); if (ok) { toast('Documento rechazado: el solicitante verá el motivo'); await solTrasCalificar(s); } render(); } }); },
     solDocLimpiar: async d => { const s = solDe(d.id); if (!s) return; const rv = Object.assign({}, s.revision || {}); delete rv[d.c]; if (await solPatch(s, { revision: rv })) render(); },
+    solExtra: d => { const s = solDe(d.id); if (!s) return;
+      openModal('Pedir otro documento', `<p class="small muted" style="margin:0 0 10px">Aparecerá en la página del solicitante como documento obligatorio, en el apartado «Solicitados por ATRIX».</p>${F('Documento *', 'n', 'text', '', 'maxlength="90" placeholder="Ej. Contrato de arrendamiento del local"')}<div class="f"><label>Indicaciones para el solicitante</label><textarea name="a" maxlength="300" placeholder="Ej. Completo y firmado por ambas partes."></textarea></div>`,
+        { submitText: 'Pedir documento', onSubmit: async v => { if (!v.n) return toast('Escribe qué documento necesitas', true); const s2 = solDe(d.id); const ex = solExtras(s2).concat([{ c: 'x_' + Date.now().toString(36), n: v.n.slice(0, 90), a: (v.a || '').slice(0, 300) }]); if (ex.length > 12) return toast('Máximo 12 documentos adicionales por solicitud', true);
+          const ok = await solPatch(s2, { revision: Object.assign({}, s2.revision || {}, { _extra: ex }) }); closeModal(); if (ok) { await solAtender(s2); toast('Documento solicitado: avísale con «Aviso por WhatsApp»'); renderNav(); } render(); } }); },
+    solExtraQuitar: async d => { const s = solDe(d.id); if (!s) return; const rv = Object.assign({}, s.revision || {}); rv._extra = solExtras(s).filter(x => x.c !== d.c); delete rv[d.c]; if (await solPatch(s, { revision: rv })) render(); },
     solEtapa: d => { const s = solDe(d.id); if (!s) return;
       openModal('Etapa de ' + s.folio, `${Sel('Etapa', 'etapa', Object.keys(SOL_ETAPA).map(k => [k, SOL_ETAPA[k][0]]), s.etapa)}<div class="f"><label>Mensaje para el solicitante (opcional, lo ve en su página)</label><textarea name="mensaje" placeholder="Ej. Su solicitud fue preaprobada. Le contactaremos para presentarle las condiciones.">${esc(s.mensaje || '')}</textarea></div><div class="note">En «No aprobada» o «Cancelada» el solicitante ya no puede cargar documentos. «Formalizada» cierra la solicitud: da de alta al acreditado y su contrato en el sistema.</div>`,
-        { onSubmit: async v => { const ok = await solPatch(solDe(d.id), { etapa: v.etapa, mensaje: v.mensaje ? v.mensaje.slice(0, 800) : null }); closeModal(); if (ok) toast('Etapa actualizada'); renderNav(); render(); } }); },
-    solNotas: d => { const s = solDe(d.id); if (!s) return; const N = SOL.notas[s.id] || {};
-      openModal('Notas internas · ' + s.folio, `<div class="f"><label>Solo las ve ATRIX</label><textarea name="notas" style="min-height:180px">${esc(N.notas || '')}</textarea></div>`, { onSubmit: async v => { const datos = Object.assign({}, N, { notas: v.notas }); const r = await Nube.req('POST', '/rest/v1/solicitudes_interno?on_conflict=solicitud_id', JSON.stringify({ solicitud_id: s.id, datos, actualizado: new Date().toISOString() }), { Prefer: 'resolution=merge-duplicates,return=minimal' });
-        if (r.status >= 200 && r.status < 300) { SOL.notas[s.id] = datos; closeModal(); toast('Notas guardadas'); render(); } else toast('No se pudo guardar: ' + solErr(r), true); } }); },
+        { onSubmit: async v => { const ok = await solPatch(solDe(d.id), { etapa: v.etapa, mensaje: v.mensaje ? v.mensaje.slice(0, 800) : null }); closeModal(); if (ok) { await solAtender(solDe(d.id)); toast('Etapa actualizada'); } renderNav(); render(); } }); },
+    solAtendida: async d => { const s = solDe(d.id); if (!s) return; if (await solInterno(s, { atendido: d.v === '1' ? new Date().toISOString() : null })) { toast(d.v === '1' ? 'Marcada como atendida' : 'Regresó a pendientes'); renderNav(); render(); } },
+    solNotas: d => { const s = solDe(d.id); if (!s) return; const N = SOL.int[s.id] || {};
+      openModal('Notas internas · ' + s.folio, `<div class="f"><label>Solo las ve ATRIX</label><textarea name="notas" style="min-height:180px">${esc(N.notas || '')}</textarea></div>`, { onSubmit: async v => { if (await solInterno(s, { notas: v.notas })) { closeModal(); toast('Notas guardadas'); render(); } } }); },
+    solAviso: d => { const s = solDe(d.id); if (!s) return; const tel = String((s.datos || {}).telefono || '').replace(/\D/g, '').slice(-10);
+      openModal('Aviso por WhatsApp · ' + s.folio, `<div class="f"><label>Mensaje sugerido según el estado del expediente (puedes editarlo)</label><textarea name="texto" id="solAvisoTxt" style="min-height:210px">${esc(solAvisoTexto(s))}</textarea></div><div class="note">${tel ? 'Se abrirá WhatsApp con el número ' + esc(tel) + '. ' : 'La solicitud no tiene teléfono. '}Si WhatsApp no abre desde aquí, usa «Copiar mensaje» y pégalo en la conversación.</div>`,
+        { submitText: 'Abrir WhatsApp', left: '<button class="btn" type="button" data-act="solAvisoCopiar">Copiar mensaje</button>', onSubmit: async v => { if (!tel) return toast('La solicitud no tiene teléfono: copia el mensaje', true); const u = 'https://wa.me/52' + tel + '?text=' + encodeURIComponent(v.texto || ''); closeModal(); const w = window.open(u, '_blank'); if (!w) copiar(v.texto || ''); } }); },
+    solAvisoCopiar: () => { const t = $('#solAvisoTxt'); if (t) copiar(t.value); },
+    solExportar: d => { const s = solDe(d.id); if (s) solExportar(s); },
     solConvertir: d => { const s = solDe(d.id); if (!s) return; const D = s.datos || {};
       confirmar('Convertir en acreditado', 'Se dará de alta a ' + s.nombre + ' en Acreditados con los datos de su solicitud. Después podrás capturar su contrato.', async () => { const obj = { id: uid('cli'), nombre: s.nombre, tipo: s.tipo === 'PM' ? 'PM' : 'PF', rfc: s.rfc, telefono: D.telefono || '', email: D.correo || '', contacto: D.contacto || '', giro: D.giro || '', direccion: D.municipio ? D.municipio + ', Nuevo León' : '', notas: 'Origen: solicitud en línea ' + s.folio + (s.promotor ? ' · promotor ' + s.promotor : ''), creado: S.hoy, solicitud: s.folio };
         await Store.save('clientes', obj); toast('Acreditado creado'); render(); }); },
     solPass: d => { const s = solDe(d.id); if (!s) return; confirmar('Nueva contraseña', 'Se generará una contraseña nueva para ' + s.nombre + '. La anterior dejará de funcionar.', async () => { const p = portalPass(); const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'pass', user_id: s.user_id, password: p }));
       if (r.status === 200 && r.json && r.json.ok) openInfo('Nueva contraseña', `<p style="margin:0 0 10px">Compártela con el solicitante por un medio seguro. No se volverá a mostrar.</p><div class="kv"><span>Página</span><span>${SOL_WEB}</span><span>Usuario (RFC)</span><span>${esc(s.rfc)}</span><span>Contraseña</span><span>${esc(p)}</span></div>`, `<button class="btn" type="button" data-act="portalCopiar" data-v="${esc('Solicitud ATRIX ' + s.folio + '\n' + SOL_WEB + '\nUsuario (RFC): ' + s.rfc + '\nContraseña: ' + p)}">Copiar datos</button>`); else toast('No se pudo cambiar: ' + solErr(r), true); }); },
-    solEliminar: d => { const s = solDe(d.id); if (!s) return; confirmar('Eliminar solicitud', 'Se eliminarán la solicitud ' + s.folio + ' de ' + s.nombre + ', su acceso y todos sus documentos. No se puede deshacer.', async () => { const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'eliminar', user_id: s.user_id }));
-      if (r.status === 200 && r.json && r.json.ok) { SOL.lista = SOL.lista.filter(x => x.id !== s.id); SOL.sel = null; toast('Solicitud eliminada'); renderNav(); render(); } else toast('No se pudo eliminar: ' + solErr(r), true); }); }
+    solEliminar: d => { const s = solDe(d.id); if (!s) return;
+      openModal('Borrar solicitud ' + s.folio, `<p style="margin:0 0 8px">Se borrarán la solicitud de <b>${esc(s.nombre)}</b>, su acceso y <b>todos sus documentos</b>. No se puede deshacer.</p><div class="note">Si quieres conservar el expediente, primero usa «Exportar expediente»: se descarga un .zip con la carátula y todos los documentos.</div>`,
+        { submitText: 'Borrar definitivamente', left: `<button class="btn" type="button" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>`, onSubmit: async () => { closeModal(); const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'eliminar', user_id: s.user_id }));
+          if (r.status === 200 && r.json && r.json.ok) { SOL.lista = SOL.lista.filter(x => x.id !== s.id); delete SOL.int[s.id]; delete SOL.files[s.id]; if (SOL.sel === s.id) SOL.sel = null; toast('Solicitud borrada'); renderNav(); render(); } else toast('No se pudo borrar: ' + solErr(r), true); } }); }
   };
 
   /* ---------- Acciones ---------- */
@@ -5053,7 +5172,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   });
   document.addEventListener('change', e => {
     const el = e.target; if (el.dataset.actChange === 'corrAbrir') { const c = S.corridas.find(x => x.id === el.value); if (c) { S.corr = Object.assign(corrDefaults(), c.datos || {}, { id: c.id }); render(); } return; }
-    if (el.dataset.actChange === 'filtroProd') { S.filtro.prod = el.value; render(); } else if (el.dataset.actChange === 'filtroEst') { S.filtro.est = el.value; render(); }
+    if (el.dataset.actChange === 'solProd') { SOL.fProd = el.value; render(); } else if (el.dataset.actChange === 'filtroProd') { S.filtro.prod = el.value; render(); } else if (el.dataset.actChange === 'filtroEst') { S.filtro.est = el.value; render(); }
     else if (el.id === 'hoy') { if (el.value) { S.hoy = el.value; S.hoyManual = el.value !== E.todayISO(); render(); } }
     else if (el.closest('[data-act-input="cob"]') && el.name === 'contratoId') { S.cob.contratoId = el.value; render(); }
   });
