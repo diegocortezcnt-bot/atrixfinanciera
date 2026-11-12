@@ -245,6 +245,8 @@ svg{display:block;max-width:100%}
 .money{position:relative}
 .money::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-3)}
 .money input{width:100%;padding:12px 14px 12px 28px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.8);font-size:1rem}
+.money.u::before{content:none}.money.u::after{content:attr(data-u);position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--ink-3);font-size:.9rem;pointer-events:none}.money.u input{padding-left:14px;padding-right:64px}.money input:focus{outline:2px solid var(--navy);outline-offset:1px}
+@media (max-width:700px){.money input{font-size:16px;padding-top:14px;padding-bottom:14px}}
 .res{border-radius:28px;padding:30px;display:grid;gap:22px;min-width:0}
 .res .top span{font-size:.74rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
 .res .top b{display:block;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:600;letter-spacing:-.04em;line-height:1.05;color:var(--navy);margin-top:4px}
@@ -709,7 +711,7 @@ html{scroll-behavior:auto}
 <div class="lab"><label for="monto" id="montoLabel">Valor del activo</label><output class="tab" id="montoOut">$1,000,000</output></div>
 <div class="money"><input type="number" id="monto" min="100000" max="2500000" step="10000" value="1000000" inputmode="numeric"></div>
 <input type="range" id="montoR" min="100000" max="2500000" step="10000" value="1000000" aria-label="Monto (deslizador)">
-<div class="hint" id="montoHint">De $100,000 a $2,500,000 MXN (pesos mexicanos).</div>
+<div class="hint" id="montoHint">Escriba el importe exacto, de $100,000 a $2,500,000 MXN.</div>
 </div>
 <div class="fld" id="f-disp">
 <div class="lab"><label for="disp">Disposición inicial</label><output class="tab" id="dispOut">$400,000</output></div>
@@ -1217,7 +1219,7 @@ $$('.seg button[data-prod]').forEach(b=>b.setAttribute('aria-pressed',String(b.d
 $('#montoLabel').textContent=c.ml;$('#montoHint').textContent=c.mh;
 if(c.el){$('#engLabel').textContent=c.el;$('#engHint').textContent=c.eh}
 $('#plazoLabel').textContent=c.pl;$('#plazoHint').textContent=c.ph;
-const [a,b,s,d]=c.pr;const v=+el.plazo.value;el.plazo.min=a;el.plazo.max=b;el.plazo.step=s;el.plazo.value=(v<a||v>b||(v-a)%s)?d:v;
+const [a,b,s,d]=c.pr;const v=+el.plazo.value;el.plazo.min=a;el.plazo.max=b;el.plazo.step=1;el.plazo.value=(v<a||v>b)?d:v;
 ['eng','res','disp','per','corr'].forEach(k=>{$('#f-'+k).hidden=!c.show.includes(k)});
 $('#bigLabel').textContent=c.big;calc();
 }
@@ -1277,14 +1279,28 @@ const show=S.full?rows:rows.slice(0,6),h=heads[S.prod];
 $('#amort thead').innerHTML=`<tr><th>No.</th><th>Fecha</th><th>Días</th><th>${h[0]}</th><th>${h[1]}</th><th>${h[2]}</th><th>${h[3]}</th></tr>`;
 $('#amort tbody').innerHTML=show.map(x=>`<tr><td>${x[0]}</td><td>${fDate.format(x[1]).replace(/\./g,'')}</td><td class="tab">${x[2]}</td><td class="tab">${fN2.format(x[3])}</td><td class="tab">${fN2.format(x[4])}</td><td class="tab">${fN2.format(x[5])}</td><td class="tab">${fN2.format(x[6])}</td></tr>`).join('')+(!S.full&&rows.length>6?`<tr><td colspan="7" style="text-align:center;color:#86868b">${rows.length-6} pagos más</td></tr>`:'');
 const tb=$('#toggleAmort');tb.hidden=rows.length<=6;tb.textContent=S.full?'Ver resumen':'Ver tabla completa';
-S.last={M,n,t};
+S.last={M,n,t};if(window.__simSync)window.__simSync();
 }
 $$('.seg button[data-prod]').forEach(b=>b.addEventListener('click',()=>setProd(b.dataset.prod)));
 $$('#perSeg button').forEach(b=>b.addEventListener('click',()=>{S.per=+b.dataset.per;$$('#perSeg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));calc()}));
 ['eng','res','plazo','tasa','disp','corr'].forEach(k=>el[k].addEventListener('input',calc));
 el.montoR.addEventListener('input',()=>{el.monto.value=el.montoR.value;calc()});
 el.monto.addEventListener('input',calc);
-el.monto.addEventListener('blur',()=>{el.monto.value=Math.min(2500000,Math.max(100000,Math.round((+el.monto.value||0)/10000)*10000));calc()});
+/* Captura a mano: cada dato del simulador se escribe con el teclado (sin deslizadores), con el importe exacto que la persona quiera. */
+(()=>{const nfT=new Intl.NumberFormat('es-MX',{maximumFractionDigits:2});const T={};
+const defs={monto:['$','',0,'Ej. 850,000'],disp:['$','',0,'Ej. 400,000'],eng:['','%',0,'Ej. 15'],res:['','%',0,'Ej. 20'],corr:['','meses',0,'Ej. 36'],plazo:['','meses',0,'Ej. 36'],tasa:['','%',2,'Ej. 35']};
+el.montoR.hidden=true;el.disp.step=1;el.tasa.step=0.01;
+Object.keys(defs).forEach(k=>{const m=el[k],d=defs[k];m.hidden=true;m.setAttribute('aria-hidden','true');m.tabIndex=-1;
+const w=document.createElement('div');w.className='money'+(d[0]?'':' u');if(d[1])w.dataset.u=d[1];
+const i=document.createElement('input');i.type='text';i.id=k+'T';i.inputMode=d[2]?'decimal':'numeric';i.autocomplete='off';i.placeholder=d[3];w.appendChild(i);m.parentNode.insertBefore(w,m);
+const lb=document.querySelector('label[for="'+k+'"]');if(lb)lb.htmlFor=i.id;T[k]=i;
+const lim=()=>k==='monto'?[100000,2500000]:[+m.min||0,+m.max||0];
+const num=()=>{const x=i.value.replace(/[^\d.]/g,'');return d[2]?parseFloat(x)||0:parseInt(x.replace(/\./g,''),10)||0};
+i.addEventListener('input',()=>{if(!d[2]){const x=i.value.replace(/[^\d]/g,'').slice(0,9);i.value=x?(d[0]?Number(x).toLocaleString('es-MX'):x):''}else i.value=i.value.replace(/[^\d.]/g,'').slice(0,5);
+const [a,b]=lim(),n=num();if(n<a)return;m.value=Math.min(b,n);calc()});
+i.addEventListener('blur',()=>{const [a,b]=lim();m.value=Math.min(b,Math.max(a,num()||a));i.value=nfT.format(+m.value);calc()});
+i.addEventListener('focus',()=>{try{i.select()}catch(e){}});i.addEventListener('keydown',e=>{if(e.key==='Enter')i.blur()})});
+window.__simSync=()=>{Object.keys(T).forEach(k=>{if(document.activeElement!==T[k])T[k].value=nfT.format(+el[k].value||0)})};})();
 $('#toggleAmort').addEventListener('click',()=>{S.full=!S.full;calc()});
 $$('[data-sim]').forEach(a=>a.addEventListener('click',()=>setProd(a.dataset.sim)));
 (()=>{const g=$('.cmp-g'),A=$('#cmpA'),B=$('#cmpB');if(!g||!A||!B)return;const cells=[...g.children];
