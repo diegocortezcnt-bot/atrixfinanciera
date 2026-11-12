@@ -67,6 +67,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 .f input,.f select,.f textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--white);font-size:15px}
 .f textarea{min-height:76px;resize:vertical}
 .f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,95,196,.15)}
+@media (max-width:700px){.f input,.f select,.f textarea{font-size:16px;padding:13px 14px}}
 .f small{display:block;font-size:11.5px;color:var(--ink-3);margin-top:5px}
 .r2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
 .opt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -265,8 +266,8 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
               <div class="f"><label for="giro">Giro o actividad</label><input id="giro" name="giro" maxlength="120" placeholder="Ej. Transporte de carga"></div>
             </div>
             <div class="r2">
-              <div class="f"><label for="antiguedad">Años de operación en México</label><select id="antiguedad" name="antiguedad"><option value="">Seleccione</option><option value="MENOS">Menos de 2 años</option><option>2 a 5 años</option><option>5 a 10 años</option><option>Más de 10 años</option></select></div>
-              <div class="f"><label for="ventas">Ventas anuales</label><select id="ventas" name="ventas"><option value="">Seleccione</option><option value="MENOS">Menos de $5 millones</option><option>$5 a $10 millones</option><option>$10 a $25 millones</option><option>$25 a $50 millones</option><option>Más de $50 millones</option></select></div>
+              <div class="f"><label for="antiguedad">Años de operación en México</label><input id="antiguedad" name="antiguedad" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="Ej. 6"><small>Años completos. Mínimo 2.</small></div>
+              <div class="f"><label for="ventas">Ventas anuales (MXN)</label><input id="ventas" name="ventas" inputmode="numeric" autocomplete="off" placeholder="Ej. 12,500,000"><small>Del último año, en pesos. Mínimo $5,000,000.</small></div>
             </div>
             <div class="f"><label for="municipio">Municipio donde opera</label><select id="municipio" name="municipio"><option value="">Seleccione</option><option>Monterrey</option><option>San Pedro Garza García</option><option>San Nicolás de los Garza</option><option>Guadalupe</option><option>Apodaca</option><option>General Escobedo</option><option>Santa Catarina</option><option>García</option><option>Juárez</option><option>Santiago</option><option>Cadereyta Jiménez</option><option>Pesquería</option><option>Salinas Victoria</option><option>Ciénega de Flores</option><option>General Zuazua</option><option>El Carmen</option><option>Allende</option><option>Montemorelos</option><option>Linares</option><option>Sabinas Hidalgo</option><option value="Otro municipio de Nuevo León">Otro municipio de Nuevo León</option><option value="FUERA">Fuera de Nuevo León</option></select></div>
             <div class="r2">
@@ -279,7 +280,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
             <div class="f"><label>Producto</label><div class="opt"><label><input type="radio" name="producto" value="AF" checked><span>Arrendamiento financiero<small>El activo es suyo al final</small></span></label><label><input type="radio" name="producto" value="AP"><span>Arrendamiento puro<small>Renta deducible, con valor residual</small></span></label><label><input type="radio" name="producto" value="CGI"><span>Crédito con garantía inmobiliaria<small>Simple o revolvente</small></span></label><label><input type="radio" name="producto" value="CE"><span>Crédito estructurado<small>A la medida de su operación</small></span></label></div></div>
             <div class="r2">
               <div class="f"><label for="monto">Monto sin IVA (MXN)</label><input id="monto" name="monto" inputmode="numeric" placeholder="Ej. 850,000"><small>De $100,000 a $2,500,000</small></div>
-              <div class="f"><label for="plazo">Plazo deseado</label><select id="plazo" name="plazo"><option value="">Seleccione</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="Por definir">Por definir</option></select></div>
+              <div class="f"><label for="plazo">Plazo deseado (meses)</label><input id="plazo" name="plazo" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="Ej. 36"><small>De 12 a 48 meses.</small></div>
             </div>
             <div class="f"><label for="activo" id="lActivo">Activo que desea arrendar</label><textarea id="activo" name="activo" maxlength="600" placeholder="Marca, modelo, año y proveedor, si ya lo tiene cotizado."></textarea></div>
             <div class="f"><label>Su aval será</label><div class="opt"><label><input type="radio" name="aval_tipo" value="PF" checked><span>Persona física</span></label><label><input type="radio" name="aval_tipo" value="PM"><span>Persona moral<small>Otra empresa</small></span></label></div></div>
@@ -423,7 +424,9 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   document.addEventListener('click', e => { const b = e.target.closest('[data-ver]'); if (!b) return; const i = document.getElementById(b.dataset.ver); i.type = i.type === 'password' ? 'text' : 'password'; b.textContent = i.type === 'password' ? 'Ver' : 'Ocultar'; });
   const fN = $('#fNueva');
   const val = n => { const el = fN.elements[n]; return el ? String(el.value || '').trim() : ''; };
-  const montoNum = () => Number(val('monto').replace(/[^\d.]/g, '')) || 0;
+  const montoNum = () => Number(val('monto').replace(/[^\d.]/g, '')) || 0; const numDe = id => Number(val(id).replace(/[^\d]/g, '')) || 0;
+  $('#ventas').addEventListener('input', e => { const d = e.target.value.replace(/[^\d]/g, '').slice(0, 12); e.target.value = d ? Number(d).toLocaleString('es-MX') : ''; });
+  ['antiguedad', 'plazo'].forEach(id => $('#' + id).addEventListener('input', e => { e.target.value = e.target.value.replace(/[^\d]/g, '').slice(0, id === 'plazo' ? 2 : 3); }));
   $('#monto').addEventListener('input', e => { const d = e.target.value.replace(/[^\d]/g, '').slice(0, 9); e.target.value = d ? Number(d).toLocaleString('es-MX') : ''; });
   $('#rfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
   $('#lrfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
@@ -435,16 +438,16 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       if (!(pm ? /^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/ : /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/).test(val('rfc'))) return ['rfc', pm ? 'El RFC de una persona moral tiene 12 caracteres. Revíselo.' : 'El RFC de una persona física tiene 13 caracteres. Revíselo.'];
       if (!val('giro')) return ['giro', 'Indique el giro o actividad.'];
       if (!val('antiguedad')) return ['antiguedad', 'Indique los años de operación en México.'];
-      if (val('antiguedad') === 'MENOS') return ['antiguedad', 'Por ahora atendemos empresas con 2 años o más de operación en México. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
+      if (numDe('antiguedad') < 2) return ['antiguedad', 'Por ahora atendemos empresas con 2 años o más de operación en México. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
       if (!val('ventas')) return ['ventas', 'Indique las ventas anuales.'];
-      if (val('ventas') === 'MENOS') return ['ventas', 'Por ahora atendemos empresas con ventas anuales de $5 millones de pesos o más. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
+      if (numDe('ventas') < 5000000) return ['ventas', 'Por ahora atendemos empresas con ventas anuales de $5 millones de pesos o más. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
       if (!val('municipio')) return ['municipio', 'Seleccione el municipio donde opera.'];
       if (val('municipio') === 'FUERA') return ['municipio', 'Por ahora ATRIX otorga financiamiento únicamente a empresas con operación en Nuevo León. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
       if (pm && val('constitucion') === 'no') return ['constitucion', 'Por ahora atendemos únicamente sociedades constituidas en México. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
       if (val('extranjero') === 'si') return ['extranjero', 'Por política, por ahora no atendemos empresas con capital mayoritario extranjero. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
     } else if (p === 1) {
       const m = montoNum(); if (!(m >= MONTO_MIN && m <= MONTO_MAX)) return ['monto', 'Por ahora atendemos operaciones de $100,000 a $2,500,000 pesos.'];
-      if (!val('plazo')) return ['plazo', 'Seleccione el plazo deseado.'];
+      if (!(numDe('plazo') >= 12 && numDe('plazo') <= 48)) return ['plazo', 'Escriba el plazo deseado en meses, de 12 a 48.'];
       if (val('activo').length < 5) return ['activo', ['AF', 'AP'].includes(val('producto')) ? 'Describa brevemente el activo que desea arrendar.' : 'Describa brevemente el destino del crédito.'];
     } else {
       if (!val('contacto')) return ['contacto', 'Escriba el nombre de la persona de contacto.'];
@@ -465,7 +468,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const b = $('#bSig'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Enviando…';
     let prom = ''; try { prom = sessionStorage.getItem('atrix_promotor') || ''; } catch (x) { }
     const cuerpo = { accion: 'alta', tipo: val('tipo'), rfc: val('rfc'), nombre: val('nombre'), producto: val('producto'), monto: montoNum(), nuevoLeon: true, extranjero: false, privacidad: true, password: $('#pw1').value, promotor: prom, web: val('web'),
-      datos: { contacto: val('contacto'), cargo: val('cargo'), telefono: val('telefono'), correo: val('correo'), giro: val('giro'), antiguedad: val('antiguedad'), municipio: val('municipio'), activo: val('activo'), plazo: val('plazo'), ventas: val('ventas') } };
+      datos: { contacto: val('contacto'), cargo: val('cargo'), telefono: val('telefono'), correo: val('correo'), giro: val('giro'), antiguedad: numDe('antiguedad') + (numDe('antiguedad') === 1 ? ' año' : ' años'), municipio: val('municipio'), activo: val('activo'), plazo: String(numDe('plazo')), ventas: '$' + numDe('ventas').toLocaleString('es-MX') } };
     const r = await api('/functions/v1/solicitud-alta', { method: 'POST', body: cuerpo });
     if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; if (r.json && r.json.existe) { $('#lrfc').value = val('rfc'); } return; }
     const err = await entrar(val('rfc'), $('#pw1').value); b.disabled = false; b.textContent = 'Enviar solicitud';
@@ -643,7 +646,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     vp.addEventListener('drop', e => { const d = zona(e); if (dz) dz.classList.remove('drop'); dz = null; if (!d) return; e.preventDefault(); if (e.dataTransfer && e.dataTransfer.files.length) subirVarios(d.dataset.doc, e.dataTransfer.files); });
     window.addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); window.addEventListener('drop', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); }
   /* Borrador: si el solicitante cierra la página a medias, al volver encuentra lo que ya había escrito (nunca la contraseña) */
-  const BKEY = 'atrix_solicitud_borrador', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'extranjero', 'constitucion', 'aval_tipo', 'socios5050', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'cargo', 'telefono', 'correo'];
+  const BKEY = 'atrix_solicitud_borrador2', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'extranjero', 'constitucion', 'aval_tipo', 'socios5050', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'cargo', 'telefono', 'correo'];
   const poner = (n, v) => { const el = fN.elements[n]; if (!el || v == null || v === '') return; if (el.length && el[0] && el[0].type === 'radio') { for (const r of el) r.checked = r.value === v; } else if (el.tagName === 'SELECT') { if ([...el.options].some(o => o.value === v || o.text === v)) el.value = v; } else el.value = v; };
   const guardarBorrador = () => { try { const o = {}; BCAMPOS.forEach(n => { const v = val(n); if (v) o[n] = v; }); o.t = Date.now(); localStorage.setItem(BKEY, JSON.stringify(o)); } catch (e) { } };
   const borrarBorrador = () => { try { localStorage.removeItem(BKEY); } catch (e) { } };
