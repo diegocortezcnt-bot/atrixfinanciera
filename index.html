@@ -444,6 +444,29 @@ html{scroll-behavior:auto}
 .stmt .stage{padding-block:100px}
 .stmt p span{opacity:1}
 }
+/* ---- Apartado «Iniciar solicitud» (nov 2026) ---- */
+.ini{padding-block:clamp(70px,9vw,120px);background:radial-gradient(700px 380px at 12% 0%,rgba(28,95,196,.28),transparent 70%),radial-gradient(520px 320px at 100% 100%,rgba(231,25,34,.16),transparent 70%),var(--night)}
+.ini-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,470px);gap:clamp(28px,5vw,64px);align-items:center}
+.ini-g>*{min-width:0}
+.ini .t-1{font-size:clamp(2.1rem,4.6vw,3.6rem)}
+.ini-s{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:12px}
+.ini-s li{display:flex;align-items:center;gap:12px;font-size:1rem;color:var(--on-dark)}
+.ini-s b{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:600;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22)}
+.ini-c{border-radius:28px;padding:clamp(20px,3vw,30px);display:grid;gap:16px}
+.ini-c .kicker{color:var(--on-dark-2)}
+.ini-t{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ini-t a{display:grid;gap:4px;align-content:start;text-decoration:none;color:var(--on-dark);padding:14px 14px 13px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);transition:background .25s,border-color .25s,transform .35s var(--ease);min-width:0}
+.ini-t a:hover,.ini-t a:focus-visible{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+.ini-t a:active{transform:scale(.98)}
+.ini-t svg{width:24px;height:24px;fill:none;stroke:#ff6b72;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-bottom:6px}
+.ini-t b{font-size:.92rem;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+.ini-t span{font-size:.76rem;color:var(--on-dark-2);line-height:1.35}
+.ini-c .btn{justify-content:center;padding:15px 24px;font-size:1.02rem;font-weight:600}
+.ini-c .more{justify-self:center;font-size:.92rem}
+.lnav .btn .s2{display:none}
+@media (max-width:900px){.ini-g{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.lnav .btn .s1{display:none}.lnav .btn .s2{display:inline}.hero .cta{gap:10px}.hero .cta .btn{flex:1 1 auto;padding:12px 14px;font-size:.88rem}.hero .cta .btn-w{flex-basis:100%;padding:14px;font-size:1rem;font-weight:600}}
+@media (max-width:359px){.ini-t{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -454,6 +477,7 @@ html{scroll-behavior:auto}
 <div class="links" id="lnLinks">
 <a href="#conozca">Conozca</a>
 <a href="#productos">Productos</a>
+<a href="#solicitud">Iniciar solicitud</a>
 <a href="#simulador">Simulador</a>
 <a href="#proceso">Proceso</a>
 <a href="#preguntas">Preguntas</a>
@@ -461,7 +485,7 @@ html{scroll-behavior:auto}
 </div>
 <a class="portal" href="/portal/" aria-label="Portal de Clientes"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Portal de Clientes</span></a>
 <button class="dd" id="lnDd" type="button" aria-label="Mostrar secciones" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-<a class="btn btn-p" href="/solicitud/">Solicitar</a>
+<a class="btn btn-p" href="/solicitud/?nueva"><span class="s1">Iniciar solicitud</span><span class="s2">Solicitar</span></a>
 </div>
 </nav>
 <!-- HERO SEQUENCE -->
@@ -474,7 +498,8 @@ html{scroll-behavior:auto}
 <h1 class="t-hero">Activos para avanzar<em>.</em></h1>
 <p class="tag">Ayudamos a su empresa a no descapitalizarse.</p>
 <div class="cta">
-<a class="btn btn-w" href="#simulador">Simular una operación</a>
+<a class="btn btn-w" href="/solicitud/?nueva">Iniciar solicitud</a>
+<a class="btn btn-o" href="#simulador">Simular una operación</a>
 <a class="btn btn-o" href="#productos">Ver productos</a>
 </div>
 </div>
@@ -501,6 +526,30 @@ html{scroll-behavior:auto}
 <div class="stage">
 <div class="wrap">
 <p id="stmtText">Su capital debe trabajar en su operación, no inmovilizado en un activo. ATRIX financia el transporte, la maquinaria y el equipo que su empresa necesita, para que su liquidez se quede donde produce.</p>
+</div>
+</div>
+</section>
+<!-- INICIAR SOLICITUD -->
+<section class="ch night ini" id="solicitud">
+<div class="wrap">
+<div class="ini-g">
+<div class="head" style="margin-bottom:0">
+<div class="kicker rv">Iniciar solicitud</div>
+<h2 class="t-1 rv d1">¿Ya sabe lo que necesita? Inicie hoy.</h2>
+<p class="lead sub rv d2">Tres minutos desde su celular o computadora. Recibe su folio al instante y carga sus documentos después, a su ritmo.</p>
+<ul class="ini-s rv d2"><li><b>1</b>Cuéntenos qué necesita</li><li><b>2</b>Cargue sus documentos en PDF o con foto</li><li><b>3</b>Preaprobación en 2 días hábiles</li></ul>
+</div>
+<div class="ini-c lg-d rv d1">
+<div class="kicker">Elija para empezar</div>
+<div class="ini-t">
+<a href="/solicitud/?nueva&amp;prod=AF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><b>Arrendamiento financiero</b><span>El activo es suyo al final</span></a>
+<a href="/solicitud/?nueva&amp;prod=AP"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></svg><b>Arrendamiento puro</b><span>Renta deducible, con valor residual</span></a>
+<a href="/solicitud/?nueva&amp;prod=CGI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-4 7 4v13M9.5 21v-5h5v5M9 11h.01M15 11h.01"/></svg><b>Crédito simple o revolvente</b><span>Con garantía inmobiliaria</span></a>
+<a href="/solicitud/?nueva&amp;prod=CE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/></svg><b>Crédito estructurado</b><span>A la medida de su operación</span></a>
+</div>
+<a class="btn btn-w" href="/solicitud/?nueva">Iniciar solicitud</a>
+<a class="more" href="/solicitud/?entrar">Ya la inicié: continuar mi solicitud</a>
+</div>
 </div>
 </div>
 </section>
@@ -955,7 +1004,7 @@ html{scroll-behavior:auto}
 <div class="card lg rv d2">
 <div class="kicker">Solicitud en línea</div>
 <p class="sub" style="font-size:.92rem">Inicie su solicitud ahora, reciba su folio y cargue sus documentos desde un espacio privado. Puede guardar su avance y regresar con su RFC.</p>
-<a class="btn btn-p" style="justify-self:start;margin-top:6px" href="/solicitud/">Iniciar solicitud en línea</a>
+<a class="btn btn-p" style="justify-self:start;margin-top:6px" href="/solicitud/?nueva">Iniciar solicitud en línea</a>
 <a class="more" style="justify-self:start" href="/solicitud/?entrar">Continuar una solicitud iniciada</a>
 </div>
 </div>
