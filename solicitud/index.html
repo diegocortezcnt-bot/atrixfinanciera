@@ -226,6 +226,114 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:900px){.land{grid-template-columns:1fr;gap:26px}.side{grid-template-columns:1fr}.bar .who{display:none}.steps{grid-template-columns:1fr;gap:12px}.steps i{margin-bottom:6px}}
 @media (max-width:480px){.r2,.opt{grid-template-columns:1fr}.fm{padding:22px 18px}.sec,.box,.envio{padding-left:16px;padding-right:16px}.bar #bSitio{display:none}}
+/* ---- Entrada rediseñada (nov 2026): 4 pasos cortos, captura cómoda en celular ---- */
+.land{grid-template-columns:minmax(0,1fr) minmax(0,480px);gap:22px 36px;padding-top:6px}
+.hero{grid-column:1;grid-row:1;position:relative;overflow:hidden;border-radius:26px;padding:38px 36px 34px;color:#fff;background:radial-gradient(520px 300px at 0% 100%,rgba(231,25,34,.22),transparent 70%),linear-gradient(150deg,#071D3D 0%,#0b2a5c 58%,#12448f 100%);box-shadow:0 18px 50px -24px rgba(7,29,61,.7)}
+.hero .mark{position:absolute;right:-46px;bottom:-60px;width:300px;height:300px;opacity:.1;fill:#fff;pointer-events:none}
+.hero .k{color:#ff8a90}
+.hero h1{color:#fff;font-size:clamp(28px,4.2vw,44px);margin:10px 0 12px;position:relative}
+.hero p.s{color:rgba(255,255,255,.82);font-size:15.5px;max-width:44ch;position:relative}
+.perks{list-style:none;padding:0;margin:22px 0 0;display:flex;flex-wrap:wrap;gap:8px;position:relative}
+.perks li{font-size:12.5px;font-weight:600;padding:7px 13px 7px 30px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);position:relative}
+.perks li::before{content:"";position:absolute;left:12px;top:50%;width:9px;height:5px;border-left:2px solid #7fe0a6;border-bottom:2px solid #7fe0a6;transform:translateY(-70%) rotate(-45deg)}
+.fm{grid-column:2;grid-row:1/span 2;scroll-margin-top:76px;padding:22px 24px 20px}
+.info{grid-column:1;grid-row:2}
+.info .pasos{margin-top:8px}
+.seg{margin-bottom:18px}
+.seg button{min-height:42px}
+.stp{display:flex;gap:6px}
+.stp i{height:5px;flex:1;border-radius:5px;background:#e3e3e8;transition:background .3s}
+.stp i.on{background:var(--navy)}
+.stp i.cur{background:linear-gradient(90deg,var(--red),#ff6a55)}
+.stpl{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:9px 0 16px;font-size:12px;color:var(--ink-3)}
+.stpl b{font-weight:600;color:var(--navy);letter-spacing:.04em;text-transform:uppercase;font-size:11px;flex:0 0 auto}
+.stpl span{text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink-2)}
+.fm h2{font-size:23px;letter-spacing:-.02em}
+.fm .sub{margin:4px 0 16px;font-size:13.5px}
+[data-paso]{animation:pin .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes pin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){[data-paso]{animation:none}}
+.f label em{font-style:normal;font-weight:500;color:var(--ink-3);margin-left:4px}
+.f input,.f select,.f textarea{min-height:48px;font-size:16px;border-radius:14px;transition:border-color .15s,box-shadow .15s}
+.f textarea{min-height:64px}
+.f select{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e6e73' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:15px}
+.f input.up{text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.f input.up::placeholder{font-weight:400;letter-spacing:0}
+.f small.okh{color:var(--ok);font-weight:600}
+.f small.badh{color:var(--bad);font-weight:600}
+.f.bad input,.f.bad select,.f.bad textarea,.f.bad .aff{border-color:var(--bad);box-shadow:0 0 0 3px rgba(196,22,28,.12)}
+.aff{display:flex;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--white);padding:0 14px;min-height:48px;transition:border-color .15s,box-shadow .15s}
+.aff:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(28,95,196,.15)}
+.aff>span{color:var(--ink-3);font-weight:600;font-size:14px;flex:0 0 auto}
+.aff input,.f.bad .aff input{border:0!important;box-shadow:none!important;padding:0 8px;min-height:46px;background:none;flex:1;min-width:0;width:auto;font-variant-numeric:tabular-nums}
+.aff.big{min-height:60px;padding:0 16px}
+.aff.big>span:first-child{font-size:24px;color:var(--navy)}
+.aff.big input{font-size:26px;font-weight:600;color:var(--navy);letter-spacing:-.01em;min-height:58px}
+.aff.big input::placeholder{color:#c3c3ca;font-weight:500}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.tile{position:relative;display:block;border:1.5px solid var(--line);border-radius:16px;padding:13px 13px 12px;cursor:pointer;background:var(--white);transition:border-color .15s,background .15s,transform .15s;-webkit-tap-highlight-color:transparent;min-width:0}
+.tile:active{transform:scale(.98)}
+.tile input{position:absolute;opacity:0;pointer-events:none}
+.tile svg{width:24px;height:24px;fill:none;stroke:var(--ink-3);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:block;margin-bottom:8px}
+.tile b{display:block;font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.25;overflow-wrap:anywhere}
+.tile small{display:block;font-size:11.5px;color:var(--ink-2);line-height:1.3;margin-top:3px}
+.tile.on{border-color:var(--navy);background:#f1f5fc;box-shadow:0 0 0 3px rgba(7,29,61,.08)}
+.tile.on svg{stroke:var(--red)}
+.tile.on b{color:var(--navy)}
+.tile.on::after{content:"";position:absolute;right:11px;top:11px;width:18px;height:18px;border-radius:50%;background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/11px no-repeat}
+.tile:focus-within{outline:2px solid var(--blue);outline-offset:2px}
+.pick{display:flex;background:#e8e8ed;border-radius:14px;padding:3px;gap:2px}
+.pick label{flex:1;margin:0;position:relative;cursor:pointer;min-width:0}
+.pick input{position:absolute;opacity:0;pointer-events:none}
+.pick span{display:block;text-align:center;padding:8px 6px;border-radius:11px;font-size:13.5px;font-weight:600;color:var(--ink-2);line-height:1.25}
+.pick span small{display:block;font-size:11px;font-weight:500;margin:1px 0 0;color:inherit;opacity:.8}
+.pick label.on span{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.conf{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;font-size:13px;color:var(--ink);line-height:1.45;cursor:pointer;margin:2px 0 12px;-webkit-tap-highlight-color:transparent}
+.conf input{flex:0 0 auto;width:22px;height:22px;margin:0;accent-color:var(--navy)}
+.conf a{color:var(--navy);font-weight:600}
+.conf.on{border-color:var(--navy);background:#f1f5fc}
+.conf.bad{border-color:var(--bad);box-shadow:0 0 0 3px rgba(196,22,28,.12)}
+.conf.sm{border:0;padding:2px 0;font-size:13px;color:var(--ink-2);align-items:center}
+.conf.sm.on{background:none}
+.nota{font-size:12.5px;color:var(--ink-2);margin:-4px 0 14px}
+.nota a{color:var(--navy);font-weight:600}
+.chs{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chs:empty{display:none}
+.chs button{border:1px solid var(--line);background:var(--pearl);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:600;color:var(--navy);cursor:pointer}
+.tk{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tk span{font-size:11.5px;font-weight:600;color:var(--ink-3);background:var(--pearl);border-radius:999px;padding:4px 10px 4px 24px;position:relative;transition:color .2s,background .2s}
+.tk span::before{content:"";position:absolute;left:10px;top:50%;width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor;transform:translateY(-50%)}
+.tk span.ok{color:var(--ok);background:#e8f5ee}
+.tk span.ok::before{border-radius:0;border-width:0 0 2px 2px;width:8px;height:4px;transform:translateY(-75%) rotate(-45deg)}
+.pw input{padding-right:74px}
+.pw button{min-height:40px;padding:6px 10px;font-size:13px;color:var(--navy)}
+.usr{font-size:12.5px;color:var(--ink-2);background:var(--pearl);border-radius:12px;padding:10px 12px;margin:0 0 12px}
+.usr b{color:var(--navy);letter-spacing:.04em}
+.fm .msg{margin:4px 0 12px}
+.nav .btn.big{min-height:52px;font-size:16px;border-radius:16px}
+.nav #bAtras{flex:0 0 auto}
+.auto{text-align:center;font-size:11.5px;color:var(--ink-3);margin-top:12px}
+.auto button{border:0;background:none;color:var(--blue);font-weight:600;font-size:11.5px;cursor:pointer;padding:4px}
+.btn{min-height:36px}
+@media (max-width:900px){
+  .land{grid-template-columns:minmax(0,1fr);gap:16px;padding-top:0}
+  .hero,.fm,.info{grid-column:1;grid-row:auto}
+  .hero{padding:24px 22px 22px;border-radius:22px}
+  .hero .mark{width:190px;height:190px;right:-34px;bottom:-44px}
+  .hero p.s{font-size:14.5px}
+  .perks{margin-top:14px;gap:6px}.perks li{font-size:11.5px;padding:6px 11px 6px 27px}.perks li::before{left:10px}
+  .info{padding:6px 4px 0}
+  .land.ava .hero p.s,.land.ava .perks{display:none}.land.ava .hero{padding:18px 22px 16px}.land.ava .hero h1{margin-bottom:0;font-size:22px}
+  main{padding-top:16px}
+}
+@media (max-width:480px){
+  .fm{padding:18px 16px 16px;border-radius:20px}
+  .hero h1{font-size:27px}
+  .r2{grid-template-columns:1fr}
+  .tile{padding:12px 11px 11px}.tile b{font-size:13px;padding-right:18px}
+  .seg button{font-size:13px;padding:9px 6px}
+}
+@media (max-width:359px){.tiles{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -240,82 +348,84 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 <main>
   <section class="land" id="vLand">
     <div class="hero">
+      <svg class="mark" viewBox="0 0 101 101" aria-hidden="true"><polygon points="50.468,0 0,100.934 50.468,74.606"/><polygon points="50.468,0 100.933,100.934 50.468,74.606"/></svg>
       <div class="k">Solicitud en línea</div>
-      <h1>Inicie su solicitud y cargue sus documentos desde aquí.</h1>
-      <p class="s">Arrendamiento y crédito para empresas en Nuevo León. Empiece en dos minutos, guarde su avance y regrese cuando quiera con su RFC.</p>
-      <ol class="pasos">
-        <li><div><b>Cuéntenos de su empresa</b><span>Datos básicos, el producto y el monto que necesita. Recibe un folio al instante.</span></div></li>
-        <li><div><b>Cargue su expediente</b><span>Le mostramos la lista exacta de documentos para su caso. Súbalos a su ritmo, en PDF o foto.</span></div></li>
-        <li><div><b>Dé seguimiento</b><span>Vea qué documentos fueron aceptados y en qué etapa va su solicitud. Preaprobación en 2 días hábiles con su información financiera y legal.</span></div></li>
-      </ol>
-      <div class="req"><b>Requisitos de la empresa</b><ul><li>Ventas anuales de $5 millones de pesos o más.</li><li>2 años o más de operación en México.</li><li>Constituida en México y con operación en Nuevo León.</li><li>Un aval, persona física o moral.</li></ul></div>
-      <div class="seguro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f3a7a" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>Sus documentos se guardan en un espacio privado: solo usted y el área de Riesgos de ATRIX pueden verlos.</span></div>
+      <h1>Inicie su solicitud en 3 minutos.</h1>
+      <p class="s">Arrendamiento y crédito para empresas en Nuevo León. Para empezar no necesita documentos: los carga después, a su ritmo.</p>
+      <ul class="perks"><li>4 pasos cortos</li><li>Su avance se guarda solo</li><li>Preaprobación en 2 días hábiles</li></ul>
     </div>
-    <div class="card fm">
-      <div class="seg" role="tablist"><button type="button" id="tNueva" class="on">Nueva solicitud</button><button type="button" id="tEntrar">Continuar mi solicitud</button></div>
+    <div class="card fm" id="fmCard">
+      <div class="seg" role="tablist"><button type="button" id="tNueva" class="on">Nueva solicitud</button><button type="button" id="tEntrar">Ya tengo solicitud</button></div>
       <div id="pNueva">
-        <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
-        <div class="msg err" id="nErr" hidden></div>
+        <div class="stp" id="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="stpl"><b id="pasoT">Paso 1 de 4</b><span id="pasoR"></span></div>
         <form id="fNueva" novalidate autocomplete="on">
           <div data-paso="0">
-            <h2>Su empresa</h2><p class="sub">Paso 1 de 3</p>
-            <div class="f"><label>Tipo de solicitante</label><div class="opt"><label><input type="radio" name="tipo" value="PM" checked><span>Persona moral<small>Empresa constituida</small></span></label><label><input type="radio" name="tipo" value="PFAE"><span>Persona física<small>Con actividad empresarial</small></span></label></div></div>
-            <div class="f"><label for="nombre" id="lNombre">Razón social</label><input id="nombre" name="nombre" autocomplete="organization" maxlength="160"></div>
-            <div class="r2">
-              <div class="f"><label for="rfc">RFC</label><input id="rfc" name="rfc" autocapitalize="characters" spellcheck="false" maxlength="13" placeholder="ABC123456XY9"></div>
-              <div class="f"><label for="giro">Giro o actividad</label><input id="giro" name="giro" maxlength="120" placeholder="Ej. Transporte de carga"></div>
+            <h2>¿Qué necesita?</h2><p class="sub">Elija una opción y escriba el monto exacto.</p>
+            <div class="tiles">
+              <label class="tile"><input type="radio" name="producto" value="AF" checked><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><b>Arrendamiento financiero</b><small>El activo es suyo al final</small></label>
+              <label class="tile"><input type="radio" name="producto" value="AP"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></svg><b>Arrendamiento puro</b><small>Renta deducible, con valor residual</small></label>
+              <label class="tile"><input type="radio" name="producto" value="CGI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-4 7 4v13M9.5 21v-5h5v5M9 11h.01M15 11h.01"/></svg><b>Crédito con garantía inmobiliaria</b><small>Simple o revolvente</small></label>
+              <label class="tile"><input type="radio" name="producto" value="CE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/></svg><b>Crédito estructurado</b><small>A la medida de su operación</small></label>
             </div>
-            <div class="r2">
-              <div class="f"><label for="antiguedad">Años de operación en México</label><input id="antiguedad" name="antiguedad" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="Ej. 6"><small>Años completos. Mínimo 2.</small></div>
-              <div class="f"><label for="ventas">Ventas anuales (MXN)</label><input id="ventas" name="ventas" inputmode="numeric" autocomplete="off" placeholder="Ej. 12,500,000"><small>Del último año, en pesos. Mínimo $5,000,000.</small></div>
-            </div>
-            <div class="f"><label for="municipio">Municipio donde opera</label><select id="municipio" name="municipio"><option value="">Seleccione</option><option>Monterrey</option><option>San Pedro Garza García</option><option>San Nicolás de los Garza</option><option>Guadalupe</option><option>Apodaca</option><option>General Escobedo</option><option>Santa Catarina</option><option>García</option><option>Juárez</option><option>Santiago</option><option>Cadereyta Jiménez</option><option>Pesquería</option><option>Salinas Victoria</option><option>Ciénega de Flores</option><option>General Zuazua</option><option>El Carmen</option><option>Allende</option><option>Montemorelos</option><option>Linares</option><option>Sabinas Hidalgo</option><option value="Otro municipio de Nuevo León">Otro municipio de Nuevo León</option><option value="FUERA">Fuera de Nuevo León</option></select></div>
-            <div class="r2">
-              <div class="f" id="fConst"><label>¿Sociedad constituida en México?</label><div class="opt"><label><input type="radio" name="constitucion" value="si" checked><span>Sí</span></label><label><input type="radio" name="constitucion" value="no"><span>No</span></label></div></div>
-              <div class="f"><label>¿Capital mayoritario extranjero?</label><div class="opt"><label><input type="radio" name="extranjero" value="no" checked><span>No</span></label><label><input type="radio" name="extranjero" value="si"><span>Sí</span></label></div></div>
-            </div>
+            <div class="f"><label for="monto">¿Cuánto necesita? <em>sin IVA</em></label><div class="aff big"><span>$</span><input id="monto" name="monto" inputmode="numeric" autocomplete="off" enterkeyhint="next" placeholder="850,000"><span>MXN</span></div><small id="montoH">De $100,000 a $2,500,000 pesos.</small></div>
+            <div class="f"><label for="plazo">¿En cuántos meses quiere pagarlo?</label><div class="aff"><input id="plazo" name="plazo" inputmode="numeric" maxlength="2" autocomplete="off" enterkeyhint="next" placeholder="36"><span>meses</span></div><small>De 12 a 48 meses.</small></div>
+            <div class="f"><label for="activo"><span id="lActivo">¿Qué activo desea arrendar?</span> <em>opcional</em></label><textarea id="activo" name="activo" rows="2" maxlength="600" placeholder="Marca, modelo y año, si ya lo tiene visto."></textarea></div>
           </div>
           <div data-paso="1" hidden>
-            <h2>Lo que necesita</h2><p class="sub">Paso 2 de 3</p>
-            <div class="f"><label>Producto</label><div class="opt"><label><input type="radio" name="producto" value="AF" checked><span>Arrendamiento financiero<small>El activo es suyo al final</small></span></label><label><input type="radio" name="producto" value="AP"><span>Arrendamiento puro<small>Renta deducible, con valor residual</small></span></label><label><input type="radio" name="producto" value="CGI"><span>Crédito con garantía inmobiliaria<small>Simple o revolvente</small></span></label><label><input type="radio" name="producto" value="CE"><span>Crédito estructurado<small>A la medida de su operación</small></span></label></div></div>
-            <div class="r2">
-              <div class="f"><label for="monto">Monto sin IVA (MXN)</label><input id="monto" name="monto" inputmode="numeric" placeholder="Ej. 850,000"><small>De $100,000 a $2,500,000</small></div>
-              <div class="f"><label for="plazo">Plazo deseado (meses)</label><input id="plazo" name="plazo" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="Ej. 36"><small>De 12 a 48 meses.</small></div>
-            </div>
-            <div class="f"><label for="activo" id="lActivo">Activo que desea arrendar</label><textarea id="activo" name="activo" maxlength="600" placeholder="Marca, modelo, año y proveedor, si ya lo tiene cotizado."></textarea></div>
-            <div class="f"><label>Su aval será</label><div class="opt"><label><input type="radio" name="aval_tipo" value="PF" checked><span>Persona física</span></label><label><input type="radio" name="aval_tipo" value="PM"><span>Persona moral<small>Otra empresa</small></span></label></div></div>
-            <div class="f" id="fSocios"><label>¿La sociedad es de dos socios con 50 % de acciones cada uno?</label><div class="opt"><label><input type="radio" name="socios5050" value="no" checked><span>No</span></label><label><input type="radio" name="socios5050" value="si"><span>Sí<small>Pediremos documentos de ambos</small></span></label></div></div>
+            <h2>Su empresa</h2><p class="sub">Empiece por el RFC: con él identificamos el tipo de solicitante.</p>
+            <div class="f"><label for="rfc">RFC</label><input id="rfc" name="rfc" class="up" autocapitalize="characters" autocorrect="off" autocomplete="off" spellcheck="false" maxlength="20" enterkeyhint="next" placeholder="ABC123456XY9"><small id="rfcH">12 caracteres si es empresa, 13 si es persona física.</small></div>
+            <div class="f"><label>Tipo de solicitante</label><div class="pick"><label><input type="radio" name="tipo" value="PM" checked><span>Empresa<small>Persona moral</small></span></label><label><input type="radio" name="tipo" value="PFAE"><span>Persona física<small>Con actividad empresarial</small></span></label></div></div>
+            <div class="f"><label for="nombre" id="lNombre">Razón social</label><input id="nombre" name="nombre" autocomplete="organization" maxlength="160" enterkeyhint="next"></div>
+            <div class="f"><label for="giro">¿A qué se dedica?</label><input id="giro" name="giro" maxlength="120" enterkeyhint="next" placeholder="Ej. Transporte de carga"></div>
           </div>
           <div data-paso="2" hidden>
-            <h2>Contacto y acceso</h2><p class="sub">Paso 3 de 3 · con su RFC y esta contraseña podrá regresar a su solicitud</p>
+            <h2>Tres datos rápidos</h2><p class="sub">Con ellos confirmamos que podemos atenderle.</p>
+            <div class="f"><label for="municipio">Municipio donde opera</label><select id="municipio" name="municipio"><option value="">Seleccione</option><option>Monterrey</option><option>San Pedro Garza García</option><option>San Nicolás de los Garza</option><option>Guadalupe</option><option>Apodaca</option><option>General Escobedo</option><option>Santa Catarina</option><option>García</option><option>Juárez</option><option>Santiago</option><option>Cadereyta Jiménez</option><option>Pesquería</option><option>Salinas Victoria</option><option>Ciénega de Flores</option><option>General Zuazua</option><option>El Carmen</option><option>Allende</option><option>Montemorelos</option><option>Linares</option><option>Sabinas Hidalgo</option><option value="Otro municipio de Nuevo León">Otro municipio de Nuevo León</option><option value="FUERA">Fuera de Nuevo León</option></select></div>
             <div class="r2">
-              <div class="f"><label for="contacto">Nombre de contacto</label><input id="contacto" name="contacto" autocomplete="name" maxlength="120"></div>
-              <div class="f"><label for="cargo">Cargo</label><input id="cargo" name="cargo" autocomplete="organization-title" maxlength="80" placeholder="Ej. Representante legal"></div>
+              <div class="f"><label for="antiguedad">Años operando en México</label><div class="aff"><input id="antiguedad" name="antiguedad" inputmode="numeric" maxlength="3" autocomplete="off" enterkeyhint="next" placeholder="6"><span>años</span></div><small id="antH">Mínimo 2 años.</small></div>
+              <div class="f"><label for="ventas">Ventas anuales</label><div class="aff"><span>$</span><input id="ventas" name="ventas" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="12,500,000"></div><small>Del último año. Mínimo $5,000,000.</small></div>
             </div>
-            <div class="r2">
-              <div class="f"><label for="telefono">Teléfono (WhatsApp)</label><input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="10 dígitos"></div>
-              <div class="f"><label for="correo">Correo electrónico</label><input id="correo" name="correo" type="email" autocomplete="email" maxlength="120"></div>
-            </div>
-            <div class="r2">
-              <div class="f"><label for="pw1">Cree una contraseña</label><div class="pw"><input id="pw1" name="new-password" type="password" autocomplete="new-password"><button type="button" data-ver="pw1">Ver</button></div><small>Mínimo 8 caracteres, con letras y números</small></div>
-              <div class="f"><label for="pw2">Confirme la contraseña</label><input id="pw2" type="password" autocomplete="new-password"></div>
-            </div>
-            <div class="hp" aria-hidden="true"><label>Sitio web<input name="web" tabindex="-1" autocomplete="off"></label></div>
-            <label class="chk"><input type="checkbox" id="acepto"><span>He leído y acepto el <a href="https://www.atrixfinanciera.com/#privacidad" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="https://www.atrixfinanciera.com/#terminos" target="_blank" rel="noopener">Términos y Condiciones</a>, y autorizo a COLIUM, S.A. de C.V. a tratar los datos y documentos que comparta para analizar mi solicitud y a contactarme al respecto.</span></label>
+            <label class="conf"><input type="checkbox" id="cumple" name="cumple"><span id="lCumple">Confirmo que la empresa está constituida en México y no tiene capital mayoritario extranjero.</span></label>
+            <p class="nota">¿No es su caso? <a href="https://wa.me/528134127296" target="_blank" rel="noopener">Escríbanos por WhatsApp</a> y lo revisamos.</p>
           </div>
+          <div data-paso="3" hidden>
+            <h2>¿A quién contactamos?</h2><p class="sub">Último paso. Con su RFC y una contraseña podrá regresar a cargar sus documentos.</p>
+            <div class="f"><label for="contacto">Su nombre</label><input id="contacto" name="contacto" autocomplete="name" autocapitalize="words" maxlength="120" enterkeyhint="next"></div>
+            <div class="r2">
+              <div class="f"><label for="telefono">WhatsApp</label><input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" enterkeyhint="next" placeholder="10 dígitos"></div>
+              <div class="f"><label for="correo">Correo electrónico</label><input id="correo" name="correo" type="email" inputmode="email" autocomplete="email" autocapitalize="none" maxlength="120" enterkeyhint="next" placeholder="nombre@empresa.com"><div class="chs" id="coCh"></div></div>
+            </div>
+            <div class="f"><label for="pw1">Cree una contraseña</label><div class="pw"><input id="pw1" name="new-password" type="password" autocomplete="new-password" autocapitalize="none" enterkeyhint="done"><button type="button" data-ver="pw1">Ver</button></div><div class="tk" id="pwT"><span data-r="l">8 caracteres</span><span data-r="a">una letra</span><span data-r="n">un número</span></div></div>
+            <div class="usr">Su usuario para regresar será su RFC: <b id="usrR">—</b></div>
+            <div class="hp" aria-hidden="true"><label>Sitio web<input name="web" tabindex="-1" autocomplete="off"></label></div>
+            <label class="conf"><input type="checkbox" id="acepto"><span>Acepto el <a href="https://www.atrixfinanciera.com/#privacidad" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="https://www.atrixfinanciera.com/#terminos" target="_blank" rel="noopener">Términos y Condiciones</a>, y autorizo a COLIUM, S.A. de C.V. a tratar los datos y documentos que comparta para analizar mi solicitud y a contactarme al respecto.</span></label>
+          </div>
+          <div class="msg err" id="nErr" role="alert" hidden></div>
           <div class="nav"><button class="btn big" type="button" id="bAtras" hidden>Atrás</button><button class="btn p big" type="submit" id="bSig">Continuar</button></div>
+          <p class="auto"><span id="autoT">Su avance se guarda en este dispositivo.</span> <button type="button" id="bLimpiar" hidden>Empezar de nuevo</button></p>
         </form>
       </div>
       <div id="pEntrar" hidden>
-        <form id="fLogin" autocomplete="on">
-          <h2>Continuar mi solicitud</h2><p class="sub">Entre con el RFC y la contraseña que creó al iniciar su solicitud.</p>
-          <div class="msg err" id="lErr" hidden></div>
-          <div class="f"><label for="lrfc">RFC</label><input id="lrfc" name="username" autocomplete="username" autocapitalize="characters" spellcheck="false" maxlength="13" required></div>
-          <div class="f"><label for="lpw">Contraseña</label><div class="pw"><input id="lpw" name="password" type="password" autocomplete="current-password" required><button type="button" data-ver="lpw">Ver</button></div></div>
+        <form id="fLogin" autocomplete="on" novalidate>
+          <h2>Continuar mi solicitud</h2><p class="sub">Entre con su RFC y la contraseña que creó al iniciar.</p>
+          <div class="msg err" id="lErr" role="alert" hidden></div>
+          <div class="f"><label for="lrfc">RFC</label><input id="lrfc" name="username" class="up" autocomplete="username" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="20" enterkeyhint="next"></div>
+          <div class="f"><label for="lpw">Contraseña</label><div class="pw"><input id="lpw" name="password" type="password" autocomplete="current-password" autocapitalize="none" enterkeyhint="go"><button type="button" data-ver="lpw">Ver</button></div></div>
+          <label class="conf sm"><input type="checkbox" id="lKeep" checked><span>Mantener mi sesión abierta en este dispositivo</span></label>
           <div class="nav"><button class="btn p big" id="bEntrar" type="submit">Entrar</button></div>
         </form>
-        <div class="help">¿Olvidó su contraseña? Escríbanos a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> o por <a href="https://wa.me/528134127296" target="_blank" rel="noopener">WhatsApp 81 3412 7296</a> y le generamos una nueva.<br>¿Ya es cliente? Consulte su crédito en el <a href="/portal/">Portal de Clientes</a>.</div>
+        <div class="help">¿Olvidó su contraseña? Escríbanos por <a href="https://wa.me/528134127296?text=Hola%2C%20olvid%C3%A9%20la%20contrase%C3%B1a%20de%20mi%20solicitud%20en%20l%C3%ADnea." target="_blank" rel="noopener">WhatsApp 81 3412 7296</a> o a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> y le generamos una nueva.<br>¿Ya es cliente? Consulte su crédito en el <a href="/portal/">Portal de Clientes</a>.</div>
       </div>
+    </div>
+    <div class="info">
+      <ol class="pasos">
+        <li><div><b>Cuéntenos qué necesita</b><span>Producto, monto y los datos básicos de su empresa. Recibe su folio al instante.</span></div></li>
+        <li><div><b>Cargue su expediente</b><span>Le mostramos la lista exacta de documentos para su caso. Súbalos en PDF o con foto desde su celular.</span></div></li>
+        <li><div><b>Dé seguimiento</b><span>Vea qué documentos fueron aceptados y en qué etapa va. Preaprobación en 2 días hábiles con su información financiera y legal.</span></div></li>
+      </ol>
+      <div class="req"><b>Requisitos de la empresa</b><ul><li>Ventas anuales de $5 millones de pesos o más.</li><li>2 años o más de operación en México.</li><li>Constituida en México y con operación en Nuevo León.</li><li>Un aval, persona física o moral.</li></ul></div>
+      <div class="seguro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f3a7a" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>Sus documentos se guardan en un espacio privado: solo usted y el área de Riesgos de ATRIX pueden verlos.</span></div>
     </div>
   </section>
   <section id="vPanel" hidden></section>
@@ -376,8 +486,11 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   const docsDe = s => extrasDe(s).concat(CATALOGO(s));
 
   /* ---------- Servidor ---------- */
-  const guardar = s => { st.ses = s; try { if (s) sessionStorage.setItem(SKEY, JSON.stringify(s)); else sessionStorage.removeItem(SKEY); } catch (e) { } };
-  const leer = () => { try { return JSON.parse(sessionStorage.getItem(SKEY) || 'null'); } catch (e) { return null; } };
+  /* La sesión se conserva en el dispositivo (salvo que el solicitante desmarque la opción) para que en el celular no tenga que volver a entrar cada vez que sale a buscar un documento. */
+  const KEEP = 'atrix_solicitud_mantener';
+  const mantener = () => { try { return localStorage.getItem(KEEP) !== '0'; } catch (e) { return false; } };
+  const guardar = s => { st.ses = s; try { sessionStorage.removeItem(SKEY); } catch (e) { } try { localStorage.removeItem(SKEY); } catch (e) { } if (!s) return; try { (mantener() ? localStorage : sessionStorage).setItem(SKEY, JSON.stringify(s)); } catch (e) { try { sessionStorage.setItem(SKEY, JSON.stringify(s)); } catch (x) { } } };
+  const leer = () => { let v = null; try { v = sessionStorage.getItem(SKEY); } catch (e) { } if (!v) { try { v = localStorage.getItem(SKEY); } catch (e) { } } try { return JSON.parse(v || 'null'); } catch (e) { return null; } };
   const errTxt = j => { const c = j && (j.error_code || j.code); const m = (j && (j.msg || j.message || j.error_description || (typeof j.error === 'string' ? j.error : ''))) || '';
     if (c === 'invalid_credentials' || /invalid login/i.test(m)) return 'RFC o contraseña incorrectos.';
     if (c === 'user_banned' || /banned/i.test(m)) return 'Su acceso está suspendido. Contacte a ATRIX.';
@@ -414,72 +527,128 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     await listar(); pintar();
   }
 
-  /* ---------- Entrada: nueva solicitud y continuar ---------- */
+  /* ---------- Entrada: nueva solicitud (4 pasos cortos) y continuar ---------- */
   function mostrarLand(msg) {
     $('#vPanel').hidden = true; $('#vLand').hidden = false; $('#bSalir').hidden = true; $('#bSitio').hidden = false; $('#who').textContent = '';
     if (msg) { tab('entrar'); const e = $('#lErr'); e.textContent = msg; e.hidden = false; }
   }
-  function tab(t) { const n = t === 'nueva'; $('#tNueva').classList.toggle('on', n); $('#tEntrar').classList.toggle('on', !n); $('#pNueva').hidden = !n; $('#pEntrar').hidden = n; }
+  function tab(t) { const n = t === 'nueva'; $('#tNueva').classList.toggle('on', n); $('#tEntrar').classList.toggle('on', !n); $('#pNueva').hidden = !n; $('#pEntrar').hidden = n; if (!n) { const r = $('#lrfc'); if (!r.value) { try { r.value = localStorage.getItem(RKEY) || ''; } catch (e) { } } } }
   $('#tNueva').addEventListener('click', () => tab('nueva')); $('#tEntrar').addEventListener('click', () => tab('entrar'));
   document.addEventListener('click', e => { const b = e.target.closest('[data-ver]'); if (!b) return; const i = document.getElementById(b.dataset.ver); i.type = i.type === 'password' ? 'text' : 'password'; b.textContent = i.type === 'password' ? 'Ver' : 'Ocultar'; });
-  const fN = $('#fNueva');
-  const val = n => { const el = fN.elements[n]; return el ? String(el.value || '').trim() : ''; };
-  const montoNum = () => Number(val('monto').replace(/[^\d.]/g, '')) || 0; const numDe = id => Number(val(id).replace(/[^\d]/g, '')) || 0;
-  $('#ventas').addEventListener('input', e => { const d = e.target.value.replace(/[^\d]/g, '').slice(0, 12); e.target.value = d ? Number(d).toLocaleString('es-MX') : ''; });
-  ['antiguedad', 'plazo'].forEach(id => $('#' + id).addEventListener('input', e => { e.target.value = e.target.value.replace(/[^\d]/g, '').slice(0, id === 'plazo' ? 2 : 3); }));
-  $('#monto').addEventListener('input', e => { const d = e.target.value.replace(/[^\d]/g, '').slice(0, 9); e.target.value = d ? Number(d).toLocaleString('es-MX') : ''; });
-  $('#rfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
-  $('#lrfc').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, ''); });
-  fN.addEventListener('change', () => { const pm = val('tipo') === 'PM'; $('#lNombre').textContent = pm ? 'Razón social' : 'Nombre completo'; $('#rfc').placeholder = pm ? 'ABC123456XY9' : 'ABCD123456XY9'; $('#fConst').hidden = !pm; $('#fSocios').hidden = !pm; const arr = ['AF', 'AP'].includes(val('producto')); $('#lActivo').textContent = arr ? 'Activo que desea arrendar' : 'Destino del crédito y garantía'; $('#activo').placeholder = arr ? 'Marca, modelo, año y proveedor, si ya lo tiene cotizado.' : 'Para qué necesita el crédito y qué inmueble ofrecería en garantía.'; });
+  const fN = $('#fNueva'), NP = 4, RKEY = 'atrix_solicitud_rfc';
+  /* Importante (Android): nunca se reescribe un campo de texto mientras se teclea; los teclados con predicción duplican las letras.
+     El RFC se muestra en mayúsculas con CSS y se limpia al leerlo. */
+  const rfcDe = v => String(v || '').toUpperCase().normalize('NFC').replace(/[^A-ZÑ&0-9]/g, '').slice(0, 13);
+  const RX_PM = /^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/, RX_PF = /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/;
+  const val = n => { const el = fN.elements[n]; const v = el ? String(el.value || '').trim() : ''; return n === 'rfc' ? rfcDe(v) : v; };
+  const numDe = id => Number(val(id).replace(/[^\d]/g, '')) || 0; const montoNum = () => numDe('monto');
+  const miles = n => Number(n).toLocaleString('es-MX');
+  const fmtNum = (el, max) => { const d = el.value.replace(/[^\d]/g, '').slice(0, max); const v = d ? miles(d) : ''; if (el.value !== v) el.value = v; };
+  [['monto', 9], ['ventas', 12]].forEach(([id, mx]) => { const el = $('#' + id); el.addEventListener('input', e => { if (!e.isComposing) fmtNum(el, mx); }); el.addEventListener('blur', () => fmtNum(el, mx)); });
+  [['antiguedad', 3], ['plazo', 2]].forEach(([id, mx]) => { const el = $('#' + id); const lim = () => { const v = el.value.replace(/[^\d]/g, '').slice(0, mx); if (el.value !== v) el.value = v; }; el.addEventListener('input', e => { if (!e.isComposing) lim(); }); el.addEventListener('blur', lim); });
+  $('#antiguedad').addEventListener('input', e => { if (e.isTrusted) { e.target.dataset.auto = ''; $('#antH').textContent = 'Mínimo 2 años.'; } });
+  [$('#rfc'), $('#lrfc')].forEach(el => el.addEventListener('blur', () => { const v = rfcDe(el.value); if (el.value !== v) el.value = v; }));
+  const poner = (n, v) => { const el = fN.elements[n]; if (!el || v == null || v === '') return; if (el.length && el[0] && el[0].type === 'radio') { for (const r of el) r.checked = r.value === v; } else if (el.tagName === 'SELECT') { if ([...el.options].some(o => o.value === v || o.text === v)) el.value = v; } else el.value = v; };
+  /* El RFC dice el tipo de solicitante (12 = empresa, 13 = persona física) y, en empresas, la fecha de constitución. */
+  function rfcAuto() {
+    const r = val('rfc'), h = $('#rfcH'); const t = RX_PM.test(r) ? 'PM' : RX_PF.test(r) ? 'PFAE' : '';
+    if (t) { poner('tipo', t); h.className = 'okh'; h.textContent = t === 'PM' ? 'RFC de empresa (persona moral).' : 'RFC de persona física.';
+      if (t === 'PM') { const hoy = new Date(); let y = 2000 + Number(r.slice(3, 5)); const m = Number(r.slice(5, 7)), d = Number(r.slice(7, 9)); if (y > hoy.getFullYear()) y -= 100;
+        const a = hoy.getFullYear() - y - ((hoy.getMonth() + 1 < m || (hoy.getMonth() + 1 === m && hoy.getDate() < d)) ? 1 : 0); const el = $('#antiguedad');
+        if (m >= 1 && m <= 12 && d >= 1 && d <= 31 && a >= 0 && a < 130 && (!el.value || el.dataset.auto === '1')) { el.value = String(a); el.dataset.auto = '1'; $('#antH').textContent = 'Calculado con la fecha de su RFC. Corríjalo si no coincide.'; } }
+    } else { h.className = ''; h.textContent = r.length ? 'Lleva ' + r.length + ' caracteres: son 12 si es empresa y 13 si es persona física.' : '12 caracteres si es empresa, 13 si es persona física.'; }
+    ajustar();
+  }
+  $('#rfc').addEventListener('input', rfcAuto);
+  function ajustar() {
+    const pm = val('tipo') === 'PM', arr = ['AF', 'AP'].includes(val('producto'));
+    fN.querySelectorAll('.tile,.pick label').forEach(l => l.classList.toggle('on', l.querySelector('input').checked));
+    fN.querySelectorAll('.conf').forEach(l => l.classList.toggle('on', l.querySelector('input').checked));
+    $('#lNombre').textContent = pm ? 'Razón social' : 'Nombre completo'; $('#nombre').autocomplete = pm ? 'organization' : 'name'; $('#rfc').placeholder = pm ? 'ABC123456XY9' : 'ABCD123456XY9';
+    $('#lCumple').textContent = pm ? 'Confirmo que la empresa está constituida en México y no tiene capital mayoritario extranjero.' : 'Confirmo que mi actividad empresarial está en México y no tiene capital mayoritario extranjero.';
+    $('#lActivo').textContent = arr ? '¿Qué activo desea arrendar?' : '¿Para qué necesita el crédito?'; $('#activo').placeholder = arr ? 'Marca, modelo y año, si ya lo tiene visto.' : 'Destino del crédito y, en su caso, el inmueble que ofrecería en garantía.';
+    const m = montoNum(), mh = $('#montoH'); mh.className = ''; mh.textContent = 'De $100,000 a $2,500,000 pesos.';
+    if (m && m < MONTO_MIN && String(m).length >= 6) { mh.className = 'badh'; mh.textContent = 'El mínimo es $100,000 pesos.'; } else if (m > MONTO_MAX) { mh.className = 'badh'; mh.textContent = 'El máximo es $2,500,000 pesos.'; } else if (m >= MONTO_MIN) { mh.className = 'okh'; mh.textContent = money(m) + ' pesos, sin IVA.'; }
+    $('#usrR').textContent = val('rfc') || '—';
+    const res = []; if (st.paso > 0) { res.push(PROD[val('producto')]); if (m) res.push(money(m)); if (numDe('plazo')) res.push(numDe('plazo') + ' meses'); } $('#pasoR').textContent = res.join(' · ');
+  }
+  fN.addEventListener('change', ajustar); $('#monto').addEventListener('input', ajustar); $('#plazo').addEventListener('input', ajustar);
+  /* Correo: dominios más comunes a un toque */
+  { const co = $('#correo'), ch = $('#coCh'), DOMS = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com.mx', 'icloud.com'];
+    const partes = () => { const v = co.value.trim(), i = v.indexOf('@'); return i < 0 ? [v, ''] : [v.slice(0, i), v.slice(i + 1).toLowerCase()]; };
+    const pinta = () => { const [u, d] = partes(); const l = u && d.indexOf('.') < 0 ? DOMS.filter(x => x.indexOf(d) === 0) : []; ch.innerHTML = l.map(x => '<button type="button" data-dom="' + x + '">@' + x + '</button>').join(''); };
+    co.addEventListener('input', pinta); co.addEventListener('focus', pinta);
+    ch.addEventListener('click', e => { const b = e.target.closest('[data-dom]'); if (!b) return; co.value = partes()[0] + '@' + b.dataset.dom; ch.innerHTML = ''; guardarBorrador(); const p = $('#pw1'); if (p) p.focus(); }); }
+  const pwOk = p => ({ l: p.length >= 8, a: /[A-Za-z]/.test(p), n: /\d/.test(p) });
+  $('#pw1').addEventListener('input', e => { const o = pwOk(e.target.value); document.querySelectorAll('#pwT span').forEach(s => s.classList.toggle('ok', !!o[s.dataset.r])); });
+  const WA = ' Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.';
   function validar(p) {
     if (p === 0) {
-      const pm = val('tipo') === 'PM';
-      if (val('nombre').length < 3) return ['nombre', pm ? 'Escriba la razón social de la empresa.' : 'Escriba su nombre completo.'];
-      if (!(pm ? /^[A-ZÑ&]{3}\d{6}[A-Z0-9]{3}$/ : /^[A-ZÑ&]{4}\d{6}[A-Z0-9]{3}$/).test(val('rfc'))) return ['rfc', pm ? 'El RFC de una persona moral tiene 12 caracteres. Revíselo.' : 'El RFC de una persona física tiene 13 caracteres. Revíselo.'];
-      if (!val('giro')) return ['giro', 'Indique el giro o actividad.'];
-      if (!val('antiguedad')) return ['antiguedad', 'Indique los años de operación en México.'];
-      if (numDe('antiguedad') < 2) return ['antiguedad', 'Por ahora atendemos empresas con 2 años o más de operación en México. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
-      if (!val('ventas')) return ['ventas', 'Indique las ventas anuales.'];
-      if (numDe('ventas') < 5000000) return ['ventas', 'Por ahora atendemos empresas con ventas anuales de $5 millones de pesos o más. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
-      if (!val('municipio')) return ['municipio', 'Seleccione el municipio donde opera.'];
-      if (val('municipio') === 'FUERA') return ['municipio', 'Por ahora ATRIX otorga financiamiento únicamente a empresas con operación en Nuevo León. Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.'];
-      if (pm && val('constitucion') === 'no') return ['constitucion', 'Por ahora atendemos únicamente sociedades constituidas en México. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
-      if (val('extranjero') === 'si') return ['extranjero', 'Por política, por ahora no atendemos empresas con capital mayoritario extranjero. Si tiene dudas, escríbanos por WhatsApp al 81 3412 7296.'];
+      const m = montoNum(); if (!m) return ['monto', 'Escriba el monto que necesita.'];
+      if (!(m >= MONTO_MIN && m <= MONTO_MAX)) return ['monto', 'Por ahora atendemos operaciones de $100,000 a $2,500,000 pesos.'];
+      if (!val('plazo')) return ['plazo', 'Escriba en cuántos meses quiere pagarlo.'];
+      if (!(numDe('plazo') >= 12 && numDe('plazo') <= 48)) return ['plazo', 'El plazo va de 12 a 48 meses.'];
     } else if (p === 1) {
-      const m = montoNum(); if (!(m >= MONTO_MIN && m <= MONTO_MAX)) return ['monto', 'Por ahora atendemos operaciones de $100,000 a $2,500,000 pesos.'];
-      if (!(numDe('plazo') >= 12 && numDe('plazo') <= 48)) return ['plazo', 'Escriba el plazo deseado en meses, de 12 a 48.'];
-      if (val('activo').length < 5) return ['activo', ['AF', 'AP'].includes(val('producto')) ? 'Describa brevemente el activo que desea arrendar.' : 'Describa brevemente el destino del crédito.'];
+      const r = val('rfc'); if (!r) return ['rfc', 'Escriba el RFC.'];
+      if (!RX_PM.test(r) && !RX_PF.test(r)) return ['rfc', 'Revise el RFC: son 12 caracteres si es empresa y 13 si es persona física, sin espacios ni guiones.'];
+      poner('tipo', RX_PM.test(r) ? 'PM' : 'PFAE'); ajustar();
+      if (val('nombre').length < 3) return ['nombre', val('tipo') === 'PM' ? 'Escriba la razón social de la empresa.' : 'Escriba su nombre completo.'];
+      if (!val('giro')) return ['giro', 'Cuéntenos a qué se dedica.'];
+    } else if (p === 2) {
+      if (!val('municipio')) return ['municipio', 'Seleccione el municipio donde opera.'];
+      if (val('municipio') === 'FUERA') return ['municipio', 'Por ahora ATRIX otorga financiamiento únicamente a empresas con operación en Nuevo León.' + WA];
+      if (!val('antiguedad')) return ['antiguedad', 'Escriba los años que lleva operando en México.'];
+      if (numDe('antiguedad') < 2) return ['antiguedad', 'Por ahora atendemos empresas con 2 años o más de operación en México.' + WA];
+      if (!val('ventas')) return ['ventas', 'Escriba sus ventas anuales.'];
+      if (numDe('ventas') < 5000000) return ['ventas', 'Por ahora atendemos empresas con ventas anuales de $5 millones de pesos o más.' + WA];
+      if (!$('#cumple').checked) return ['cumple', 'Marque la casilla de confirmación para continuar.' + WA];
     } else {
-      if (!val('contacto')) return ['contacto', 'Escriba el nombre de la persona de contacto.'];
-      if (val('telefono').replace(/\D/g, '').slice(-10).length !== 10) return ['telefono', 'Escriba un teléfono de 10 dígitos.'];
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('correo'))) return ['correo', 'Escriba un correo electrónico válido.'];
-      const p1 = $('#pw1').value; if (p1.length < 8 || !/[A-Za-z]/.test(p1) || !/\d/.test(p1)) return ['pw1', 'La contraseña debe tener al menos 8 caracteres, con letras y números.'];
-      if (p1 !== $('#pw2').value) return ['pw2', 'Las contraseñas no coinciden.'];
-      if (!$('#acepto').checked) return ['acepto', 'Para continuar es necesario aceptar el Aviso de Privacidad.'];
+      if (val('contacto').length < 2) return ['contacto', 'Escriba su nombre.'];
+      if (val('telefono').replace(/\D/g, '').slice(-10).length !== 10) return ['telefono', 'Escriba su WhatsApp a 10 dígitos.'];
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('correo'))) return ['correo', 'Revise su correo electrónico.'];
+      const o = pwOk($('#pw1').value); if (!(o.l && o.a && o.n)) return ['pw1', 'La contraseña lleva al menos 8 caracteres, con una letra y un número.'];
+      if (!$('#acepto').checked) return ['acepto', 'Para enviar su solicitud marque la casilla del Aviso de Privacidad.'];
     }
     return null;
   }
-  function irPaso(p) { st.paso = p; fN.querySelectorAll('[data-paso]').forEach(d => { d.hidden = Number(d.dataset.paso) !== p; }); document.querySelectorAll('#dots i').forEach((d, i) => d.classList.toggle('on', i <= p)); $('#bAtras').hidden = p === 0; $('#bSig').textContent = p === 2 ? 'Enviar solicitud' : 'Continuar'; $('#nErr').hidden = true; const f = fN.querySelector('[data-paso="' + p + '"] input:not([type=radio]),[data-paso="' + p + '"] select'); if (f && window.matchMedia('(min-width:900px)').matches) f.focus(); }
+  const limpiaErr = () => { $('#nErr').hidden = true; fN.querySelectorAll('.bad').forEach(x => x.classList.remove('bad')); };
+  function irPaso(p, sinMover) {
+    st.paso = p; $('#vLand').classList.toggle('ava', p > 0); fN.querySelectorAll('[data-paso]').forEach(d => { d.hidden = Number(d.dataset.paso) !== p; });
+    document.querySelectorAll('#dots i').forEach((d, i) => { d.classList.toggle('on', i < p); d.classList.toggle('cur', i === p); });
+    $('#pasoT').textContent = 'Paso ' + (p + 1) + ' de ' + NP; $('#bAtras').hidden = p === 0; $('#bSig').textContent = p === NP - 1 ? 'Enviar solicitud' : 'Continuar'; limpiaErr(); ajustar();
+    if (sinMover) return; const c = $('#fmCard'); if (c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start' });
+    const f = fN.querySelector('[data-paso="' + p + '"] input:not([type=radio]):not([type=checkbox]),[data-paso="' + p + '"] select'); if (f && !f.value && window.matchMedia('(min-width:900px)').matches) f.focus();
+  }
   $('#bAtras').addEventListener('click', () => irPaso(st.paso - 1));
+  fN.addEventListener('input', e => { const f = e.target.closest('.f,.conf'); if (f && f.classList.contains('bad')) { f.classList.remove('bad'); $('#nErr').hidden = true; } });
   fN.addEventListener('submit', async ev => {
-    ev.preventDefault(); const e = $('#nErr'); const v = validar(st.paso);
-    if (v) { e.textContent = v[1]; e.hidden = false; const el = document.getElementById(v[0]) || fN.elements[v[0]]; if (el && el.focus) el.focus(); e.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
-    e.hidden = true; if (st.paso < 2) return irPaso(st.paso + 1);
+    ev.preventDefault(); const e = $('#nErr'); const v = validar(st.paso); limpiaErr();
+    if (v) { e.textContent = v[1]; e.hidden = false; const el = document.getElementById(v[0]) || fN.elements[v[0]]; const caja = el && el.closest ? el.closest('.f,.conf') : null; if (caja) caja.classList.add('bad');
+      if (el && el.focus && el.type !== 'checkbox') { try { el.focus({ preventScroll: true }); } catch (x) { el.focus(); } } (caja || e).scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    if (st.paso < NP - 1) return irPaso(st.paso + 1);
     const b = $('#bSig'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Enviando…';
     let prom = ''; try { prom = sessionStorage.getItem('atrix_promotor') || ''; } catch (x) { }
-    const cuerpo = { accion: 'alta', tipo: val('tipo'), rfc: val('rfc'), nombre: val('nombre'), producto: val('producto'), monto: montoNum(), nuevoLeon: true, extranjero: false, privacidad: true, password: $('#pw1').value, promotor: prom, web: val('web'),
-      datos: { contacto: val('contacto'), cargo: val('cargo'), telefono: val('telefono'), correo: val('correo'), giro: val('giro'), antiguedad: numDe('antiguedad') + (numDe('antiguedad') === 1 ? ' año' : ' años'), municipio: val('municipio'), activo: val('activo'), plazo: String(numDe('plazo')), ventas: '$' + numDe('ventas').toLocaleString('es-MX') } };
+    const pass = $('#pw1').value, rfc = val('rfc'), tipo = val('tipo');
+    const cuerpo = { accion: 'alta', tipo, rfc, nombre: val('nombre'), producto: val('producto'), monto: montoNum(), nuevoLeon: true, extranjero: false, privacidad: true, password: pass, promotor: prom, web: val('web'),
+      datos: { contacto: val('contacto'), telefono: val('telefono').replace(/\D/g, '').slice(-10), correo: val('correo').toLowerCase(), giro: val('giro'), antiguedad: numDe('antiguedad') + (numDe('antiguedad') === 1 ? ' año' : ' años'), municipio: val('municipio'), activo: val('activo'), plazo: String(numDe('plazo')), ventas: '$' + miles(numDe('ventas')) } };
     const r = await api('/functions/v1/solicitud-alta', { method: 'POST', body: cuerpo });
-    if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud'; e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; if (r.json && r.json.existe) { $('#lrfc').value = val('rfc'); } return; }
-    const err = await entrar(val('rfc'), $('#pw1').value); b.disabled = false; b.textContent = 'Enviar solicitud';
-    if (err) { $('#lrfc').value = val('rfc'); return mostrarLand('Su solicitud ' + r.json.folio + ' quedó registrada. Entre con su RFC y contraseña para cargar sus documentos.'); }
-    await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'datos', p: { aval_tipo: val('aval_tipo') === 'PM' ? 'PM' : 'PF', socios5050: val('tipo') === 'PM' && val('socios5050') === 'si' ? 'si' : 'no', constitucion_mx: val('tipo') === 'PM' ? 'si' : '' } } });
-    st.nueva = true; fN.reset(); borrarBorrador(); irPaso(0); await cargar(); window.scrollTo(0, 0);
+    if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud';
+      if (r.json && r.json.existe) { $('#lrfc').value = rfc; return mostrarLand('Ya existe una solicitud con el RFC ' + rfc + '. Entre con su contraseña para continuarla.'); }
+      e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; e.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    try { localStorage.setItem(RKEY, rfc); } catch (x) { }
+    const err = await entrar(rfc, pass); b.disabled = false; b.textContent = 'Enviar solicitud';
+    if (err) { $('#lrfc').value = rfc; fN.reset(); borrarBorrador(); irPaso(0, true); return mostrarLand('Su solicitud ' + r.json.folio + ' quedó registrada. Entre con su RFC y contraseña para cargar sus documentos.'); }
+    await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'datos', p: { aval_tipo: 'PF', socios5050: 'no', constitucion_mx: tipo === 'PM' ? 'si' : '' } } });
+    st.nueva = true; fN.reset(); borrarBorrador(); irPaso(0, true); await cargar(); window.scrollTo(0, 0);
   });
   $('#fLogin').addEventListener('submit', async ev => {
-    ev.preventDefault(); const b = $('#bEntrar'), e = $('#lErr'); e.hidden = true; b.disabled = true; b.innerHTML = '<span class="spin"></span> Entrando…';
-    const err = await entrar($('#lrfc').value, $('#lpw').value); b.disabled = false; b.textContent = 'Entrar';
-    if (err) { e.textContent = err; e.hidden = false; return; } $('#lpw').value = ''; await cargar(); window.scrollTo(0, 0);
+    ev.preventDefault(); const b = $('#bEntrar'), e = $('#lErr'); e.hidden = true; const rfc = rfcDe($('#lrfc').value), pw = $('#lpw').value;
+    if (!rfc) { e.textContent = 'Escriba su RFC.'; e.hidden = false; $('#lrfc').focus(); return; } if (!pw) { e.textContent = 'Escriba su contraseña.'; e.hidden = false; $('#lpw').focus(); return; }
+    try { localStorage.setItem(KEEP, $('#lKeep').checked ? '1' : '0'); } catch (x) { }
+    b.disabled = true; b.innerHTML = '<span class="spin"></span> Entrando…';
+    let err = await entrar(rfc, pw); if (err && pw !== pw.trim() && /incorrectos/.test(err)) err = await entrar(rfc, pw.trim());
+    b.disabled = false; b.textContent = 'Entrar';
+    if (err) { e.textContent = err; e.hidden = false; return; } try { localStorage.setItem(RKEY, rfc); } catch (x) { } $('#lpw').value = ''; await cargar(); window.scrollTo(0, 0);
   });
   $('#bSalir').addEventListener('click', async () => { try { await api('/auth/v1/logout', { method: 'POST', auth: true }); } catch (e) { } guardar(null); st.sol = null; st.tab = null; mostrarLand(); tab('entrar'); });
 
@@ -646,19 +815,24 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     vp.addEventListener('drop', e => { const d = zona(e); if (dz) dz.classList.remove('drop'); dz = null; if (!d) return; e.preventDefault(); if (e.dataTransfer && e.dataTransfer.files.length) subirVarios(d.dataset.doc, e.dataTransfer.files); });
     window.addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); window.addEventListener('drop', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); }); }
   /* Borrador: si el solicitante cierra la página a medias, al volver encuentra lo que ya había escrito (nunca la contraseña) */
-  const BKEY = 'atrix_solicitud_borrador2', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'extranjero', 'constitucion', 'aval_tipo', 'socios5050', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'cargo', 'telefono', 'correo'];
-  const poner = (n, v) => { const el = fN.elements[n]; if (!el || v == null || v === '') return; if (el.length && el[0] && el[0].type === 'radio') { for (const r of el) r.checked = r.value === v; } else if (el.tagName === 'SELECT') { if ([...el.options].some(o => o.value === v || o.text === v)) el.value = v; } else el.value = v; };
+  const BKEY = 'atrix_solicitud_borrador3', BCAMPOS = ['tipo', 'nombre', 'rfc', 'antiguedad', 'giro', 'municipio', 'producto', 'monto', 'plazo', 'activo', 'ventas', 'contacto', 'telefono', 'correo'];
   const guardarBorrador = () => { try { const o = {}; BCAMPOS.forEach(n => { const v = val(n); if (v) o[n] = v; }); o.t = Date.now(); localStorage.setItem(BKEY, JSON.stringify(o)); } catch (e) { } };
-  const borrarBorrador = () => { try { localStorage.removeItem(BKEY); } catch (e) { } };
+  const borrarBorrador = () => { try { localStorage.removeItem(BKEY); localStorage.removeItem('atrix_solicitud_borrador2'); } catch (e) { } $('#bLimpiar').hidden = true; $('#autoT').textContent = 'Su avance se guarda en este dispositivo.'; };
   fN.addEventListener('input', guardarBorrador); fN.addEventListener('change', guardarBorrador);
-  try { const o = JSON.parse(localStorage.getItem(BKEY) || 'null'); if (o && Date.now() - (o.t || 0) < 30 * 86400000) BCAMPOS.forEach(n => poner(n, o[n])); else if (o) borrarBorrador(); } catch (e) { }
-  try { const q = new URLSearchParams(location.search); const pr = (q.get('prod') || '').toUpperCase(); if (PROD[pr]) poner('producto', pr); const m = Math.round(Number(q.get('monto')) || 0); if (m > 0) poner('monto', Math.min(m, 999999999).toLocaleString('es-MX')); const pl = q.get('plazo'); if (pl) poner('plazo', String(parseInt(pl, 10) || '')); } catch (e) { }
-  fN.dispatchEvent(new Event('change'));
+  let hayBorrador = false;
+  try { const o = JSON.parse(localStorage.getItem(BKEY) || localStorage.getItem('atrix_solicitud_borrador2') || 'null'); if (o && Date.now() - (o.t || 0) < 30 * 86400000) { BCAMPOS.forEach(n => poner(n, o[n])); hayBorrador = BCAMPOS.some(n => n !== 'tipo' && n !== 'producto' && o[n]); } else if (o) borrarBorrador(); } catch (e) { }
+  if (hayBorrador) { $('#autoT').textContent = 'Recuperamos lo que ya había escrito.'; $('#bLimpiar').hidden = false; }
+  $('#bLimpiar').addEventListener('click', () => { fN.reset(); $('#antiguedad').dataset.auto = ''; borrarBorrador(); irPaso(0); rfcAuto(); });
+  try { const q = new URLSearchParams(location.search); const pr = (q.get('prod') || '').toUpperCase(); if (PROD[pr]) poner('producto', pr); const m = Math.round(Number(q.get('monto')) || 0); if (m > 0) poner('monto', miles(Math.min(m, 999999999))); const pl = q.get('plazo'); if (pl) poner('plazo', String(parseInt(pl, 10) || '')); } catch (e) { }
+  rfcAuto(); irPaso(0, true);
 
   /* ---------- Arranque ---------- */
-  try { const q = new URLSearchParams(location.search); const p = (q.get('p') || '').replace(/[^\w-]/g, '').slice(0, 40); if (p) sessionStorage.setItem('atrix_promotor', p); if (q.get('entrar') != null) tab('entrar'); } catch (e) { }
+  try { const q = new URLSearchParams(location.search); const p = (q.get('p') || '').replace(/[^\w-]/g, '').slice(0, 40); if (p) sessionStorage.setItem('atrix_promotor', p); let hayRfc = false; try { hayRfc = !!localStorage.getItem(RKEY); } catch (e) { }
+    if (q.get('entrar') != null || (hayRfc && !hayBorrador && !q.get('prod') && q.get('nueva') == null)) tab('entrar'); } catch (e) { }
+  try { $('#lKeep').checked = mantener(); } catch (e) { }
   st.ses = leer(); if (st.ses) cargar();
 })();
 </script>
+
 </body>
 </html>
