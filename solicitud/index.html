@@ -365,11 +365,12 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
             <div class="tiles">
               <label class="tile"><input type="radio" name="producto" value="AF" checked><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><b>Arrendamiento financiero</b><small>El activo es suyo al final</small></label>
               <label class="tile"><input type="radio" name="producto" value="AP"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></svg><b>Arrendamiento puro</b><small>Renta deducible, con valor residual</small></label>
-              <label class="tile"><input type="radio" name="producto" value="CGI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-4 7 4v13M9.5 21v-5h5v5M9 11h.01M15 11h.01"/></svg><b>Crédito con garantía inmobiliaria</b><small>Simple o revolvente</small></label>
-              <label class="tile"><input type="radio" name="producto" value="CE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/></svg><b>Crédito estructurado</b><small>A la medida de su operación</small></label>
+              <label class="tile"><input type="radio" name="producto" value="CGI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-4 7 4v13M9.5 21v-5h5v5M9 11h.01M15 11h.01"/></svg><b>Crédito con garantía inmobiliaria</b><small>Simple o revolvente · clientes ATRIX</small></label>
+              <label class="tile"><input type="radio" name="producto" value="CE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/></svg><b>Crédito estructurado</b><small>A la medida · clientes ATRIX</small></label>
             </div>
+            <p style="margin:-6px 0 16px;font-size:11px;line-height:1.45;color:var(--ink-2)">El arrendamiento financiero y el puro se destinan a la adquisición de activos. El crédito simple, revolvente y estructurado se ofrecen a clientes ATRIX con al menos 12 meses de historial y score interno positivo. Toda solicitud de arrendamiento o crédito está sujeta a preaprobación y aprobación por parte del Comité de Crédito de ATRIX.</p>
             <div class="f"><label for="monto">¿Cuánto necesita? <em>sin IVA</em></label><div class="aff big"><span>$</span><input id="monto" name="monto" inputmode="numeric" autocomplete="off" enterkeyhint="next" placeholder="850,000"><span>MXN</span></div><small id="montoH">De $100,000 a $2,500,000 pesos.</small></div>
-            <div class="f"><label for="plazo">¿En cuántos meses quiere pagarlo?</label><div class="aff"><input id="plazo" name="plazo" inputmode="numeric" maxlength="2" autocomplete="off" enterkeyhint="next" placeholder="36"><span>meses</span></div><small>De 12 a 48 meses.</small></div>
+            <div class="f"><label for="plazo">¿En cuántos meses quiere pagarlo?</label><div class="aff"><input id="plazo" name="plazo" inputmode="numeric" maxlength="2" autocomplete="off" enterkeyhint="next" placeholder="36"><span>meses</span></div><small>De 12 a 36 meses.</small></div>
             <div class="f"><label for="activo"><span id="lActivo">¿Qué activo desea arrendar?</span> <em>opcional</em></label><textarea id="activo" name="activo" rows="2" maxlength="600" placeholder="Marca, modelo y año, si ya lo tiene visto."></textarea></div>
           </div>
           <div data-paso="1" hidden>
@@ -387,7 +388,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
               <div class="f"><label for="ventas">Ventas anuales</label><div class="aff"><span>$</span><input id="ventas" name="ventas" inputmode="numeric" autocomplete="off" enterkeyhint="done" placeholder="12,500,000"></div><small>Del último año. Mínimo $5,000,000.</small></div>
             </div>
             <label class="conf"><input type="checkbox" id="cumple" name="cumple"><span id="lCumple">Confirmo que la empresa está constituida en México y no tiene capital mayoritario extranjero.</span></label>
-            <p class="nota">¿No es su caso? <a href="https://wa.me/528134127296" target="_blank" rel="noopener">Escríbanos por WhatsApp</a> y lo revisamos.</p>
+            <p class="nota">¿No es su caso? <a href="https://wa.me/528187098023" target="_blank" rel="noopener">Escríbanos por WhatsApp</a> y lo revisamos.</p>
           </div>
           <div data-paso="3" hidden>
             <h2>¿A quién contactamos?</h2><p class="sub">Último paso. Con su RFC y una contraseña podrá regresar a cargar sus documentos.</p>
@@ -415,7 +416,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
           <label class="conf sm"><input type="checkbox" id="lKeep" checked><span>Mantener mi sesión abierta en este dispositivo</span></label>
           <div class="nav"><button class="btn p big" id="bEntrar" type="submit">Entrar</button></div>
         </form>
-        <div class="help">¿Olvidó su contraseña? Escríbanos por <a href="https://wa.me/528134127296?text=Hola%2C%20olvid%C3%A9%20la%20contrase%C3%B1a%20de%20mi%20solicitud%20en%20l%C3%ADnea." target="_blank" rel="noopener">WhatsApp 81 3412 7296</a> o a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> y le generamos una nueva.<br>¿Ya es cliente? Consulte su crédito en el <a href="/portal/">Portal de Clientes</a>.</div>
+        <div class="help">¿Olvidó su contraseña? Escríbanos por <a href="https://wa.me/528187098023?text=Hola%2C%20olvid%C3%A9%20la%20contrase%C3%B1a%20de%20mi%20solicitud%20en%20l%C3%ADnea." target="_blank" rel="noopener">WhatsApp 81 8709 8023</a> o a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> y le generamos una nueva.<br>¿Ya es cliente? Consulte su crédito en el <a href="/portal/">Portal de Clientes</a>.</div>
       </div>
     </div>
     <div class="info">
@@ -478,7 +479,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       a(g, 'id_aval', 'INE del aval', INE); a(g, 'aval_csf', 'CSF actualizada del aval', CSF); a(g, 'domicilio_aval', 'Comprobante de domicilio del aval', DOM); a(g, 'aval_edoscta', 'Estados de cuenta bancarios del aval', CTA); a(g, 'aval_buro', 'Buró de Crédito del aval', BURO);
     }
     if (cred) { a('Garantía inmobiliaria', 'escritura', 'Escritura del inmueble en garantía', 'Con datos de inscripción en el Registro Público de la Propiedad.', s.producto === 'CE'); a('Garantía inmobiliaria', 'predial', 'Predial y certificado de libertad de gravamen', 'Boleta predial del año en curso y certificado reciente.', s.producto === 'CE'); }
-    a('Solicitud', 'carta', 'Carta de Crédito', cred ? 'Carta firmada donde explique para qué requiere el crédito y qué tipo de crédito solicita.' : 'Carta firmada donde explique para qué requiere el arrendamiento y qué tipo de arrendamiento solicita (financiero o puro).');
+    a('Solicitud', 'carta', 'Carta de Crédito', cred ? 'Carta firmada donde explique el destino del crédito (adquisición de activos, capital de trabajo o proyecto específico) y qué tipo de crédito solicita.' : 'Carta firmada donde explique para qué requiere el arrendamiento y qué tipo de arrendamiento solicita (financiero o puro).');
     a('Adicional', 'otros', 'Otros documentos', 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', 1);
     const F1 = ['acta', 'reformas', 'poderes', 'csf', 'pr_ine', 'pr_csf', 's2_ine', 's2_csf', 'id_titular', 'ef_3m', 'edosfin', 'edoscta']; L.forEach(d => { d.f = F1.includes(d.c) ? 1 : 2; });
     return L.filter(d => d.f === 1).concat(L.filter(d => d.f === 2)); };
@@ -566,7 +567,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     fN.querySelectorAll('.conf').forEach(l => l.classList.toggle('on', l.querySelector('input').checked));
     $('#lNombre').textContent = pm ? 'Razón social' : 'Nombre completo'; $('#nombre').autocomplete = pm ? 'organization' : 'name'; $('#rfc').placeholder = pm ? 'ABC123456XY9' : 'ABCD123456XY9';
     $('#lCumple').textContent = pm ? 'Confirmo que la empresa está constituida en México y no tiene capital mayoritario extranjero.' : 'Confirmo que mi actividad empresarial está en México y no tiene capital mayoritario extranjero.';
-    $('#lActivo').textContent = arr ? '¿Qué activo desea arrendar?' : '¿Para qué necesita el crédito?'; $('#activo').placeholder = arr ? 'Marca, modelo y año, si ya lo tiene visto.' : 'Destino del crédito y, en su caso, el inmueble que ofrecería en garantía.';
+    $('#lActivo').textContent = arr ? '¿Qué activo desea arrendar?' : '¿Para qué necesita el crédito?'; $('#activo').placeholder = arr ? 'Marca, modelo y año, si ya lo tiene visto.' : 'Destino del crédito (adquisición de activos, capital de trabajo o proyecto específico) y, en su caso, el inmueble que ofrecería en garantía.';
     const m = montoNum(), mh = $('#montoH'); mh.className = ''; mh.textContent = 'De $100,000 a $2,500,000 pesos.';
     if (m && m < MONTO_MIN && String(m).length >= 6) { mh.className = 'badh'; mh.textContent = 'El mínimo es $100,000 pesos.'; } else if (m > MONTO_MAX) { mh.className = 'badh'; mh.textContent = 'El máximo es $2,500,000 pesos.'; } else if (m >= MONTO_MIN) { mh.className = 'okh'; mh.textContent = money(m) + ' pesos, sin IVA.'; }
     $('#usrR').textContent = val('rfc') || '—';
@@ -581,13 +582,14 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     ch.addEventListener('click', e => { const b = e.target.closest('[data-dom]'); if (!b) return; co.value = partes()[0] + '@' + b.dataset.dom; ch.innerHTML = ''; guardarBorrador(); const p = $('#pw1'); if (p) p.focus(); }); }
   const pwOk = p => ({ l: p.length >= 8, a: /[A-Za-z]/.test(p), n: /\d/.test(p) });
   $('#pw1').addEventListener('input', e => { const o = pwOk(e.target.value); document.querySelectorAll('#pwT span').forEach(s => s.classList.toggle('ok', !!o[s.dataset.r])); });
-  const WA = ' Si su caso es distinto, escríbanos por WhatsApp al 81 3412 7296.';
+  const conLiga = (el, t) => { el.textContent = ''; String(t || '').split('81 8709 8023').forEach((p, i) => { if (i) { const a = document.createElement('a'); a.href = 'https://wa.me/528187098023'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '81 8709 8023'; el.append(a); } el.append(p); }); };
+  const WA = ' Si su caso es distinto, escríbanos por WhatsApp al 81 8709 8023.';
   function validar(p) {
     if (p === 0) {
       const m = montoNum(); if (!m) return ['monto', 'Escriba el monto que necesita.'];
       if (!(m >= MONTO_MIN && m <= MONTO_MAX)) return ['monto', 'Por ahora atendemos operaciones de $100,000 a $2,500,000 pesos.'];
       if (!val('plazo')) return ['plazo', 'Escriba en cuántos meses quiere pagarlo.'];
-      if (!(numDe('plazo') >= 12 && numDe('plazo') <= 48)) return ['plazo', 'El plazo va de 12 a 48 meses.'];
+      if (!(numDe('plazo') >= 12 && numDe('plazo') <= 36)) return ['plazo', 'El plazo va de 12 a 36 meses.'];
     } else if (p === 1) {
       const r = val('rfc'); if (!r) return ['rfc', 'Escriba el RFC.'];
       if (!RX_PM.test(r) && !RX_PF.test(r)) return ['rfc', 'Revise el RFC: son 12 caracteres si es empresa y 13 si es persona física, sin espacios ni guiones.'];
@@ -623,7 +625,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   fN.addEventListener('input', e => { const f = e.target.closest('.f,.conf'); if (f && f.classList.contains('bad')) { f.classList.remove('bad'); $('#nErr').hidden = true; } });
   fN.addEventListener('submit', async ev => {
     ev.preventDefault(); const e = $('#nErr'); const v = validar(st.paso); limpiaErr();
-    if (v) { e.textContent = v[1]; e.hidden = false; const el = document.getElementById(v[0]) || fN.elements[v[0]]; const caja = el && el.closest ? el.closest('.f,.conf') : null; if (caja) caja.classList.add('bad');
+    if (v) { conLiga(e, v[1]); e.hidden = false; const el = document.getElementById(v[0]) || fN.elements[v[0]]; const caja = el && el.closest ? el.closest('.f,.conf') : null; if (caja) caja.classList.add('bad');
       if (el && el.focus && el.type !== 'checkbox') { try { el.focus({ preventScroll: true }); } catch (x) { el.focus(); } } (caja || e).scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
     if (st.paso < NP - 1) return irPaso(st.paso + 1);
     const b = $('#bSig'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Enviando…';
@@ -634,7 +636,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const r = await api('/functions/v1/solicitud-alta', { method: 'POST', body: cuerpo });
     if (!r.ok || !r.json || !r.json.ok) { b.disabled = false; b.textContent = 'Enviar solicitud';
       if (r.json && r.json.existe) { $('#lrfc').value = rfc; return mostrarLand('Ya existe una solicitud con el RFC ' + rfc + '. Entre con su contraseña para continuarla.'); }
-      e.textContent = (r.json && r.json.error) || errTxt(r.json); e.hidden = false; e.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+      conLiga(e, (r.json && r.json.error) || errTxt(r.json)); e.hidden = false; e.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
     try { localStorage.setItem(RKEY, rfc); } catch (x) { }
     const err = await entrar(rfc, pass); b.disabled = false; b.textContent = 'Enviar solicitud';
     if (err) { $('#lrfc').value = rfc; fN.reset(); borrarBorrador(); irPaso(0, true); return mostrarLand('Su solicitud ' + r.json.folio + ' quedó registrada. Entre con su RFC y contraseña para cargar sus documentos.'); }
@@ -698,7 +700,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
         <h3>Avisos importantes</h3><ul class="av2">${AVISOS[tipo].map(x => `<li>${esc(x)}</li>`).join('')}</ul>
         <h3>Confidencialidad y datos personales</h3><ul class="av2">${AVISOS.conf.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
         ${pie}
-        <div class="pf"><span>ATRIX® es una marca comercial de COLIUM, S.A. de C.V. · Monterrey, Nuevo León · atencion@atrixfinanciera.com · 81 3412 7296</span><button class="btn sm" type="button" id="bImprimir">Imprimir o guardar en PDF</button></div></div></div>`;
+        <div class="pf"><span>ATRIX® es una marca comercial de COLIUM, S.A. de C.V. · Monterrey, Nuevo León · <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> · <a href="tel:+528187098023">81 8709 8023</a></span><button class="btn sm" type="button" id="bImprimir">Imprimir o guardar en PDF</button></div></div></div>`;
   }
   /* ---------- Panel del solicitante ---------- */
   function estadoDoc(d, S) {
@@ -724,7 +726,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     if (S.etapa === 'rechazada') {} else if (S.mensaje) aviso += `<div class="card aviso"><b>Mensaje de ATRIX</b><p>${esc(S.mensaje)}</p></div>`;
     let envio = '';
     if (!cerrada && ['recibida', 'documentos'].includes(S.etapa)) envio = `<div class="card envio"><p>${falt1 ? `<b>Para su preaprobación faltan ${falt1} de ${req1.length} documentos.</b> Solo se necesita ${F1TXT}. Puede cargarlos en varias visitas; su avance se guarda solo.` : `<b>Ya tiene lo necesario para su preaprobación.</b> Envíelo y ATRIX le responde en 2 días hábiles.${falt2 ? ' Los documentos de la etapa de análisis puede cargarlos después.' : ''}`}</p><button class="btn p big" id="bEnviar" type="button" ${falt1 ? 'disabled' : ''}>Enviar a preaprobación</button></div>`;
-    else if (S.etapa === 'revision') envio = `<div class="card envio"><p><b>En revisión para preaprobación${S.enviado ? ' desde el ' + fdt(S.enviado) : ''}.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección: vuelva a cargarlo para continuar.' : 'ATRIX le responde en 2 días hábiles.' + (falt2 ? ' Mientras tanto puede adelantar los ' + falt2 + ' documentos de la etapa de análisis.' : ' Su expediente ya está completo para el análisis.')}</p><a class="btn" href="https://wa.me/528134127296?text=${encodeURIComponent('Hola, ' + (corr ? 'tengo una duda sobre' : 'ya envié a revisión') + ' el expediente de mi solicitud ' + S.folio + ' (' + S.nombre + ').')}" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>`;
+    else if (S.etapa === 'revision') envio = `<div class="card envio"><p><b>En revisión para preaprobación${S.enviado ? ' desde el ' + fdt(S.enviado) : ''}.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección: vuelva a cargarlo para continuar.' : 'ATRIX le responde en 2 días hábiles.' + (falt2 ? ' Mientras tanto puede adelantar los ' + falt2 + ' documentos de la etapa de análisis.' : ' Su expediente ya está completo para el análisis.')}</p><a class="btn" href="https://wa.me/528187098023?text=${encodeURIComponent('Hola, ' + (corr ? 'tengo una duda sobre' : 'ya envié a revisión') + ' el expediente de mi solicitud ' + S.folio + ' (' + S.nombre + ').')}" target="_blank" rel="noopener">Avisar por WhatsApp</a></div>`;
     else if (S.etapa === 'preaprobada') envio = `<div class="card envio"><p><b>Su solicitud fue preaprobada y pasa a análisis.</b> ${corr ? 'Hay ' + corr + (corr === 1 ? ' documento que requiere' : ' documentos que requieren') + ' corrección.' : falt2 ? 'Para concluir el análisis faltan ' + falt2 + ' de ' + req2.length + ' documentos de la segunda etapa.' : 'Su expediente está completo; el área de Riesgos concluye el análisis para presentarlo a Comité.'}</p></div>`;
     let grupo = '', fase = 0; const lista = docs.map(d => { const x = d.x; let hf = ''; if (d.f && d.f !== fase) { fase = d.f; grupo = ''; hf = d.f === 1 ? `<div class="fase"><b>Etapa 1 · Para su preaprobación</b><span>${ok1} de ${req1.length} cargados</span><p>Solo ${F1TXT}. Con esto ATRIX le da respuesta en 2 días hábiles.</p></div>` : `<div class="fase"><b>Etapa 2 · Para el análisis y la aprobación</b><span>${req2.length - falt2} de ${req2.length} cargados</span><p>Puede cargarlos desde ahora o después de recibir su preaprobación.</p></div>`; } const h = hf + (d.g !== grupo ? `<div class="grp">${esc(d.g)}</div>` : ''); grupo = d.g;
       const puede = !cerrada && x.e !== 'aceptado' && x.fs.length < MAX_ARCH; const sub = st.sub[d.c];
@@ -746,7 +748,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
         <div class="card box"><h3>Su solicitud</h3><div class="dl">
           <div><span>Folio</span><b>${esc(S.folio)}</b></div><div><span>RFC</span><b>${esc(S.rfc)}</b></div><div><span>Producto</span><b>${esc(PROD[S.producto] || S.producto)}</b></div><div><span>Monto</span><b>${money(S.monto)}</b></div>
           ${D.plazo ? `<div><span>Plazo</span><b>${esc(D.plazo)}${/^\d+$/.test(D.plazo) ? ' meses' : ''}</b></div>` : ''}${D.municipio ? `<div><span>Municipio</span><b>${esc(D.municipio)}</b></div>` : ''}${D.contacto ? `<div><span>Contacto</span><b>${esc(D.contacto)}</b></div>` : ''}${D.telefono ? `<div><span>Teléfono</span><b>${esc(D.telefono)}</b></div>` : ''}</div></div>
-        <div class="card box"><h3>¿Necesita ayuda?</h3><p>Si tiene dudas sobre algún documento o quiere corregir un dato de su solicitud, escríbanos indicando su folio.</p><a class="btn p" href="https://wa.me/528134127296?text=${encodeURIComponent('Hola, tengo una duda sobre mi solicitud ' + S.folio + '.')}" target="_blank" rel="noopener">WhatsApp 81 3412 7296</a><a class="btn" style="margin-top:8px" href="mailto:atencion@atrixfinanciera.com?subject=${encodeURIComponent('Solicitud ' + S.folio)}">Escribir un correo</a></div>
+        <div class="card box"><h3>¿Necesita ayuda?</h3><p>Si tiene dudas sobre algún documento o quiere corregir un dato de su solicitud, escríbanos indicando su folio.</p><a class="btn p" href="https://wa.me/528187098023?text=${encodeURIComponent('Hola, tengo una duda sobre mi solicitud ' + S.folio + '.')}" target="_blank" rel="noopener">WhatsApp 81 8709 8023</a><a class="btn" style="margin-top:8px" href="mailto:atencion@atrixfinanciera.com?subject=${encodeURIComponent('Solicitud ' + S.folio)}">Escribir un correo</a></div>
         <div class="card box"><h3>Su acceso</h3><p>Usuario: su RFC. Puede cambiar su contraseña cuando quiera.</p><button class="btn" type="button" id="bPass">Cambiar contraseña</button></div>
       </div></div>`;
   }
