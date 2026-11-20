@@ -96,6 +96,11 @@ svg{display:block;max-width:100%}
 .lnav .links a:hover,.lnav .links a.on{opacity:1}
 .lnav .links a.on::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--red)}
 .lnav .btn{padding:6px 15px;font-size:.8rem}
+.lnav .nsol{padding:7px 18px 9px;font-size:.8rem;font-weight:500;letter-spacing:.01em;color:#fff;background:var(--navy);border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.lnav .nsol span{position:relative;padding-bottom:3px}
+.lnav .nsol span::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;border-radius:2px;background:var(--red);transform:scaleX(.35);transform-origin:left;transition:transform .35s var(--ease)}
+.lnav .nsol:hover span::after,.lnav .nsol.on span::after{transform:scaleX(1)}
+.lnav .nsol:hover{background:var(--navy-2)}
 .lnav .dd{display:none;background:none;border:0;cursor:pointer;width:34px;height:34px;border-radius:50%}
 .lnav .dd svg{width:14px;height:14px;transition:transform .35s var(--ease)}
 .lnav.open .dd svg{transform:rotate(180deg)}
@@ -522,7 +527,6 @@ html{scroll-behavior:auto}
 <div class="links" id="lnLinks">
 <a href="#conozca">Conozca</a>
 <a href="#productos">Productos</a>
-<a href="#solicitud">Iniciar solicitud</a>
 <a href="#simulador">Simulador</a>
 <a href="#proceso">Proceso</a>
 <a href="#preguntas">Preguntas</a>
@@ -530,7 +534,7 @@ html{scroll-behavior:auto}
 </div>
 <a class="portal" href="/portal/" aria-label="Portal de Clientes"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Portal de Clientes</span></a>
 <button class="dd" id="lnDd" type="button" aria-label="Mostrar secciones" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-<a class="btn btn-p" href="/solicitud/?nueva"><span class="s1">Iniciar solicitud</span><span class="s2">Solicitar</span></a>
+<a class="btn btn-p nsol" href="/solicitud/?nueva"><span class="s1">Iniciar solicitud</span><span class="s2">Solicitar</span></a>
 </div>
 </nav>
 <!-- HERO SEQUENCE -->
@@ -1252,7 +1256,7 @@ const y=scrollY, navB=lnav.getBoundingClientRect().bottom;
 // nav theme
 lnav.classList.toggle('dark',darkZones.some(z=>{const r=z.getBoundingClientRect();return r.top<=navB&&r.bottom>=navB}));
 // active link
-let cur=null; const th=innerHeight*.4; secs.forEach(s=>{const r=s.el.getBoundingClientRect(); if(r.top<=th&&r.bottom>th) cur=s.a}); $$('#lnLinks a').forEach(a=>a.classList.toggle('on',a===cur));
+let cur=null; const th=innerHeight*.4; secs.forEach(s=>{const r=s.el.getBoundingClientRect(); if(r.top<=th&&r.bottom>th) cur=s.a}); $$('#lnLinks a').forEach(a=>a.classList.toggle('on',a===cur)); {const so=$('#solicitud'),nb=$('.lnav .nsol'); if(so&&nb){const r=so.getBoundingClientRect(); nb.classList.toggle('on',r.top<=th&&r.bottom>th);}}
 toTop.classList.toggle('show',y>900);
 if(reduce){heroP=0;return}
 // hero
