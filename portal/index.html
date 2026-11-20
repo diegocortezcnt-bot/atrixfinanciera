@@ -155,7 +155,7 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
       <div class="f"><label for="pw">Contraseña</label><div class="pw"><input id="pw" name="password" type="password" autocomplete="current-password" autocapitalize="none" enterkeyhint="go"><button type="button" data-ver="pw">Ver</button></div></div>
       <label class="keep"><input type="checkbox" id="keep" checked><span>Mantener mi sesión abierta en este dispositivo</span></label>
       <button class="btn p" id="bEntrar" type="submit">Entrar</button>
-      <div class="help">¿Olvidó su contraseña o aún no tiene acceso?<br>Escríbanos a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> o por <a href="https://wa.me/528134127296?text=Hola%2C%20necesito%20ayuda%20para%20entrar%20al%20Portal%20de%20Clientes." target="_blank" rel="noopener">WhatsApp 81 3412 7296</a>.</div>
+      <div class="help">¿Olvidó su contraseña o aún no tiene acceso?<br>Escríbanos a <a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a> o por <a href="https://wa.me/528187098023?text=Hola%2C%20necesito%20ayuda%20para%20entrar%20al%20Portal%20de%20Clientes." target="_blank" rel="noopener">WhatsApp 81 8709 8023</a>.</div>
       <div class="alt">¿Aún no es cliente? <a href="/solicitud/?nueva">Inicie su solicitud</a> · <a href="/solicitud/?entrar">Continuar una solicitud</a></div>
     </form>
   </section>
@@ -319,7 +319,7 @@ tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--navy)}
       <div class="kpis">${kpis}</div>
       <div class="side"><div>${cont}</div>
         <aside class="card box">${ayuda}
-          <a class="btn" href="mailto:${esc((D.contacto || {}).correo || 'atencion@atrixfinanciera.com')}">Correo</a><a class="btn" href="${esc((D.contacto || {}).whatsapp || 'https://wa.me/528134127296')}" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn" href="mailto:${esc((D.contacto || {}).correo || 'atencion@atrixfinanciera.com')}">Correo</a><a class="btn" href="${esc((D.contacto || {}).whatsapp || 'https://wa.me/528187098023')}" target="_blank" rel="noopener">WhatsApp</a>
           <h3 style="margin-top:20px">Seguridad</h3><p>Su contraseña es personal. ATRIX nunca se la pedirá por teléfono ni por correo.</p><button class="btn" data-act="pass">Cambiar contraseña</button></aside></div>`;
     // lleva cada tabla a su periodo actual (el renglón resaltado queda a la vista)
     P.querySelectorAll('.tw').forEach(w => { const c = w.querySelector('tr.cur'); if (c) w.scrollTop = Math.max(0, c.offsetTop - 2 * c.offsetHeight - (w.querySelector('thead') ? w.querySelector('thead').offsetHeight : 0)); });
