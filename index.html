@@ -1374,7 +1374,7 @@ function levelACT(B,i,c,VR=0){let pf=1,sum=0;for(let k=c.length-1;k>=0;k--){sum+
 const P=r2(sum?(B*pf-VR)/sum:B-VR);let b=B;const rows=[];
 c.forEach((x,k)=>{const it=r2(b*i*x.d/360);let cap=r2(P-it),pay=P;if(k===c.length-1){cap=r2(b-VR);pay=r2(it+cap)}b=r2(b-cap);rows.push([k+1,x.f,x.d,pay,it,cap,b])});
 return {P,rows,int:r2(rows.reduce((a,x)=>a+x[4],0)),tot:r2(rows.reduce((a,x)=>a+x[3],0))}}
-const heads={fin:['Renta','Carga financiera','Capital','Saldo'],puro:['Renta','Interés implícito','Recuperación','Por recuperar'],simple:['Pago','Interés','Capital','Saldo'],rev:['Pago','Interés','Capital','Dispuesto'],est:['Pago','Interés','Capital','Saldo']};
+const heads={fin:['Renta','Interés','Capital','Saldo'],puro:['Renta','Interés implícito','Recuperación','Por recuperar'],simple:['Pago','Interés','Capital','Saldo'],rev:['Pago','Interés','Capital','Dispuesto'],est:['Pago','Interés','Capital','Saldo']};
 const fDate=new Intl.DateTimeFormat('es-MX',{day:'2-digit',month:'short',year:'2-digit'});
 const fN2=new Intl.NumberFormat('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
 function calc(){
@@ -1386,9 +1386,9 @@ $('#plazoOut').textContent=n+(n===1?' mes':' meses');$('#tasaOut').textContent=(
 if(M<=+el.montoR.max&&M>=+el.montoR.min)el.montoR.value=M;
 const ap=b=>b*.025*1.16,c=calendar(n);let big=0,sub='',kv=[],rows=[],mix=[];
 if(S.prod==='fin'){const PV=r2(M*(1-e)),L=levelACT(PV,i,c);rows=L.rows;big=L.P;
-sub=`más IVA · ${n} rentas fijas · carga financiera ACT/360 · sin valor residual`;
-kv=[['Monto financiado',fmt.format(PV)],['Enganche',fmt.format(M*e)],['Carga financiera total',fmt.format(L.int)],['Total de rentas',fmt.format(L.tot)],['Comisión por apertura',fmt.format(ap(PV))],['Al término','El activo es suyo']];
-mix=[['Capital',PV,'k'],['Carga financiera',L.int,'n'],['Enganche',M*e,'r']];}
+sub=`más IVA · ${n} rentas fijas · interés ACT/360 · sin valor residual`;
+kv=[['Monto financiado',fmt.format(PV)],['Enganche',fmt.format(M*e)],['Interés total',fmt.format(L.int)],['Total de rentas',fmt.format(L.tot)],['Comisión por apertura',fmt.format(ap(PV))],['Al término','El activo es suyo']];
+mix=[['Capital',PV,'k'],['Interés',L.int,'n'],['Enganche',M*e,'r']];}
 else if(S.prod==='puro'){const C=r2(M*(1-e)),RV=r2(M*R),L=levelACT(C,i,c,RV),F=levelACT(C,i,c);rows=L.rows;big=L.P;
 sub=`más IVA · ${n} rentas · valor residual ${Math.round(R*100)}% · renta por valor presente ACT/360`;
 kv=[['Pago inicial',fmt.format(M*e)],['Valor residual',fmt.format(RV)],['Total de rentas',fmt.format(L.tot)],['Ahorro mensual vs. financiero',fmt.format(Math.max(0,F.P-L.P))],['Comisión por apertura',fmt.format(ap(C))],['Al término','Renovar, devolver o comprar']];
