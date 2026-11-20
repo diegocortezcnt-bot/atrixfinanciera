@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="ATRIX Financiera: arrendamiento financiero, arrendamiento puro, crédito con garantía inmobiliaria y crédito estructurado para empresas en Nuevo León. Ayudamos a su empresa a no descapitalizarse.">
+<meta name="description" content="ATRIX Financiera: arrendamiento financiero y arrendamiento puro para la adquisición de activos, y crédito simple, revolvente y estructurado para clientes ATRIX, en Nuevo León. Ayudamos a su empresa a no descapitalizarse.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 101 101%27%3E%3Cpolygon points=%2750.468,0 0,100.934 50.468,74.606%27 fill=%27%23E71922%27/%3E%3Cpolygon points=%2750.468,0 35.109,87.770 50.468,74.606%27 fill=%27%23A50F16%27/%3E%3Cpolygon points=%2750.468,0 100.933,100.934 50.468,74.606%27 fill=%27%230D2A52%27/%3E%3Cpolygon points=%2750.468,0 65.828,87.770 50.468,74.606%27 fill=%27%23071D3D%27/%3E%3C/svg%3E">
 <title>ATRIX Financiera</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -200,6 +200,49 @@ svg{display:block;max-width:100%}
 @media (max-width:1100px){.lineup{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){.lineup{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.lineup{grid-template-columns:1fr}.lu .desc{min-height:0}}
+.pf-g{display:grid;gap:18px}
+.pf-h{display:flex;align-items:flex-start;gap:16px;margin-top:26px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.pf-h:first-child{margin-top:0}
+.pf-k{font-size:.74rem;font-weight:600;letter-spacing:.16em;color:var(--red);padding-top:6px}
+.pf-h b{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:1.3rem;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.pf-h small{display:block;margin-top:4px;font-size:.86rem;line-height:1.5;color:var(--ink-2);max-width:70ch}
+.pf-lock{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--navy);padding:5px 10px 5px 8px;border-radius:999px}
+.pf-lock svg{width:12px;height:12px}
+.pf-row{display:grid;gap:18px}
+.pf-row.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pf-row.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pf{position:relative;display:flex;flex-direction:column;gap:12px;padding:28px 26px 24px;border-radius:28px;background:linear-gradient(160deg,#ffffff 0%,#f2f4f8 100%);border:1px solid #e3e6ee;box-shadow:inset 0 1px 0 #fff,0 30px 60px -42px rgba(7,29,61,.5);overflow:hidden;min-width:0;transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+.pf::before{content:"";position:absolute;left:26px;top:0;width:36px;height:3px;background:var(--red);border-radius:0 0 3px 3px}
+.pf:hover{transform:translateY(-4px);box-shadow:inset 0 1px 0 #fff,0 40px 70px -40px rgba(7,29,61,.6)}
+.pf-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pf .ico{width:52px;height:52px;flex:0 0 52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(150deg,#0f3a7a,#071D3D);box-shadow:0 14px 28px -16px rgba(7,29,61,.8)}
+.pf .ico svg{width:26px;height:26px;stroke:#fff}
+.pf .tag{font-size:.7rem;font-weight:600;line-height:1.3;text-align:right;padding:6px 11px;border-radius:999px;background:rgba(7,29,61,.06);color:var(--navy)}
+.pf .pill{margin-top:6px;font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--red)}
+.pf h3{margin:-6px 0 0;font-size:1.65rem;font-weight:600;color:var(--ink)}
+.pf .desc{margin:0;font-size:.92rem;line-height:1.55;color:var(--ink-2)}
+.pf-s{margin:6px 0 0;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #e3e6ee}
+.pf-s div{display:grid;gap:3px;align-content:start;padding:13px 0;border-bottom:1px solid #e3e6ee;min-width:0}
+.pf-s div:nth-child(odd){padding-right:14px}
+.pf-s dt{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.pf-s dd{margin:0;font-size:.9rem;font-weight:500;line-height:1.35;color:var(--ink)}
+.pf .acts{margin-top:auto;padding-top:8px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.pf.dk{background:radial-gradient(130% 90% at 100% 0%,#14417f 0%,#071D3D 55%,#04112a 100%);border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 30px 60px -36px rgba(7,29,61,.85)}
+.pf.dk:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 40px 70px -34px rgba(7,29,61,.95)}
+.pf.dk .ico{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);box-shadow:none}
+.pf.dk .tag{background:rgba(255,255,255,.1);color:#dbe6ff}
+.pf.dk .pill{color:#ff6b72}
+.pf.dk h3{color:#fff}
+.pf.dk .desc{color:#b9c4d8}
+.pf.dk .pf-s,.pf.dk .pf-s div{border-color:rgba(255,255,255,.14)}
+.pf.dk .pf-s dt{color:#8fa3c4}
+.pf.dk .pf-s dd{color:#fff}
+.pf.dk .btn-p{background:#fff;color:var(--navy)}
+.pf.dk .btn-p:hover{background:#e6ecf7}
+.pf.dk .more{color:var(--sky)}
+@media (max-width:1000px){.pf-row.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.pf-row.two,.pf-row.three{grid-template-columns:1fr}.pf{padding:24px 20px 22px}.pf::before{left:20px}}
+@media (max-width:360px){.pf-s{grid-template-columns:1fr}.pf-s div:nth-child(odd){padding-right:0}}
 .nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
 .num{display:grid;gap:8px;min-width:0;padding-top:22px;border-top:1px solid #2a2a2d}
 .num b{font-size:clamp(2.6rem,5vw,4.4rem);font-weight:600;letter-spacing:-.04em;line-height:1;background:linear-gradient(180deg,#fff,#9fb8e6);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -461,6 +504,8 @@ html{scroll-behavior:auto}
 .ini-t svg{width:24px;height:24px;fill:none;stroke:#ff6b72;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-bottom:6px}
 .ini-t b{font-size:.92rem;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
 .ini-t span{font-size:.76rem;color:var(--on-dark-2);line-height:1.35}
+.ini-n{margin:0;font-size:.72rem;line-height:1.45;color:var(--on-dark-2)}
+.lu-n{text-align:center;margin:26px auto 0;max-width:62ch}
 .ini-c .btn{justify-content:center;padding:15px 24px;font-size:1.02rem;font-weight:600}
 .ini-c .more{justify-self:center;font-size:.92rem}
 .lnav .btn .s2{display:none}
@@ -507,7 +552,7 @@ html{scroll-behavior:auto}
 <div class="final" id="heroFinal">
 <div class="wrap">
 <h2>Financiamos el activo. Usted conserva su capital.</h2>
-<p>Arrendamiento financiero, arrendamiento puro, crédito con garantía inmobiliaria y crédito estructurado en Nuevo León.</p>
+<p>Arrendamiento financiero y puro para la adquisición de activos. Crédito simple, revolvente y estructurado para clientes con historial en ATRIX.</p>
 </div>
 </div>
 <div class="facts" id="heroFacts">
@@ -544,9 +589,10 @@ html{scroll-behavior:auto}
 <div class="ini-t">
 <a href="/solicitud/?nueva&amp;prod=AF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><b>Arrendamiento financiero</b><span>El activo es suyo al final</span></a>
 <a href="/solicitud/?nueva&amp;prod=AP"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.7 5.6L4 15.5M4 20v-4.5h4.5"/></svg><b>Arrendamiento puro</b><span>Renta deducible, con valor residual</span></a>
-<a href="/solicitud/?nueva&amp;prod=CGI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-4 7 4v13M9.5 21v-5h5v5M9 11h.01M15 11h.01"/></svg><b>Crédito simple o revolvente</b><span>Con garantía inmobiliaria</span></a>
-<a href="/solicitud/?nueva&amp;prod=CE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/></svg><b>Crédito estructurado</b><span>A la medida de su operación</span></a>
+<a href="/solicitud/?nueva&amp;prod=CGI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-4 7 4v13M9.5 21v-5h5v5M9 11h.01M15 11h.01"/></svg><b>Crédito simple o revolvente</b><span>Clientes ATRIX · garantía inmobiliaria</span></a>
+<a href="/solicitud/?nueva&amp;prod=CE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5"/></svg><b>Crédito estructurado</b><span>Clientes ATRIX · a la medida</span></a>
 </div>
+<p class="ini-n">El crédito simple, revolvente y estructurado se ofrecen a clientes ATRIX con al menos 12 meses de historial y score interno positivo. Toda solicitud de arrendamiento o crédito está sujeta a preaprobación y aprobación por parte del Comité de Crédito de ATRIX.</p>
 <a class="btn btn-w" href="/solicitud/?nueva">Iniciar solicitud</a>
 <a class="more" href="/solicitud/?entrar">Ya la inicié: continuar mi solicitud</a>
 </div>
@@ -576,7 +622,7 @@ html{scroll-behavior:auto}
 <g class="a-spin"><circle cx="300" cy="222" r="17" fill="#111" stroke="#3a3f4d" stroke-width="5"/><line x1="300" y1="208" x2="300" y2="236" stroke="#555" stroke-width="2"/></g></g>
 </svg></div>
 <button class="plus" type="button" aria-label="Más información sobre transporte y flotillas"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-<div class="detail"><h3>Transporte y flotillas</h3><p class="meta">Arrendamiento financiero o puro · 24 a 48 meses</p><p>Tractocamiones, camiones ligeros, pick ups y vans de trabajo. Con arrendamiento financiero, el vehículo pasa a su nombre al término del plazo; con arrendamiento puro, renueva la flota cada ciclo y deduce la renta como gasto.</p><h4>Cómo se estructura</h4><ul><li>Factura a nombre de ATRIX durante el plazo y, en financiero, refactura a su favor al ejercer la opción de compra.</li><li>Seguro de cobertura amplia con ATRIX como beneficiario preferente, financiable en la renta.</li><li>Localización satelital (GPS) en todas las unidades.</li><li>Contrato ratificado e inscrito en el Registro Único de Garantías Mobiliarias.</li></ul></div>
+<div class="detail"><h3>Transporte y flotillas</h3><p class="meta">Arrendamiento financiero o puro · 24 a 36 meses</p><p>Tractocamiones, camiones ligeros, pick ups y vans de trabajo. Con arrendamiento financiero, el vehículo pasa a su nombre al término del plazo; con arrendamiento puro, renueva la flota cada ciclo y deduce la renta como gasto.</p><h4>Cómo se estructura</h4><ul><li>Factura a nombre de ATRIX durante el plazo y, en financiero, refactura a su favor al ejercer la opción de compra.</li><li>Seguro de cobertura amplia con ATRIX como beneficiario preferente, financiable en la renta.</li><li>Localización satelital (GPS) en todas las unidades.</li><li>Contrato ratificado e inscrito en el Registro Único de Garantías Mobiliarias.</li></ul></div>
 </article>
 <article class="kc c2">
 <div class="tx"><small>Maquinaria y construcción</small><h3>Equipo que produce desde el primer día.</h3></div>
@@ -589,7 +635,7 @@ html{scroll-behavior:auto}
 <g class="a-arm2" style="transform-origin:296px 70px"><polygon points="288,62 306,72 352,190 334,198" fill="#e1e3ea"/><path d="M326 190h34l18 30q2 22-18 28l-30 2q-18-6-14-26z" fill="#E71922"/></g></g>
 </svg></div>
 <button class="plus" type="button" aria-label="Más información sobre maquinaria"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-<div class="detail"><h3>Maquinaria y construcción</h3><p class="meta">Arrendamiento financiero · 24 a 48 meses</p><p>Maquinaria de construcción ligera, equipo industrial y líneas de producción. El activo se paga con lo que genera y su empresa conserva la liquidez para operar.</p><h4>Ventajas</h4><ul><li>El IVA del activo se difiere y se cubre conforme a las rentas, no al inicio.</li><li>Deducción conforme a la Ley del Impuesto sobre la Renta.</li><li>Plazo alineado a la vida útil y al ciclo de ingresos del equipo.</li><li>GPS y seguro con beneficiario preferente.</li></ul></div>
+<div class="detail"><h3>Maquinaria y construcción</h3><p class="meta">Arrendamiento financiero · 24 a 36 meses</p><p>Maquinaria de construcción ligera, equipo industrial y líneas de producción. El activo se paga con lo que genera y su empresa conserva la liquidez para operar.</p><h4>Ventajas</h4><ul><li>El IVA del activo se difiere y se cubre conforme a las rentas, no al inicio.</li><li>Deducción conforme a la Ley del Impuesto sobre la Renta.</li><li>Plazo alineado a la vida útil y al ciclo de ingresos del equipo.</li><li>GPS y seguro con beneficiario preferente.</li></ul></div>
 </article>
 <article class="kc c3">
 <div class="tx"><small>Cafeterías y restaurantes</small><h3>Equipo profesional con renta deducible.</h3></div>
@@ -615,7 +661,7 @@ html{scroll-behavior:auto}
 <rect x="20" y="196" width="60" height="96" fill="#fff" opacity=".18" class="a-sweep"/>
 </svg></div>
 <button class="plus" type="button" aria-label="Más información sobre energía solar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-<div class="detail"><h3>Energía solar para negocios</h3><p class="meta">Arrendamiento financiero · hasta 60 meses</p><p>Sistemas fotovoltaicos para comercios e industria ligera. La operación se dimensiona para que la renta mensual sea igual o menor al ahorro en el recibo de energía.</p><h4>Cómo se estructura</h4><ul><li>Estudio de consumo y cotización del instalador.</li><li>Plazos largos acordes a la vida útil del sistema.</li><li>Garantía del instalador y seguro del sistema.</li><li>Tratamiento fiscal favorable para equipo de energía renovable conforme a la LISR.</li></ul></div>
+<div class="detail"><h3>Energía solar para negocios</h3><p class="meta">Arrendamiento financiero · hasta 36 meses</p><p>Sistemas fotovoltaicos para comercios e industria ligera. La operación se dimensiona para que la renta mensual sea igual o menor al ahorro en el recibo de energía.</p><h4>Cómo se estructura</h4><ul><li>Estudio de consumo y cotización del instalador.</li><li>Plazo de hasta 36 meses, acorde a la vida útil del sistema.</li><li>Garantía del instalador y seguro del sistema.</li><li>Tratamiento fiscal favorable para equipo de energía renovable conforme a la LISR.</li></ul></div>
 </article>
 <article class="kc c5">
 <div class="tx"><small>Equipo médico y dental</small><h3>Tecnología clínica sin inmovilizar capital.</h3></div>
@@ -640,7 +686,7 @@ html{scroll-behavior:auto}
 <g class="a-rise" style="animation-delay:-2s"><circle cx="320" cy="210" r="16" fill="none" stroke="#fff" stroke-width="5"/><path d="M336 210h40v10M362 210v8" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/></g>
 </svg></div>
 <button class="plus" type="button" aria-label="Más información sobre crédito con garantía inmobiliaria"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-<div class="detail"><h3>Crédito con garantía inmobiliaria</h3><p class="meta">Crédito simple o revolvente · Nuevo León</p><p>Liquidez estructurada respaldada por un inmueble ubicado en Nuevo León. Es la única modalidad en la que otorgamos crédito simple o revolvente.</p><h4>Cómo se estructura</h4><ul><li>Avalúo del inmueble y verificación de libertad de gravamen.</li><li>Hipoteca en primer lugar a favor de COLIUM, S.A. de C.V.</li><li>Crédito simple: pagos fijos de 12 a 48 meses.</li><li>Crédito revolvente: línea anual con disposiciones de 1 a 12 meses.</li><li>Si su flujo requiere un esquema distinto, lo resolvemos con un Crédito Estructurado.</li></ul></div>
+<div class="detail"><h3>Crédito con garantía inmobiliaria</h3><p class="meta">Crédito simple o revolvente · Clientes ATRIX</p><p>Para clientes con al menos 12 meses de historial en ATRIX y score interno positivo. Liquidez respaldada por un inmueble ubicado en Nuevo León, que puede destinarse a la adquisición de activos, a capital de trabajo o a un proyecto específico de la empresa.</p><h4>Cómo se estructura</h4><ul><li>Avalúo del inmueble y verificación de libertad de gravamen.</li><li>Hipoteca en primer lugar a favor de COLIUM, S.A. de C.V.</li><li>Crédito simple: pagos fijos de 12 a 36 meses.</li><li>Crédito revolvente: línea de hasta 36 meses con disposiciones de 1 a 12 meses.</li><li>Si su flujo requiere un esquema distinto, lo resolvemos con un Crédito Estructurado.</li></ul></div>
 </article>
 </div>
 <div class="rail-ctl" data-for="railKnow">
@@ -654,45 +700,52 @@ html{scroll-behavior:auto}
 <div class="head c">
 <div class="kicker rv">Productos</div>
 <h2 class="t-1 rv d1">Elija la estructura adecuada.</h2>
-<p class="lead sub rv d2">Cada figura tiene un tratamiento jurídico y fiscal distinto. Le orientamos sobre la que mejor se ajusta a su flujo, a su régimen y a su plan para el activo.</p>
+<p class="lead sub rv d2">Cada figura tiene un tratamiento jurídico y fiscal distinto. El arrendamiento financiero y el puro son nuestra vía de financiamiento para la adquisición de activos; el crédito simple, revolvente y estructurado se ofrecen a clientes que ya construyeron una relación con ATRIX.</p>
 </div>
-<div class="lineup">
-<div class="lu rv">
-<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/></svg></div>
-<div class="pill">Arrendamiento</div><h3>Financiero</h3>
+<div class="pf-g">
+<div class="pf-h rv"><span class="pf-k">01</span><div><b>Arrendamiento</b><small>Para la adquisición de activos, cada figura con sus propias reglas. Abierto a nuevos clientes.</small></div></div>
+<div class="pf-row two">
+<article class="pf rv">
+<div class="pf-top"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/></svg></span><span class="tag">Adquisición de activos</span></div>
+<small class="pill">Arrendamiento</small><h3>Financiero</h3>
 <p class="desc">Usted usa el activo, paga rentas fijas y al término lo adquiere por un valor simbólico.</p>
+<dl class="pf-s"><div><dt>Plazo</dt><dd>12 a 36 meses</dd></div><div><dt>Al término</dt><dd>Pasa a su nombre</dd></div><div><dt>Pagos</dt><dd>Rentas fijas mensuales</dd></div><div><dt>Garantía</dt><dd>El activo, pagaré y aval</dd></div></dl>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="fin">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Plazo</dt><dd>12 a 48 meses</dd></div><div><dt>Propiedad al término</dt><dd>Pasa a su nombre</dd></div><div><dt>Pagos</dt><dd>Rentas fijas mensuales</dd></div><div><dt>Garantía</dt><dd>El activo, pagaré y aval</dd></div></dl>
-</div>
-<div class="lu rv d1">
-<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg></div>
-<div class="pill">Arrendamiento</div><h3>Puro</h3>
+</article>
+<article class="pf rv d1">
+<div class="pf-top"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg></span><span class="tag">Adquisición de activos</span></div>
+<small class="pill">Arrendamiento</small><h3>Puro</h3>
 <p class="desc">Paga solo por el uso. Renta menor, 100% deducible, y al final decide si renueva, devuelve o compra.</p>
+<dl class="pf-s"><div><dt>Plazo</dt><dd>12 a 36 meses</dd></div><div><dt>Al término</dt><dd>De ATRIX, salvo compra</dd></div><div><dt>Valor residual</dt><dd>Pactado desde la firma</dd></div><div><dt>Garantía</dt><dd>El activo, pagaré y aval</dd></div></dl>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="puro">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Plazo</dt><dd>12 a 48 meses</dd></div><div><dt>Propiedad al término</dt><dd>De ATRIX, salvo compra</dd></div><div><dt>Valor residual</dt><dd>Pactado desde la firma</dd></div><div><dt>Garantía</dt><dd>El activo, pagaré y aval</dd></div></dl>
+</article>
 </div>
-<div class="lu rv d2">
-<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></div>
-<div class="pill">Crédito</div><h3>Simple</h3>
+<div class="pf-h rv"><span class="pf-k">02</span><div><b>Crédito <span class="pf-lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Clientes ATRIX</span></b><small>Para clientes con al menos 12 meses de historial en ATRIX y score interno positivo. Para activos, capital de trabajo o un proyecto específico.</small></div></div>
+<div class="pf-row three">
+<article class="pf dk rv">
+<div class="pf-top"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg></span><span class="tag">Activos, capital de trabajo o proyecto</span></div>
+<small class="pill">Crédito</small><h3>Simple</h3>
 <p class="desc">Un monto único con pagos fijos de capital e intereses, respaldado por un inmueble en Nuevo León.</p>
+<dl class="pf-s"><div><dt>Plazo</dt><dd>12 a 36 meses</dd></div><div><dt>Pagos</dt><dd>Fijos, capital e intereses</dd></div><div><dt>Pago anticipado</dt><dd>Sin penalización</dd></div><div><dt>Garantía</dt><dd>Inmobiliaria en Nuevo León</dd></div></dl>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="simple">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Plazo</dt><dd>12 a 48 meses</dd></div><div><dt>Pagos</dt><dd>Fijos, capital e intereses</dd></div><div><dt>Pago anticipado</dt><dd>Sin penalización</dd></div><div><dt>Garantía</dt><dd>Inmobiliaria en Nuevo León</dd></div></dl>
-</div>
-<div class="lu rv d3">
-<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 8-8h4"/><path d="M14 2l3 2-3 2"/><path d="M20 12a8 8 0 0 1-8 8H8"/><path d="M10 22l-3-2 3-2"/></svg></div>
-<div class="pill">Crédito</div><h3>Revolvente</h3>
+</article>
+<article class="pf dk rv d1">
+<div class="pf-top"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 8-8h4"/><path d="M14 2l3 2-3 2"/><path d="M20 12a8 8 0 0 1-8 8H8"/><path d="M10 22l-3-2 3-2"/></svg></span><span class="tag">Activos, capital de trabajo o proyecto</span></div>
+<small class="pill">Crédito</small><h3>Revolvente</h3>
 <p class="desc">Una línea autorizada de la que dispone cuando la necesita. Paga intereses solo sobre lo dispuesto.</p>
+<dl class="pf-s"><div><dt>Plazo de la línea</dt><dd>Hasta 36 meses</dd></div><div><dt>Disposiciones</dt><dd>De 1 a 12 meses</dd></div><div><dt>Intereses</dt><dd>Solo sobre lo dispuesto</dd></div><div><dt>Garantía</dt><dd>Inmobiliaria en Nuevo León</dd></div></dl>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="rev">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Vigencia de la línea</dt><dd>12 meses, renovable</dd></div><div><dt>Disposiciones</dt><dd>De 1 a 12 meses</dd></div><div><dt>Intereses</dt><dd>Solo sobre lo dispuesto</dd></div><div><dt>Garantía</dt><dd>Inmobiliaria en Nuevo León</dd></div></dl>
-</div>
-<div class="lu rv d3">
-<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></div>
-<div class="pill">Crédito</div><h3>Estructurado</h3>
-<p class="desc">Se diseña según el crédito que requiere su empresa: periodicidad de pagos a capital y corrida a la medida, con vencimiento máximo a 36 meses.</p>
+</article>
+<article class="pf dk rv d2">
+<div class="pf-top"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg></span><span class="tag">Activos, capital de trabajo o proyecto</span></div>
+<small class="pill">Crédito</small><h3>Estructurado</h3>
+<p class="desc">Se diseña según el crédito que requiere su empresa: periodicidad de pagos a capital y corrida a la medida.</p>
+<dl class="pf-s"><div><dt>Plazo</dt><dd>Hasta 36 meses</dd></div><div><dt>Pagos a capital</dt><dd>Mensual, bimestral o trimestral</dd></div><div><dt>Corrida de cálculo</dt><dd>Hasta 50 meses</dd></div><div><dt>Garantía</dt><dd>Definida en la estructura</dd></div></dl>
 <div class="acts"><a class="btn btn-p btn-s" href="#simulador" data-sim="est">Simular</a><a class="more" href="#comparar">Comparar</a></div>
-<dl><div><dt>Plazo</dt><dd>Hasta 36 meses</dd></div><div><dt>Pagos a capital</dt><dd>Mensual, bimestral o trimestral</dd></div><div><dt>Corrida de cálculo</dt><dd>Hasta 50 meses</dd></div><div><dt>Garantía</dt><dd>Definida en la estructura</dd></div></dl>
+</article>
 </div>
 </div>
+<p class="fine lu-n rv">Toda solicitud de arrendamiento o crédito está sujeta a preaprobación y aprobación por parte del Comité de Crédito de ATRIX.</p>
 </div>
 </section>
 <!-- CIFRAS -->
@@ -793,8 +846,8 @@ html{scroll-behavior:auto}
 </div>
 <div class="fld">
 <div class="lab"><label for="plazo" id="plazoLabel">Plazo</label><output class="tab" id="plazoOut">36 meses</output></div>
-<input type="range" id="plazo" min="12" max="48" step="6" value="36">
-<div class="hint" id="plazoHint">De 12 a 48 meses, según el activo.</div>
+<input type="range" id="plazo" min="12" max="36" step="6" value="36">
+<div class="hint" id="plazoHint">De 12 a 36 meses, según el activo.</div>
 </div>
 <div class="fld">
 <div class="lab"><label for="tasa">Tasa anual fija</label><output class="tab" id="tasaOut">35%</output></div>
@@ -856,6 +909,16 @@ html{scroll-behavior:auto}
 <div class="cmp-c"><strong>Crédito liquidado</strong><span>Al término</span></div>
 <div class="cmp-c"><strong>Línea disponible</strong><span>Al término</span></div>
 <div class="cmp-c"><strong>Liquidado al mes 36</strong><span>Al término</span></div>
+<div class="cmp-c"><strong>Adquisición de activos</strong><span>Destino</span></div>
+<div class="cmp-c"><strong>Adquisición de activos</strong><span>Destino</span></div>
+<div class="cmp-c"><strong>Activos, capital de trabajo o proyecto</strong><span>Destino</span></div>
+<div class="cmp-c"><strong>Activos, capital de trabajo o proyecto</strong><span>Destino</span></div>
+<div class="cmp-c"><strong>Activos, capital de trabajo o proyecto</strong><span>Destino</span></div>
+<div class="cmp-c"><strong>Nuevos clientes y clientes ATRIX</strong><span>Disponible para</span></div>
+<div class="cmp-c"><strong>Nuevos clientes y clientes ATRIX</strong><span>Disponible para</span></div>
+<div class="cmp-c"><strong>Clientes ATRIX con 12 meses</strong><span>Disponible para</span></div>
+<div class="cmp-c"><strong>Clientes ATRIX con 12 meses</strong><span>Disponible para</span></div>
+<div class="cmp-c"><strong>Clientes ATRIX con 12 meses</strong><span>Disponible para</span></div>
 <div class="cmp-c"><strong>Activos de larga vida</strong><span>Ideal para</span></div>
 <div class="cmp-c"><strong>Equipo que se renueva</strong><span>Ideal para</span></div>
 <div class="cmp-c"><strong>Liquidez con su patrimonio</strong><span>Ideal para</span></div>
@@ -863,6 +926,7 @@ html{scroll-behavior:auto}
 <div class="cmp-c"><strong>Pagos a la medida</strong><span>Ideal para</span></div>
 </div>
 </div>
+<p class="fine lu-n">El crédito simple, revolvente y estructurado se ofrecen a clientes ATRIX con al menos 12 meses de historial y score interno positivo. Toda solicitud de arrendamiento o crédito está sujeta a preaprobación y aprobación por parte del Comité de Crédito de ATRIX.</p>
 </div>
 </section>
 <!-- PORTAL DE CLIENTES -->
@@ -909,7 +973,7 @@ html{scroll-behavior:auto}
 <h3>Acceso para clientes</h3>
 <p>Entre con su RFC y la contraseña que le entregó ATRIX al formalizar su contrato.</p>
 <a class="btn btn-w" href="/portal/" style="justify-content:center">Entrar al Portal de Clientes</a>
-<div class="soon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="2" stroke-linecap="round" style="flex:0 0 18px;margin-top:1px"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>¿Olvidó su contraseña? Escríbanos a atencion@atrixfinanciera.com o por WhatsApp al 81 3412 7296 y le generamos una nueva.</span></div>
+<div class="soon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fb6ff" stroke-width="2" stroke-linecap="round" style="flex:0 0 18px;margin-top:1px"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><span>¿Olvidó su contraseña? Escríbanos a atencion@atrixfinanciera.com o por WhatsApp al <a href="https://wa.me/528187098023" target="_blank" rel="noopener">81 8709 8023</a> y le generamos una nueva.</span></div>
 <a class="more" href="/solicitud/" style="justify-self:center">¿Aún no es cliente? Inicie su solicitud en línea</a>
 </div>
 </div>
@@ -933,10 +997,10 @@ html{scroll-behavior:auto}
 <div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><h3>Respuesta en dos días.</h3><p>Preaprobación en dos días hábiles con un expediente acotado. Sabe desde el inicio qué necesitamos y qué esperar.</p></div>
 <div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></svg><h3>Sin costos ocultos.</h3><p>Tabla de amortización, comisiones y accesorios por escrito antes de firmar. Lo que ve en la carta de aprobación es lo que paga.</p></div>
 <div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg><h3>Operación protegida.</h3><p>Contrato ratificado ante fedatario e inscrito en el RUG; activo asegurado y, en vehículos y maquinaria, con localización satelital.</p></div>
-<div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><h3>Un solo interlocutor.</h3><p>La misma persona le acompaña de la solicitud a la entrega del activo, con decisiones de la Dirección y sin comités que alarguen el proceso.</p></div>
+<div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><h3>Un solo interlocutor.</h3><p>La misma persona le acompaña de la solicitud a la entrega del activo, con resoluciones del Comité de Crédito de ATRIX en plazos definidos.</p></div>
 <div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h10M4 17h6"/><circle cx="17" cy="7" r="3"/><circle cx="13" cy="17" r="3"/></svg><h3>Estructura a la medida.</h3><p>Plazos, enganche, residual y fechas de pago ajustados a su flujo y a su régimen fiscal, siempre dentro de nuestra política de riesgos.</p></div>
 <div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><h3>Conocimiento local.</h3><p>Operamos exclusivamente en Nuevo León. Visitamos al cliente, verificamos el activo y acompañamos la operación de cerca.</p></div>
-<div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><h3>Una relación que crece.</h3><p>Su historial de pago con ATRIX es la base para mejores condiciones en su siguiente operación.</p></div>
+<div class="wc"><svg viewBox="0 0 24 24" fill="none" stroke="#071D3D" stroke-width="1.6" stroke-linecap="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><h3>Una relación que crece.</h3><p>Su historial de pago con ATRIX es la base para mejores condiciones y, después de 12 meses con score interno positivo, para acceder a crédito simple, revolvente y estructurado.</p></div>
 </div>
 <div class="rail-ctl" data-for="railWhy">
 <button type="button" data-dir="-1" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
@@ -965,12 +1029,13 @@ html{scroll-behavior:auto}
 <h2 class="t-1 rv d1">Respuestas claras.</h2>
 </div>
 <div class="faq rv">
+<details><summary>¿Quién puede solicitar crédito simple, revolvente o estructurado?<i></i></summary><div class="a">Estos créditos se ofrecen a clientes de ATRIX con al menos <b>12 meses</b> de relación y un <b>score interno positivo</b>. Pueden destinarse a la adquisición de activos, a capital de trabajo o a un proyecto específico de la empresa. Si es su primera operación con nosotros, el financiamiento se otorga mediante arrendamiento financiero o puro, para la adquisición de activos.</div></details>
 <details><summary>¿Otorgan crédito simple o revolvente sin garantía inmobiliaria?<i></i></summary><div class="a"><b>No.</b> El crédito simple y el revolvente se otorgan exclusivamente con garantía inmobiliaria ubicada en Nuevo León. Si no cuenta con un inmueble, la alternativa es el arrendamiento financiero o puro, donde el propio activo respalda la operación.</div></details>
 <details><summary>¿Pueden estructurar la operación a la medida?<i></i></summary><div class="a"><b>Sí.</b> Ajustamos plazo, enganche, valor residual, fechas de pago y la combinación de figuras según su flujo, su régimen fiscal y el uso del activo. Toda estructura pasa por el mismo análisis de riesgo.</div></details>
-<details><summary>¿Qué es el Crédito Estructurado?<i></i></summary><div class="a">Es un crédito que se estructura según el tipo de financiamiento que requiere su empresa. El plazo máximo es de <b>36 meses</b>, con pagos a capital <b>mensuales, bimestrales o trimestrales</b>. Cuando la estructura lo permite, el pago a capital puede calcularse sobre una corrida de hasta <b>50 meses</b> para reducir la mensualidad; en ese caso el crédito vence al mes 36 y en esa fecha se liquida el saldo insoluto. Siempre sujeto al cumplimiento de requisitos y al estudio del área de Riesgos.</div></details>
+<details><summary>¿Qué es el Crédito Estructurado?<i></i></summary><div class="a">Es un crédito que se estructura según el tipo de financiamiento que requiere su empresa. El plazo máximo es de <b>36 meses</b>, con pagos a capital <b>mensuales, bimestrales o trimestrales</b>. Cuando la estructura lo permite, el pago a capital puede calcularse sobre una corrida de hasta <b>50 meses</b> para reducir la mensualidad; en ese caso el crédito vence al mes 36 y en esa fecha se liquida el saldo insoluto. Se ofrece a clientes ATRIX con al menos 12 meses de historial y score interno positivo, y puede destinarse a activos, capital de trabajo o un proyecto específico. Siempre sujeto al cumplimiento de requisitos y al estudio del área de Riesgos.</div></details>
 <details><summary>¿En qué zona operan?<i></i></summary><div class="a">Únicamente en <b>Nuevo León</b>. El cliente, el activo y, en su caso, el inmueble en garantía deben ubicarse en el estado.</div></details>
 <details><summary>¿Cómo se determina mi tasa?<i></i></summary><div class="a">Las tasas varían conforme a lo que arroja el <b>estudio del área de Riesgos</b>: capacidad de pago, historial crediticio, tipo y antigüedad del activo, plazo, enganche y garantías. El simulador usa una tasa de referencia de 25% a 45% anual fija; la tasa definitiva se le comunica por escrito en la carta de aprobación, antes de firmar.</div></details>
-<details><summary>¿Cuánto tarda la aprobación?<i></i></summary><div class="a"><b>Dos días hábiles</b> para la preaprobación y <b>cinco días hábiles</b> para la aprobación, contados desde que recibimos la información completa. Si surgen dudas, el plazo depende de la rapidez con la que recibamos sus aclaraciones.</div></details>
+<details><summary>¿Cuánto tarda la aprobación?<i></i></summary><div class="a"><b>Dos días hábiles</b> para la preaprobación y <b>cinco días hábiles</b> para la aprobación, contados desde que recibimos la información completa. Si surgen dudas, el plazo depende de la rapidez con la que recibamos sus aclaraciones. La resolución final corresponde al Comité de Crédito de ATRIX.</div></details>
 <details><summary>¿Cuál es la diferencia entre arrendamiento financiero y puro?<i></i></summary><div class="a">En el <b>financiero</b> paga el valor completo del activo en rentas y al final lo adquiere por un valor simbólico. En el <b>puro</b> paga solo el uso durante el plazo, la renta es menor y deducible, y al final decide si renueva, devuelve o compra al valor residual.</div></details>
 <details><summary>¿Qué montos manejan?<i></i></summary><div class="a">De <b>$100,000</b> hasta <b>$2,500,000</b> pesos mexicanos (MXN) por crédito. El monto autorizado dentro de ese rango depende del activo, la garantía y la capacidad de pago.</div></details>
 <details><summary>¿Puedo liquidar anticipadamente?<i></i></summary><div class="a">Sí. En crédito simple y revolvente, sin penalización y previo aviso. En arrendamiento, a partir del mes 12 bajo las condiciones de liquidación anticipada pactadas en el contrato.</div></details>
@@ -990,9 +1055,9 @@ html{scroll-behavior:auto}
 <div class="side">
 <div class="card lg rv">
 <div class="kicker">WhatsApp y teléfono</div>
-<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span class="phone tab" id="phoneTxt">81 3412 7296</span><button type="button" class="mini" data-copy="8134127296">Copiar</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><a class="phone tab" id="phoneTxt" href="tel:+528187098023" style="color:inherit;text-decoration:none">81 8709 8023</a><button type="button" class="mini" data-copy="8187098023">Copiar</button></div>
 <p class="sub" style="font-size:.9rem">Lunes a viernes, de 9:00 a 18:00 h · Monterrey, Nuevo León.</p>
-<a class="btn btn-p" style="justify-self:start;margin-top:6px" href="https://wa.me/528134127296" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+<a class="btn btn-p" style="justify-self:start;margin-top:6px" href="https://wa.me/528187098023" target="_blank" rel="noopener">Escribir por WhatsApp</a>
 </div>
 <div class="card lg rv d1">
 <div class="kicker">Correo electrónico</div>
@@ -1021,13 +1086,13 @@ html{scroll-behavior:auto}
 <div class="f"><label for="producto">Tipo de crédito</label><select id="producto"><option value="">Seleccione una opción</option><option>Arrendamiento Financiero</option><option>Arrendamiento Puro</option><option>Crédito Simple (garantía inmobiliaria)</option><option>Crédito Revolvente (garantía inmobiliaria)</option><option>Crédito Estructurado</option><option>Requiero asesoría</option></select><span class="err">Seleccione el tipo de crédito.</span></div>
 <div class="f"><label for="montoLead">Monto aproximado (MXN)</label><input id="montoLead" type="text" inputmode="numeric" placeholder="Ej. 850,000"></div>
 </div>
-<div class="f"><label for="destino">¿Para qué lo necesita?</label><textarea id="destino" placeholder="Describa el activo o el destino del crédito, y si cuenta con inmueble en garantía."></textarea><span class="err">Describa brevemente el destino.</span></div>
+<div class="f"><label for="destino">¿Para qué lo necesita?</label><textarea id="destino" placeholder="Describa el activo a arrendar o, si ya es cliente ATRIX, el destino del crédito (activos, capital de trabajo o proyecto)."></textarea><span class="err">Describa brevemente el destino.</span></div>
 <div class="f"><label class="check"><input type="checkbox" id="acepto"><span>He leído y acepto el <button type="button" class="linkbtn" data-modal="privacidad">Aviso de Privacidad</button> y los <button type="button" class="linkbtn" data-modal="terminos">Términos y Condiciones</button>, y autorizo a COLIUM, S.A. de C.V. a contactarme respecto de mi solicitud.</span></label><span class="err">Es necesario aceptar el Aviso de Privacidad.</span></div>
 <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
-<a class="btn btn-p" id="sendBtn" href="https://wa.me/528134127296" target="_blank" rel="noopener">Enviar solicitud</a>
+<a class="btn btn-p" id="sendBtn" href="https://wa.me/528187098023" target="_blank" rel="noopener">Enviar solicitud</a>
 <span class="fine" id="formStatus">Al enviar se abre WhatsApp con su solicitud lista para enviarnos.</span>
 </div>
-<div class="okb" id="okBox"><h4>Solicitud lista</h4><p class="sub" style="font-size:.9rem" id="okText"></p><a class="btn btn-p btn-s" id="okWa" href="https://wa.me/528134127296" target="_blank" rel="noopener" style="justify-self:start">Abrir WhatsApp con mi solicitud</a></div>
+<div class="okb" id="okBox"><h4>Solicitud lista</h4><p class="sub" style="font-size:.9rem" id="okText"></p><a class="btn btn-p btn-s" id="okWa" href="https://wa.me/528187098023" target="_blank" rel="noopener" style="justify-self:start">Abrir WhatsApp con mi solicitud</a></div>
 </form>
 </div>
 </div>
@@ -1039,14 +1104,15 @@ html{scroll-behavior:auto}
 <p>1. Las tasas mostradas son de referencia. La tasa, el monto, el plazo y las garantías definitivos varían conforme al resultado del estudio del área de Riesgos de cada operación y se comunican por escrito en la carta de aprobación.</p>
 <p>2. Los tiempos de preaprobación (2 días hábiles) y aprobación (5 días hábiles) se cuentan a partir de la recepción de la información completa.</p>
 <p>3. El simulador es informativo y no constituye oferta vinculante. Las cifras no incluyen IVA, seguros, ni gastos de ratificación o registro.</p>
-<p>4. Productos disponibles exclusivamente para personas morales y personas físicas con actividad empresarial en el estado de Nuevo León. El crédito simple y el revolvente requieren garantía inmobiliaria. Monto por crédito de $100,000 a $2,500,000 pesos mexicanos (MXN); todas las cifras del sitio están expresadas en MXN.</p>
+<p>4. Productos disponibles exclusivamente para personas morales y personas físicas con actividad empresarial en el estado de Nuevo León. El arrendamiento financiero y el puro se destinan a la adquisición de activos. El crédito simple, revolvente y estructurado se ofrecen únicamente a clientes con al menos 12 meses de historial con ATRIX y score interno positivo; el simple y el revolvente requieren garantía inmobiliaria. Monto por crédito de $100,000 a $2,500,000 pesos mexicanos (MXN); todas las cifras del sitio están expresadas en MXN.</p>
+<p>5. Toda solicitud de arrendamiento o crédito está sujeta a preaprobación y aprobación por parte del Comité de Crédito de ATRIX.</p>
 <p>COLIUM, S.A. de C.V. es una sociedad mercantil que otorga arrendamiento y crédito con recursos propios; no capta recursos del público ni ofrece productos de inversión.</p>
 </div>
 <div class="cols">
 <div><h4>Productos</h4><ul><li><a href="#productos">Arrendamiento Financiero</a></li><li><a href="#productos">Arrendamiento Puro</a></li><li><a href="#productos">Crédito Simple</a></li><li><a href="#productos">Crédito Revolvente</a></li><li><a href="#productos">Crédito Estructurado</a></li></ul></div>
 <div><h4>Herramientas</h4><ul><li><a href="#simulador">Simulador</a></li><li><a href="#comparar">Comparar productos</a></li><li><a href="#requisitos">Requisitos</a></li></ul></div>
 <div><h4>Clientes</h4><ul><li><a href="#clientes">Portal de Clientes</a></li><li><a href="#proceso">Proceso de riesgos</a></li><li><a href="#preguntas">Preguntas frecuentes</a></li></ul></div>
-<div><h4>Institucional</h4><ul><li><button class="lb" type="button" data-modal="terminos">Términos y Condiciones</button></li><li><button class="lb" type="button" data-modal="privacidad">Aviso de Privacidad</button></li><li><a href="#contacto">Contacto · 81 3412 7296</a></li><li><a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a></li><li><a class="ig" href="https://www.instagram.com/atrixfinanciera/" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>@atrixfinanciera</a></li></ul></div>
+<div><h4>Institucional</h4><ul><li><button class="lb" type="button" data-modal="terminos">Términos y Condiciones</button></li><li><button class="lb" type="button" data-modal="privacidad">Aviso de Privacidad</button></li><li><a href="#contacto">Contacto</a> · <a href="tel:+528187098023">81 8709 8023</a></li><li><a href="mailto:atencion@atrixfinanciera.com">atencion@atrixfinanciera.com</a></li><li><a class="ig" href="https://www.instagram.com/atrixfinanciera/" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>@atrixfinanciera</a></li></ul></div>
 </div>
 <div class="bot">
 <span>© <span id="yr">2026</span> COLIUM, S.A. de C.V. Todos los derechos reservados. ATRIX<sup>®</sup> y ATRIX FINANCIERA son marcas de COLIUM, S.A. de C.V.</span>
@@ -1055,7 +1121,7 @@ html{scroll-behavior:auto}
 </div>
 </footer>
 <!-- FLOATING -->
-<a class="fl wa" href="https://wa.me/528134127296" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp al 81 3412 7296"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20.5 3.5A11.9 11.9 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.3-1.7a11.9 11.9 0 0 0 5.7 1.5c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.4ZM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 0 1 2.1 12C2.1 6.5 6.5 2 12 2c2.6 0 5.1 1 7 2.9a9.8 9.8 0 0 1 2.9 7c0 5.5-4.5 9.9-9.9 9.9Zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4Z"/></svg></a>
+<a class="fl wa" href="https://wa.me/528187098023" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp al 81 8709 8023"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20.5 3.5A11.9 11.9 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.3-1.7a11.9 11.9 0 0 0 5.7 1.5c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.4ZM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 0 1 2.1 12C2.1 6.5 6.5 2 12 2c2.6 0 5.1 1 7 2.9a9.8 9.8 0 0 1 2.9 7c0 5.5-4.5 9.9-9.9 9.9Zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4Z"/></svg></a>
 <button class="fl up" id="toTop" type="button" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>
 <!-- MODAL -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Detalle">
@@ -1066,10 +1132,10 @@ html{scroll-behavior:auto}
 <p class="meta">Sitio informativo de ATRIX<sup>®</sup> Financiera · COLIUM, S.A. de C.V. · Última actualización: noviembre de 2026</p>
 <h4>1. Aceptación</h4><p>El acceso y uso de este sitio implica la aceptación de los presentes Términos y Condiciones. Si no está de acuerdo con ellos, le pedimos abstenerse de utilizarlo.</p>
 <h4>2. Titular</h4><p>El sitio es operado por COLIUM, S.A. de C.V. ("COLIUM"), sociedad mercantil con domicilio en Monterrey, Nuevo León, México, titular de las marcas ATRIX<sup>®</sup> y ATRIX FINANCIERA.</p>
-<h4>3. Carácter informativo</h4><p>La información del sitio, incluidos los productos, el simulador y cualquier cifra, tasa o plazo, es exclusivamente informativa. No constituye oferta vinculante, promesa de contratación ni aprobación de crédito o arrendamiento. Toda operación está sujeta al análisis y aprobación de COLIUM; las tasas varían conforme al resultado del estudio del área de Riesgos y las condiciones definitivas serán las pactadas en el contrato que, en su caso, se celebre.</p>
+<h4>3. Carácter informativo</h4><p>La información del sitio, incluidos los productos, el simulador y cualquier cifra, tasa o plazo, es exclusivamente informativa. No constituye oferta vinculante, promesa de contratación ni aprobación de crédito o arrendamiento. Toda operación está sujeta a preaprobación y aprobación por parte del Comité de Crédito de ATRIX; las tasas varían conforme al resultado del estudio del área de Riesgos y las condiciones definitivas serán las pactadas en el contrato que, en su caso, se celebre.</p>
 <h4>4. Simulador</h4><p>El simulador calcula estimaciones con base en los parámetros que el usuario captura y en tasas de referencia. Los resultados no incluyen IVA, seguros, gastos de ratificación o de registro, ni otros accesorios, y pueden diferir de la cotización formal.</p>
 <h4>5. Portal de Clientes</h4><p>El acceso al Portal de Clientes se otorga únicamente a clientes con contrato formalizado, mediante usuario (RFC) y contraseña personales e intransferibles. La información mostrada es informativa, corresponde a la fecha de corte indicada y no sustituye los términos del contrato. Las vistas de esta página son ilustrativas y contienen datos de ejemplo. ATRIX puede suspender el acceso por motivos de seguridad.</p>
-<h4>6. Cobertura</h4><p>Los productos se ofrecen únicamente a personas morales y personas físicas con actividad empresarial con domicilio, activos y, en su caso, garantías ubicados en el estado de Nuevo León.</p>
+<h4>6. Cobertura</h4><p>Los productos se ofrecen únicamente a personas morales y personas físicas con actividad empresarial con domicilio, activos y, en su caso, garantías ubicados en el estado de Nuevo León. El crédito simple, revolvente y estructurado se ofrecen únicamente a clientes con al menos 12 meses de historial con ATRIX y score interno positivo.</p>
 <h4>7. Propiedad intelectual</h4><p>Las marcas, logotipos, textos, diseños, animaciones y demás contenidos del sitio son propiedad de COLIUM o se usan bajo licencia, y están protegidos por la Ley Federal de Protección a la Propiedad Industrial y la Ley Federal del Derecho de Autor. Queda prohibida su reproducción sin autorización previa y por escrito.</p>
 <h4>8. Uso del sitio</h4><p>El usuario se obliga a utilizar el sitio de forma lícita y a proporcionar información veraz. COLIUM podrá suspender el acceso a quien incumpla estos términos.</p>
 <h4>9. Servicios de terceros</h4><p>El sitio puede remitir a servicios de terceros, como WhatsApp. COLIUM no es responsable por su contenido, políticas o funcionamiento.</p>
@@ -1080,12 +1146,12 @@ html{scroll-behavior:auto}
 <template id="tpl-privacidad">
 <h3>Aviso de Privacidad</h3>
 <p class="meta">Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, su Reglamento y Lineamientos · Noviembre de 2026</p>
-<h4>Responsable</h4><p>COLIUM, S.A. de C.V. ("COLIUM"), titular de la marca ATRIX<sup>®</sup>, con domicilio en Monterrey, Nuevo León, México, es responsable del tratamiento de sus datos personales. Contacto: 81 3412 7296, atencion@atrixfinanciera.com o el formulario de este sitio.</p>
+<h4>Responsable</h4><p>COLIUM, S.A. de C.V. ("COLIUM"), titular de la marca ATRIX<sup>®</sup>, con domicilio en Monterrey, Nuevo León, México, es responsable del tratamiento de sus datos personales. Contacto: <a href="tel:+528187098023">81 8709 8023</a>, atencion@atrixfinanciera.com o el formulario de este sitio.</p>
 <h4>Datos que recabamos</h4><p>Nombre, empresa o razón social, teléfono, correo electrónico, producto de interés, monto aproximado y destino del financiamiento. Durante el análisis podremos recabar datos de identificación, fiscales, patrimoniales y financieros, así como su historial crediticio, previa autorización expresa. Para el Portal de Clientes, se generarán credenciales de acceso personales.</p>
 <h4>Finalidades primarias</h4><ul><li>Atender su solicitud y contactarle.</li><li>Analizar, aprobar y formalizar operaciones de arrendamiento o crédito.</li><li>Verificar su identidad y cumplir obligaciones legales, incluidas las de prevención de operaciones con recursos de procedencia ilícita.</li><li>Administrar la relación contractual y darle acceso al Portal de Clientes.</li></ul>
 <h4>Finalidades secundarias</h4><p>Enviarle información sobre productos y novedades de ATRIX<sup>®</sup>. Puede oponerse en cualquier momento; su negativa no afectará los servicios solicitados.</p>
 <h4>Transferencias</h4><p>Sus datos podrán compartirse sin su consentimiento con autoridades competentes por requerimiento legal, con sociedades de información crediticia conforme a su autorización y con proveedores que presten servicios a COLIUM bajo obligaciones de confidencialidad (fedatarios, aseguradoras, localización satelital y tecnología). Fuera de estos casos, no se transfieren sin su consentimiento.</p>
-<h4>Derechos ARCO y revocación</h4><p>Puede ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición, revocar su consentimiento o limitar el uso de sus datos mediante solicitud que contenga su nombre, medio de respuesta, copia de identificación y descripción de los datos y del derecho que ejerce, a través del correo atencion@atrixfinanciera.com, del 81 3412 7296 o del formulario de este sitio. Responderemos en un plazo máximo de 20 días hábiles.</p>
+<h4>Derechos ARCO y revocación</h4><p>Puede ejercer sus derechos de Acceso, Rectificación, Cancelación y Oposición, revocar su consentimiento o limitar el uso de sus datos mediante solicitud que contenga su nombre, medio de respuesta, copia de identificación y descripción de los datos y del derecho que ejerce, a través del correo atencion@atrixfinanciera.com, del <a href="tel:+528187098023">81 8709 8023</a> o del formulario de este sitio. Responderemos en un plazo máximo de 20 días hábiles.</p>
 <h4>Seguridad</h4><p>COLIUM aplica medidas administrativas, técnicas y físicas para proteger sus datos contra daño, pérdida, alteración, destrucción o uso, acceso o tratamiento no autorizado.</p>
 <h4>Tecnologías del sitio</h4><p>El sitio puede utilizar almacenamiento local del navegador para recordar preferencias de navegación. No utiliza cookies de rastreo publicitario.</p>
 <h4>Cambios</h4><p>Cualquier modificación a este aviso se publicará en este sitio con su fecha de actualización.</p>
@@ -1098,7 +1164,7 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const range=(p,a,b)=>clamp((p-a)/(b-a));
-const WA='528134127296';
+const WA='528187098023';
 $('#yr').textContent=new Date().getFullYear();
 /* ---------- local nav ---------- */
 const lnav=$('#lnav'), dd=$('#lnDd');
@@ -1256,11 +1322,11 @@ const S={prod:'fin',full:false,last:null,per:1};
 const perName={1:'Mensual',2:'Bimestral',3:'Trimestral'};
 const names={fin:'Arrendamiento Financiero',puro:'Arrendamiento Puro',simple:'Crédito Simple (garantía inmobiliaria)',rev:'Crédito Revolvente (garantía inmobiliaria)',est:'Crédito Estructurado'};
 const cfg={
-fin:{ml:'Valor del activo',mh:'De $100,000 a $2,500,000 MXN (pesos mexicanos).',el:'Enganche',eh:'Un enganche mayor reduce la renta y mejora las condiciones.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng'],big:'Renta mensual estimada'},
-puro:{ml:'Valor del activo',mh:'De $100,000 a $2,500,000 MXN (pesos mexicanos).',el:'Pago inicial',eh:'Depósito en garantía y primera renta. Reduce la renta mensual.',pl:'Plazo',ph:'De 12 a 48 meses, según la vida útil del activo.',pr:[12,48,6,36],show:['eng','res'],big:'Renta mensual estimada'},
-simple:{ml:'Monto del crédito',mh:'De $100,000 a $2,500,000 MXN. Requiere garantía inmobiliaria en Nuevo León; el monto se determina por el valor del inmueble y su capacidad de pago.',pl:'Plazo',ph:'De 12 a 48 meses, con pagos fijos de capital e intereses.',pr:[12,48,6,36],show:[],big:'Pago mensual estimado'},
-rev:{ml:'Línea de crédito autorizada',mh:'Línea de hasta $2,500,000 MXN. Requiere garantía inmobiliaria en Nuevo León y se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'},
-est:{ml:'Monto del crédito',mh:'Hasta $2,500,000 MXN. Estructura a la medida, sujeta al cumplimiento de requisitos y al estudio del área de Riesgos.',pl:'Plazo del crédito',ph:'Hasta 36 meses, plazo máximo por crédito.',pr:[12,36,6,36],show:['per','corr'],big:'Primer pago con capital'}
+fin:{ml:'Valor del activo',mh:'De $100,000 a $2,500,000 MXN (pesos mexicanos).',el:'Enganche',eh:'Un enganche mayor reduce la renta y mejora las condiciones.',pl:'Plazo',ph:'De 12 a 36 meses, según la vida útil del activo.',pr:[12,36,6,36],show:['eng'],big:'Renta mensual estimada'},
+puro:{ml:'Valor del activo',mh:'De $100,000 a $2,500,000 MXN (pesos mexicanos).',el:'Pago inicial',eh:'Depósito en garantía y primera renta. Reduce la renta mensual.',pl:'Plazo',ph:'De 12 a 36 meses, según la vida útil del activo.',pr:[12,36,6,36],show:['eng','res'],big:'Renta mensual estimada'},
+simple:{ml:'Monto del crédito',mh:'De $100,000 a $2,500,000 MXN, para clientes ATRIX con 12 meses de historial. Requiere garantía inmobiliaria en Nuevo León; el monto se determina por el valor del inmueble y su capacidad de pago.',pl:'Plazo',ph:'De 12 a 36 meses, con pagos fijos de capital e intereses.',pr:[12,36,6,36],show:[],big:'Pago mensual estimado'},
+rev:{ml:'Línea de crédito autorizada',mh:'Línea de hasta $2,500,000 MXN, para clientes ATRIX con 12 meses de historial. Requiere garantía inmobiliaria en Nuevo León y se renueva anualmente con base en su comportamiento.',pl:'Plazo de la disposición',ph:'De 1 a 12 meses por disposición. Intereses mensuales; capital al vencimiento.',pr:[1,12,1,6],show:['disp'],big:'Interés mensual estimado'},
+est:{ml:'Monto del crédito',mh:'Hasta $2,500,000 MXN, para clientes ATRIX con 12 meses de historial. Estructura a la medida, sujeta al cumplimiento de requisitos y al estudio del área de Riesgos.',pl:'Plazo del crédito',ph:'Hasta 36 meses, plazo máximo por crédito.',pr:[12,36,6,36],show:['per','corr'],big:'Primer pago con capital'}
 };
 function setProd(p){
 S.prod=p;const c=cfg[p];
@@ -1372,7 +1438,7 @@ sendBtn.addEventListener('click',async e=>{
 if(!valid()){e.preventDefault();const b=$('.f.bad');if(b)b.scrollIntoView({behavior:'smooth',block:'center'});return}
 if(busy)return;busy=true;updWa();
 okBox.classList.add('show');
-$('#okText').textContent='Gracias. Envíe el mensaje que se abrió en WhatsApp para completar su solicitud; un asesor le contactará el mismo día hábil. Si WhatsApp no se abrió, use el botón de abajo o llámenos al 81 3412 7296.';
+$('#okText').innerHTML='Gracias. Envíe el mensaje que se abrió en WhatsApp para completar su solicitud; un asesor le contactará el mismo día hábil. Si WhatsApp no se abrió, use el botón de abajo o llámenos al <a href="tel:+528187098023">81 8709 8023</a>.';
 st.textContent='Resumen listo para enviar por WhatsApp.';busy=false;
 });
 /* ---------- copy ---------- */
