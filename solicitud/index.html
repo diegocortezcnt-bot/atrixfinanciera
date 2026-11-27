@@ -635,7 +635,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     if (!st.sol) { guardar(null); return mostrarLand('Este usuario no tiene una solicitud en línea. Si ya es cliente, entre al Portal de Clientes.'); }
     await listar();
     let luego = false; try { luego = sessionStorage.getItem('atrix_carta_luego') === '1'; } catch (e) { }
-    if (!st.wz && cartaPend(st.sol) && !luego && ['recibida', 'documentos'].includes(st.sol.etapa)) st.wz = wzNuevo(st.sol);
+    if (!st.wz && !pideBienvenida(st.sol) && cartaPend(st.sol) && !luego && ['recibida', 'documentos'].includes(st.sol.etapa)) st.wz = wzNuevo(st.sol);
     pintar();
   }
 
@@ -763,7 +763,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     b.disabled = false; b.textContent = 'Entrar';
     if (err) { e.textContent = err; e.hidden = false; return; } try { localStorage.setItem(RKEY, rfc); } catch (x) { } $('#lpw').value = ''; await cargar(); window.scrollTo(0, 0);
   });
-  $('#bSalir').addEventListener('click', async () => { try { await api('/auth/v1/logout', { method: 'POST', auth: true }); } catch (e) { } guardar(null); st.sol = null; st.tab = null; st.wz = null; st.cartaOk = false; mostrarLand(); tab('entrar'); });
+  $('#bSalir').addEventListener('click', async () => { try { await api('/auth/v1/logout', { method: 'POST', auth: true }); } catch (e) { } guardar(null); st.sol = null; st.tab = null; st.wz = null; st.bv = null; st.cartaOk = false; mostrarLand(); tab('entrar'); });
 
   /* ---------- Preaprobación y aprobación: se desbloquean cuando ATRIX las carga desde su sistema ---------- */
   const LOGO = '<svg class="atrix-logo" viewBox="244.809 299.191 419.1 104.9" role="img" aria-label="ATRIX Financiera"><polygon points="297.277,301.191 246.809,402.125 297.277,375.797" fill="rgb(231,25,34)"/><polygon points="297.277,301.191 281.918,388.961 297.277,375.797" fill="rgb(165,15,22)"/><polygon points="297.277,301.191 347.742,402.125 297.277,375.797" fill="rgb(13,42,82)"/><polygon points="297.277,301.191 312.637,388.961 297.277,375.797" fill="rgb(7,29,61)"/><path fill="#E71922" d="M 297.28 384.13 L 300.13 396.64 L 292.13 386.61 L 303.69 392.18 L 290.86 392.18 L 302.42 386.61 L 294.42 396.64 Z M 297.28 384.13"/><path fill="#071D3D" d="M 493.86 343.58 L 478.52 310.28 L 476.11 310.28 L 460.79 343.58 L 463.40 343.58 L 467.65 334.22 L 486.96 334.22 L 491.25 343.58 Z M 477.30 312.95 L 486.06 332.15 L 468.58 332.15 Z M 477.30 312.95"/><path fill="#071D3D" d="M 523.41 343.58 L 523.41 312.46 L 535.43 312.46 L 535.43 310.28 L 509.01 310.28 L 509.01 312.46 L 520.99 312.46 L 520.99 343.58 Z M 523.41 343.58"/><path fill="#071D3D" d="M 575.12 331.93 C 580.07 330.44 582.91 326.79 582.91 321.50 C 582.91 314.45 577.87 310.28 569.51 310.28 L 557.54 310.28 L 557.54 343.58 L 559.98 343.58 L 559.98 332.67 L 569.51 332.67 C 570.65 332.67 571.67 332.59 572.72 332.46 L 580.67 343.58 L 583.43 343.58 Z M 559.98 312.46 L 569.51 312.46 C 576.62 312.46 580.43 315.76 580.43 321.50 C 580.43 327.21 576.62 330.56 569.51 330.56 L 559.98 330.56 Z M 559.98 312.46"/><path fill="#071D3D" d="M 610.38 343.58 L 610.38 310.28 L 607.96 310.28 L 607.96 343.58 Z M 610.38 343.58"/><path fill="#071D3D" d="M 649.08 326.35 L 660.98 310.28 L 658.26 310.28 L 647.66 324.60 L 637.04 310.28 L 634.19 310.28 L 646.08 326.41 L 633.27 343.58 L 636.14 343.58 L 647.55 328.16 L 659.03 343.58 L 661.87 343.58 Z M 649.08 326.35"/><rect x="448.68" y="366.80" width="56.52" height="4.54" fill="#E71922"/><text x="454.73" y="397.08" font-family="Montserrat, \'Helvetica Neue\', Helvetica, Arial, sans-serif" font-size="15.86" fill="#071D3D" textLength="207.14" lengthAdjust="spacing">FINANCIERA</text></svg>';
@@ -927,6 +927,35 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     if (k === 'monto' || t.dataset.k === 'valor' || t.dataset.k === 'cant') { const mm = $('#w_mm'); if (mm) mm.innerHTML = wzCobHTML(W.d); }
     if (W.err) { W.err = ''; const er = $('#wErr'); if (er) er.hidden = true; } wzGuardar();
   }
+  /* ---------- 17.35 · Bienvenida: primer ingreso con acceso dado por ATRIX (Aviso de Privacidad, política y contraseña propia) ---------- */
+  const pideBienvenida = S => { const D = S.datos || {}; return !!D.pass_temporal || (D.origen === 'ATRIX' && !D.consentimiento); };
+  function bienvenida(S) {
+    const D = S.datos || {}, B = st.bv || (st.bv = { nl: '', ex: '', ok: false, err: '' }), cons = !D.consentimiento, pw = !!D.pass_temporal;
+    const sn = (k, v, t) => `<button type="button" data-bv="${k}" data-v="${v}" class="${B[k] === v ? 'on' : ''}">${t}</button>`;
+    return `<div class="card wz anim" id="bv"><div class="wzh"><div class="k">Bienvenido a ATRIX · ${esc(S.folio)}</div><h2>${esc(S.nombre)}</h2><p>${cons && pw ? 'Dos datos rápidos y su contraseña personal, y empieza.' : pw ? 'Por seguridad, cree su contraseña personal.' : 'Dos datos rápidos y empieza.'}</p></div>
+      <div class="wzc"><div class="msg err" id="bvErr" role="alert" ${B.err ? '' : 'hidden'}>${esc(B.err)}</div>
+      ${cons ? `<h3>¿Su empresa opera en Nuevo León?</h3><div class="pk">${sn('nl', 'si', 'Sí')}${sn('nl', 'no', 'No')}</div>
+      <h3>¿Tiene capital mayoritario extranjero?</h3><div class="pk">${sn('ex', 'no', 'No')}${sn('ex', 'si', 'Sí')}</div>` : ''}
+      ${pw ? `<div class="r2"><div class="f"><label for="bvp1">Nueva contraseña</label><div class="pw"><input id="bvp1" type="password" autocomplete="new-password" autocapitalize="none"><button type="button" data-ver="bvp1">Ver</button></div><small>Mínimo 8 caracteres, con letras y números.</small></div>
+      <div class="f"><label for="bvp2">Confírmela</label><div class="pw"><input id="bvp2" type="password" autocomplete="new-password" autocapitalize="none"><button type="button" data-ver="bvp2">Ver</button></div></div></div>` : ''}
+      ${cons ? `<label class="chk"><input type="checkbox" id="bvOk" ${B.ok ? 'checked' : ''}><span>Acepto el <a href="https://www.atrixfinanciera.com/#privacidad" target="_blank" rel="noopener">Aviso de Privacidad</a> y los <a href="https://www.atrixfinanciera.com/#terminos" target="_blank" rel="noopener">Términos y Condiciones</a> de ATRIX Financiera.</span></label>` : ''}</div>
+      <div class="wzn"><button type="button" class="lt" id="bvSal">Salir</button><span class="sp"></span><button type="button" class="btn g big" id="bvSig">Continuar</button></div></div>`;
+  }
+  async function bvEnviar(b) {
+    const S = st.sol, D = S.datos || {}, B = st.bv, cons = !D.consentimiento, pw = !!D.pass_temporal;
+    const err = m => { B.err = m; const e = $('#bvErr'); if (e) { e.textContent = m; e.hidden = false; e.scrollIntoView({ block: 'center', behavior: 'smooth' }); } };
+    if (cons) { const c = $('#bvOk'); B.ok = !!(c && c.checked); if (!B.nl) return err('Indique si su empresa opera en Nuevo León.'); if (!B.ex) return err('Indique si su empresa tiene capital mayoritario extranjero.'); }
+    let p1 = '';
+    if (pw) { p1 = $('#bvp1').value; if (p1.length < 8 || !/[A-Za-z]/.test(p1) || !/\d/.test(p1)) return err('La contraseña debe tener al menos 8 caracteres, con letras y números.'); if (p1 !== $('#bvp2').value) return err('Las contraseñas no coinciden.'); }
+    if (cons && !B.ok) return err('Para continuar acepte el Aviso de Privacidad.');
+    if (!(await sesionVigente())) return mostrarLand('Su sesión terminó. Vuelva a entrar.');
+    b.disabled = true; b.innerHTML = '<span class="spin"></span> Guardando…';
+    if (pw) { const r = await api('/auth/v1/user', { method: 'PUT', auth: true, body: { password: p1 } }); if (!r.ok) { b.disabled = false; b.textContent = 'Continuar'; return err(r.json && r.json.error_code === 'same_password' ? 'Use una contraseña distinta a la que le enviamos.' : errTxt(r.json)); } }
+    const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'bienvenida', p: cons ? { nuevoLeon: B.nl === 'si', extranjero: B.ex === 'si', privacidad: B.ok } : {} } });
+    if (!r.ok || !r.json) { b.disabled = false; b.textContent = 'Continuar'; return err(errTxt(r.json)); }
+    st.sol = r.json; st.bv = null; let luego = false; try { luego = sessionStorage.getItem('atrix_carta_luego') === '1'; } catch (e) { }
+    if (cartaPend(st.sol) && !luego && ['recibida', 'documentos'].includes(st.sol.etapa)) st.wz = wzNuevo(st.sol); pintar(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   /* ---------- Panel del solicitante ---------- */
   function estadoDoc(d, S) {
     const fs = st.files.filter(f => f.clave === d.c || (d.c === 'otros' && !st.claves.includes(f.clave))); const rv = (S.revision || {})[d.c] || {};
@@ -939,6 +968,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   function pintar() {
     const S = st.sol, D = S.datos || {}, cerrada = ['formalizada', 'rechazada', 'cancelada'].includes(S.etapa);
     $('#vLand').hidden = true; $('#vPanel').hidden = false; $('#bSalir').hidden = false; $('#bSitio').hidden = true; $('#who').textContent = S.nombre;
+    if (pideBienvenida(S)) { $('#vPanel').innerHTML = bienvenida(S); return; }
     if (st.wz) { $('#vPanel').innerHTML = wizard(S); return; }
     const C = D.carta || null, pend = cartaPend(S), editable = !cerrada && ['recibida', 'documentos'].includes(S.etapa);
     const cat0 = docsDe(S); st.claves = cat0.map(d => d.c); const docs = cat0.map(d => ({ ...d, x: estadoDoc(d, S) }));
@@ -1019,6 +1049,9 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   $('#vPanel').addEventListener('change', e => { const i = e.target.closest('[data-up]'); if (i && i.files && i.files.length) subirVarios(i.dataset.up, i.files); });
   $('#vPanel').addEventListener('input', wzInput);
   $('#vPanel').addEventListener('click', async e => {
+    const bvb = e.target.closest('[data-bv]'); if (bvb && st.bv) { st.bv[bvb.dataset.bv] = bvb.dataset.v; st.bv.err = ''; const c = $('#bvOk'); if (c) st.bv.ok = c.checked; const v1 = $('#bvp1'), v2 = $('#bvp2'); const a = v1 ? v1.value : '', z = v2 ? v2.value : ''; pintar(); if (v1) { $('#bvp1').value = a; $('#bvp2').value = z; } return; }
+    if (e.target.closest('#bvSig')) { bvEnviar(e.target.closest('#bvSig')); return; }
+    if (e.target.closest('#bvSal')) { $('#bSalir').click(); return; }
     if (wzClick(e)) return;
     const ca = e.target.closest('[data-carta]'); if (ca) { const S = st.sol; if (ca.dataset.carta === 'ver') return modal(`<h2>Su carta solicitud</h2>${cartaTexto(S, (S.datos || {}).carta || {})}<div class="act"><button class="btn p" type="button" data-m="x">Cerrar</button></div>`, true); st.cartaOk = false; st.wz = wzNuevo(S); pintar(); wzArriba(); return; }
     const ver = e.target.closest('[data-ver-arch]'), del = e.target.closest('[data-del]');
