@@ -2171,7 +2171,7 @@ const LevelDBChrome = (function () {
 if (typeof module !== 'undefined') module.exports = LevelDBChrome;
 
 </script>
-<script>window.ATRIX_CARGA = {"id": "arranque-limpio-2026-11-19", "limpio": true, "titulo": "Dejar el sistema en cero para operar", "descripcion": "Esta versión borra la cartera de ejercicio para que empieces a operar con datos reales.", "datos": {"clientes": [], "contratos": [], "pagos": [], "inversionistas": [], "inversiones": [], "pagosInv": [], "caja": [], "config": [], "fondo": [], "corridas": []}};</script>
+<script>window.ATRIX_CARGA = null;</script>
 <script>window.ATRIX_SEED = null;</script>
 <script>
 (function () {
@@ -2188,6 +2188,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
 
   /* ---------- Estado ---------- */
   const COLS = ['clientes', 'contratos', 'pagos', 'inversionistas', 'inversiones', 'pagosInv', 'caja', 'config', 'fondo', 'corridas'];
+  const PLAZO_MAX = 36; // 17.33 · política ATRIX: plazo máximo de 36 meses en todos los productos
   const S = { clientes: [], contratos: [], pagos: [], inversionistas: [], inversiones: [], pagosInv: [], caja: [], config: [], fondo: [], corridas: [], loaded: {}, fin: {}, hoy: E.todayISO(), view: 'inicio', sel: {}, tab: {}, filtro: {}, sim: null, cob: {}, agenda: null, ec: {}, ficha: [] };
   let downloads = null, canWrite = true;
 
@@ -2230,7 +2231,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.31';
+  const SISTEMA_VERSION = '17.33';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -2329,7 +2330,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       const c = await this.cargarFila();
       if (!c.ok) { this.pantallaLogin(); $('#loginErr').textContent = c.r.status === 0 ? 'No hay conexión con el servidor.' : 'No se pudieron leer los datos (' + c.r.status + ').'; return; }
       if (!c.fila) { this.borrarSesion(); this.pantallaLogin(); $('#loginErr').textContent = 'Este usuario no tiene acceso al sistema.'; return; }
-      this._dentro = true; this.version = c.fila.version || 0;
+      this._dentro = true; this.version = c.fila.version || 0; setTimeout(() => { try { OPS.cargarRol(); } catch (e) { } }, 0);
       const local = NATIVO && Mac.info.datos && Array.isArray(Mac.info.datos.contratos) ? Mac.info.datos : null;
       if (c.fila.datos && Array.isArray(c.fila.datos.contratos)) { this._usar(c.fila.datos); this.espejoMac(JSON.stringify(c.fila.datos)); }
       else { this.vacia = true; if (local) this._usar(local); }
@@ -2394,13 +2395,17 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     async save(col, obj) {
       if (Nube.soloLectura) { toast('Modo consulta sin conexión: entra con internet para guardar cambios', true); throw new Error('solo lectura'); }
       if (!obj.id) obj.id = uid(col.slice(0, 3));
+      const prev = (S[col] || []).find(x => x.id === obj.id) || null; const perm = OPS.puede(col, obj, prev, false); if (perm !== true) { toast(perm, true); throw new Error('permiso'); } // 17.33 · permisos por rol
       if (this.db) { try { await this.db.collection(col).doc(obj.id).set(JSON.parse(JSON.stringify(obj))); } catch (e) { toast('No se pudo guardar: ' + (e && e.code || e), true); throw e; } }
       else { const i = S[col].findIndex(x => x.id === obj.id); S[col] = i >= 0 ? S[col].map(x => (x.id === obj.id ? obj : x)) : S[col].concat([obj]); E.MOTOR.limpiarMemo(); this.persistLocal(); render(); } // arreglo nuevo: invalida cálculos en caché
+      try { OPS.registrar(col, obj, prev, prev ? 'cambio' : 'alta'); } catch (e) { } // 17.33 · bitácora
     },
     async remove(col, id) {
       if (Nube.soloLectura) { toast('Modo consulta sin conexión: entra con internet para guardar cambios', true); throw new Error('solo lectura'); }
+      const prev = (S[col] || []).find(x => x.id === id) || null; const perm = OPS.puede(col, prev || { id }, prev, true); if (perm !== true) { toast(perm, true); throw new Error('permiso'); }
       if (this.db) { try { await this.db.collection(col).doc(id).delete(); } catch (e) { toast('No se pudo eliminar: ' + (e && e.code || e), true); throw e; } }
       else { S[col] = S[col].filter(x => x.id !== id); E.MOTOR.limpiarMemo(); this.persistLocal(); render(); }
+      try { if (prev) OPS.registrar(col, prev, prev, 'baja'); } catch (e) { }
     }
   };
   function foot() {
@@ -2438,7 +2443,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   const estatusTxt = { vigente: 'Vigente', atrasado: 'Atrasado', vencido: 'Vencido', liquidado: 'Liquidado', cancelado: 'Cancelado' };
   const nextFolio = (prefix, col) => { const n = S[col].filter(x => (x.folio || '').startsWith(prefix)).length + 1; return prefix + String(n).padStart(4, '0'); };
   const nextMonthISO = () => { const d = new Date(); return E.iso(E.addMonths(E.iso(new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))), 1)); };
-  const activos = () => S.contratos.filter(c => c.estatus !== 'cancelado');
+  const activos = () => S.contratos.filter(c => c.estatus !== 'cancelado' && formLiberado(c)); // 17.33: un contrato por formalizar todavía no es cartera
   const CFG = () => S.config.find(x => x.id === 'general') || {};
   const DATA = () => ({ contratos: activos(), pagos: S.pagos, inversiones: S.inversiones, pagosInv: S.pagosInv, caja: S.caja, fondo: S.fondo, config: CFG() });
   const fuenteNombre = f => f.tipo === 'inversion' ? f.nombre + ' · ' + invNombre(f.inv.inversionistaId) : f.nombre;
@@ -2451,6 +2456,9 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
 
   /* ---------- Navegación ---------- */
   const ICON = {
+    conciliacion: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18M12 3l9 5H3z"/></svg>',
+    garantias: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
+    usuarios: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M15 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.9.8 3.1 2.6 3.5 5.2"/></svg>',
     inicio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
     simulador: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h3M13 11h3M8 15h3M13 15h3"/></svg>',
     acreditados: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
@@ -2467,9 +2475,9 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     solicitudes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>',
     ajustes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'
   };
-  const NAV = [['Cartera activa'], ['inicio', 'Inicio'], ['simulador', 'Simulador'], ['corridas', 'Corridas financieras'], ['solicitudes', 'Solicitudes'], ['acreditados', 'Acreditados'], ['cartera', 'Cartera'], ['cobranza', 'Cobranza'], ['default', 'Default'], ['Pasivo'], ['inversionistas', 'Inversionistas'], ['pasivo', 'Inversiones'], ['fondo', 'Fondo de inversión'], ['General'], ['admin', 'Administración'], ['estados', 'Estados financieros'], ['ajustes', 'Ajustes']];
-  const TITLES = { solicitudes: ['Solicitudes en línea', 'Prospectos que iniciaron su solicitud en el sitio: expediente, revisión y etapa'], inicio: ['Inicio', 'Mi dinero, mi cartera y mi resultado'], simulador: ['Simulador', 'Cotiza una operación y revisa sus números antes de contratarla'], acreditados: ['Acreditados', 'Clientes de la cartera y su score de pago'], cartera: ['Cartera de crédito', 'Contratos activos y su estado al día'], cobranza: ['Cobranza', 'Monitor de vencimientos y aplicación de pagos'], default: ['Default', 'Tablero de cartera vencida y en atraso'], inversionistas: ['Inversionistas', 'Personas físicas, morales y crédito institucional'], pasivo: ['Inversiones y créditos', 'Pasivo: cortes, pagos y estados de cuenta'], agenda: ['Agenda de pagos', 'Fechas de cobro y de pago por mes'], estados: ['Estados financieros', 'Balance, resultados, flujo de efectivo, caja y descargas'], admin: ['Administración', 'Capital social, cuentas bancarias y de quién es cada peso'], fondo: ['Fondo de inversión', 'Deuda en cuentas colocada en un fondo bancario para no tenerla parada'], ajustes: ['Ajustes', 'Versión del sistema y actualizaciones'], corridas: ['Corridas financieras', 'Los números del cliente con la operación: ¿le conviene contratar?'] };
-  function renderNav() { $('#nav').innerHTML = NAV.map(n => n.length === 1 ? `<div class="sep">${n[0]}</div>` : `<button data-act="nav" data-view="${n[0]}" class="${S.view === n[0] ? 'on' : ''}">${ICON[n[0]]}<span>${n[1]}</span>${n[0] === 'solicitudes' ? solBadge() : ''}</button>`).join(''); }
+  const NAV = [['Cartera activa'], ['inicio', 'Inicio'], ['simulador', 'Simulador'], ['corridas', 'Corridas financieras'], ['solicitudes', 'Solicitudes'], ['acreditados', 'Acreditados'], ['cartera', 'Cartera'], ['cobranza', 'Cobranza'], ['conciliacion', 'Conciliación bancaria'], ['garantias', 'Formalización y garantías'], ['default', 'Default'], ['Pasivo'], ['inversionistas', 'Inversionistas'], ['pasivo', 'Inversiones'], ['fondo', 'Fondo de inversión'], ['General'], ['admin', 'Administración'], ['estados', 'Estados financieros'], ['usuarios', 'Usuarios y bitácora'], ['ajustes', 'Ajustes']];
+  const TITLES = { conciliacion: ['Conciliación bancaria', 'Carga el estado de cuenta del banco y aplica cada depósito a su contrato'], garantias: ['Formalización y garantías', 'Candado antes de liberar recursos, seguros y GPS de los bienes'], usuarios: ['Usuarios y bitácora', 'Quién entra, con qué rol, y el registro de todos los cambios'], solicitudes: ['Solicitudes en línea', 'Prospectos que iniciaron su solicitud en el sitio: expediente, revisión y etapa'], inicio: ['Inicio', 'Mi dinero, mi cartera y mi resultado'], simulador: ['Simulador', 'Cotiza una operación y revisa sus números antes de contratarla'], acreditados: ['Acreditados', 'Clientes de la cartera y su score de pago'], cartera: ['Cartera de crédito', 'Contratos activos y su estado al día'], cobranza: ['Cobranza', 'Monitor de vencimientos y aplicación de pagos'], default: ['Default', 'Tablero de cartera vencida y en atraso'], inversionistas: ['Inversionistas', 'Personas físicas, morales y crédito institucional'], pasivo: ['Inversiones y créditos', 'Pasivo: cortes, pagos y estados de cuenta'], agenda: ['Agenda de pagos', 'Fechas de cobro y de pago por mes'], estados: ['Estados financieros', 'Balance, resultados, flujo de efectivo, caja y descargas'], admin: ['Administración', 'Capital social, cuentas bancarias y de quién es cada peso'], fondo: ['Fondo de inversión', 'Deuda en cuentas colocada en un fondo bancario para no tenerla parada'], ajustes: ['Ajustes', 'Versión del sistema y actualizaciones'], corridas: ['Corridas financieras', 'Los números del cliente con la operación: ¿le conviene contratar?'] };
+  function renderNav() { $('#nav').innerHTML = NAV.map(n => n.length === 1 ? `<div class="sep">${n[0]}</div>` : `<button data-act="nav" data-view="${n[0]}" class="${S.view === n[0] ? 'on' : ''}">${ICON[n[0]]}<span>${n[1]}</span>${n[0] === 'solicitudes' ? solBadge() : n[0] === 'garantias' ? (() => { const k = OPS.alertas(); return k ? `<i class="sol-n" title="Contratos por formalizar y seguros por vencer">${k}</i>` : ''; })() : ''}</button>`).join(''); }
 
   /* ---------- Render ---------- */
   /* ======== 17.21 · Orden visual ========
@@ -2691,6 +2699,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       <h3>Score de pago: cómo se obtuvo</h3>${scoreClienteHTML(sel)}
       <h3>Datos del acreditado</h3><div class="grid2"><div class="kv"><span>RFC</span><span>${esc(sel.rfc || '—')}</span><span>Teléfono</span><span>${esc(sel.telefono || '—')}</span><span>Correo</span><span>${esc(sel.email || '—')}</span></div><div class="kv"><span>Contacto</span><span>${esc(sel.contacto || '—')}</span><span>Giro / actividad</span><span>${esc(sel.giro || '—')}</span><span>Domicilio</span><span style="white-space:normal">${esc(sel.direccion || '—')}</span></div></div>
       ${sel.notas ? `<div class="note">${esc(sel.notas)}</div>` : ''}
+      ${OPS.expHTML(sel)}
       ${portalPerfil('cli', sel)}</div>`;
   }
 
@@ -3015,7 +3024,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   function simDefaults() { return { producto: 'AF', monto: 1000000, tasa: 36, plazo: 36, fechaPrimerPago: nextMonthISO(), residualPct: 20, iva: 16, tasaMora: 72, ivaSobre: 'pago', comision: 2.5 }; }
   VIEWS.simulador = () => {
     const s = S.sim || (S.sim = simDefaults());
-    const c = { producto: s.producto, monto: Number(s.monto) || 0, tasa: Number(s.tasa) || 0, plazo: Math.max(1, parseInt(s.plazo) || 1), fechaPrimerPago: s.fechaPrimerPago || nextMonthISO(), residualPct: s.producto === 'AP' ? (Number(s.residualPct) || 0) : 0, iva: Number(s.iva) || 0, ivaSobre: s.ivaSobre };
+    const c = { producto: s.producto, monto: Number(s.monto) || 0, tasa: Number(s.tasa) || 0, plazo: Math.min(PLAZO_MAX, Math.max(1, parseInt(s.plazo) || 1)), fechaPrimerPago: s.fechaPrimerPago || nextMonthISO(), residualPct: s.producto === 'AP' ? (Number(s.residualPct) || 0) : 0, iva: Number(s.iva) || 0, ivaSobre: s.ivaSobre };
     const P = s.producto, esPR = P === 'PR', esAP = P === 'AP', esAF = P === 'AF', esPS = P === 'PS'; const ivaR = c.iva / 100; const comPct = Number(s.comision) || 0;
     const comision = c.monto * comPct / 100, comTotal = comision * (1 + ivaR); const tasaIva = c.tasa * (1 + ivaR);
     const nPago = esAP ? 'Renta mensual' : esPR ? 'Corte mensual típico' : 'Pago mensual'; const nPagos = esPR ? 'cortes mensuales' : esAP ? 'rentas' : 'mensualidades';
@@ -3062,7 +3071,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
             <div class="f"><label>Prospecto (opcional, para la cotización)</label><input name="prospecto" value="${esc(s.prospecto || '')}" placeholder="Nombre o razón social"></div>
             <div class="sim-g">Monto y plazo</div>
             <div class="f"><label>${esPR ? 'Línea autorizada' : esAP || esAF ? 'Valor del bien a financiar (sin IVA)' : 'Monto financiado (sin IVA)'}</label><input name="monto" type="number" step="0.01" min="0" value="${s.monto}"></div>
-            <div class="row"><div class="f"><label>${esPR ? 'Vigencia (meses)' : 'Plazo (meses)'}</label><input name="plazo" type="number" step="1" min="1" max="240" value="${s.plazo}"></div><div class="f"><label>${esPR ? 'Primer corte' : 'Fecha del primer pago'}</label><input name="fechaPrimerPago" type="date" value="${s.fechaPrimerPago}"></div></div>
+            <div class="row"><div class="f"><label>${esPR ? 'Vigencia (meses)' : 'Plazo (meses, máx. 36)'}</label><input name="plazo" type="number" step="1" min="1" max="36" value="${s.plazo}"></div><div class="f"><label>${esPR ? 'Primer corte' : 'Fecha del primer pago'}</label><input name="fechaPrimerPago" type="date" value="${s.fechaPrimerPago}"></div></div>
             ${esAP ? `<div class="f"><label>Valor residual % (valor del bien al término)</label><input name="residualPct" type="number" step="0.5" min="0" max="90" value="${s.residualPct}"></div>` : ''}
             <div class="sim-g">Tasas</div>
             <div class="row"><div class="f"><label>Tasa anual (sin IVA)</label><input name="tasa" type="number" step="0.01" min="0" value="${s.tasa}"></div><div class="f"><label>Tasa moratoria anual (sin IVA)</label><input name="tasaMora" type="number" step="0.01" min="0" value="${s.tasaMora}"></div></div>
@@ -3128,6 +3137,8 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
         ${c.producto === 'AF' && ev.opcionesTerminales ? `<h3>Opciones terminales (LGTOC)</h3><div class="kv" style="max-width:640px"><span>Compra</span><span>${money(ev.opcionesTerminales.compra.total)} (valor residual + IVA)</span><span>Prórroga</span><span>${ev.opcionesTerminales.prorroga.meses} rentas de ${money(ev.opcionesTerminales.prorroga.rentaMensual)}</span><span>Participación en venta</span><span>${pct(ev.opcionesTerminales.participacionVenta.porcentajeArrendatario, 0)} del excedente sobre el valor residual</span></div>` : ''}
         ${ev.eventos.length || ev.avisos.length ? `<h3>Eventos</h3><div class="tscroll"><table><tbody>${ev.eventos.map(e => `<tr><td class="l">${fdate(e.fecha)}</td><td class="l">${esc(e.detalle)}</td></tr>`).join('')}${ev.avisos.map(a => `<tr><td class="l">Aviso</td><td class="l neg">${esc(a)}</td></tr>`).join('')}</tbody></table></div>` : ''}
         <h3>Validaciones automáticas</h3><div class="tscroll"><table><tbody>${V.map(v => `<tr><td class="l">${v.ok ? chip('vigente', 'OK') : chip('vencido', 'Revisar')}</td><td class="l">${esc(v.regla)}${v.detalle ? ' · ' + esc(v.detalle) : ''}</td></tr>`).join('')}</tbody></table></div>`;
+    } else if (tab === 'formal') {
+      body = OPS.formalHTML(c);
     } else if (tab === 'score') {
       const sc0 = scoreContrato(c, ev); body = `<div class="score-top">${scoreBadge(sc0, true)}<span class="muted small">Qué tan a tiempo ha pagado este crédito · corte ${fdate(S.hoy)}</span></div>${scoreDesglose(sc0)}${SCORE_ESCALA}`;
     } else {
@@ -3140,8 +3151,9 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const baseOrd = Math.max(0, (ev.saldoCapital || 0) - (ev.capitalVencido || 0)); const proxR = ev.rows.find(r => r.fecha > S.hoy);
     const dDev = ap ? `<div class="desg"><div class="dt">Renta devengada del periodo</div><div class="kv"><span>Renta del periodo (sin IVA)</span><span>${money(proxR ? proxR.capital : ev.renta || 0)}</span><span>Días del periodo</span><span>${proxR ? proxR.dias : '—'}</span><span>Renta diaria</span><span>${money(proxR && proxR.dias ? proxR.capital / proxR.dias : 0)}</span><span>Días transcurridos desde ${fdate(ev.periodoDesde)}</span><span>${ev.diasDevengo || 0}</span><span class="tot">Devengado a hoy</span><span class="tot">${money(ev.rentaDevengadaCorriente || 0)}</span></div><div class="note">Renta diaria = renta del periodo ÷ sus días naturales. Causa IVA al cobrarse.</div></div>`
       : `<div class="desg"><div class="dt">Interés ordinario devengado del periodo</div><div class="kv"><span>Saldo que genera interés</span><span>${money(ev.interesDiario ? baseOrd : 0)}</span><span>Tasa anual</span><span>${pct(c.tasa)}</span><span>Interés diario (saldo × tasa ÷ 360)</span><span>${money(ev.interesDiario || 0)}</span><span>Días transcurridos desde ${fdate(ev.periodoDesde)}</span><span>${ev.diasDevengo || 0}</span><span class="tot">Devengado a hoy</span><span class="tot">${money(ev.devengado || 0)}</span><span>IVA del devengado</span><span>${money(ev.ivaDevengado || 0)}</span>${ev.moraDiaria > 0.004 && ev.diasAtraso > 0 ? `<span>Moratorio diario (sin IVA)</span><span class="neg">${money(ev.moraDiaria)}</span>` : ''}</div><div class="note">${ev.acelerado ? 'Con el vencimiento anticipado ya no corre interés ordinario: sólo moratorio sobre el capital total.' : 'Días naturales reales, año de 360. El capital vencido deja de generar ordinario y genera moratorio.'}</div></div>`;
-    return `<div class="glass panel" style="margin-top:14px"><div class="ph"><h2>${esc(c.folio)} · <a href="#" class="lnk" data-act="selCliente" data-id="${c.clienteId}">${esc(clienteNombre(c.clienteId))}</a> ${chip(cancel ? 'cancelado' : ev.estatus, estatusTxt[cancel ? 'cancelado' : ev.estatus])} <span class="muted small">${prodNombre(c.producto)} · ${esc(ev.cobranzaTxt || '')} · ${esc(ev.juridicoTxt || '')} · Etapa ${ev.regulatoria ? ev.regulatoria.etapa : 1}</span></h2>
-      <div class="pill-row">${!cancel && ev.estatus !== 'liquidado' ? `<button class="btn sm primary" data-act="cobSel" data-id="${c.id}">Aplicar pago</button>${esPR ? `<button class="btn sm" data-act="dispContrato" data-id="${c.id}">Registrar disposición</button>` : ''}` : ''}${!cancel && ev.estatus !== 'liquidado' ? `<button class="btn sm" data-act="eventoContrato" data-id="${c.id}">Evento</button>` : ''}<button class="btn sm" data-act="ecContrato" data-id="${c.id}">Estado de cuenta</button><button class="btn sm" data-act="editContrato" data-id="${c.id}">Editar</button>${cancel ? `<button class="btn sm danger" data-act="delContrato" data-id="${c.id}">Eliminar</button>` : `<button class="btn sm danger" data-act="cancelContrato" data-id="${c.id}">Cancelar</button>`}</div></div>
+    return `<div class="glass panel" style="margin-top:14px"><div class="ph"><h2>${esc(c.folio)} · <a href="#" class="lnk" data-act="selCliente" data-id="${c.clienteId}">${esc(clienteNombre(c.clienteId))}</a> ${chip(cancel ? 'cancelado' : ev.estatus, estatusTxt[cancel ? 'cancelado' : ev.estatus])} <span class="muted small">${prodNombre(c.producto)} · ${esc(ev.cobranzaTxt || '')} · ${esc(ev.juridicoTxt || '')} · Etapa ${ev.regulatoria ? ev.regulatoria.etapa : 1} · Ref. ${OPS.ref(c)}</span>${formLiberado(c) ? '' : ' ' + chip('atrasado', 'Por formalizar')}</h2>
+      ${formLiberado(c) ? '' : `<div class="note" style="border-color:var(--orange);margin:0 0 10px"><b>Candado de formalización:</b> faltan ${OPS.avance(c).faltan.length} de ${OPS.avance(c).total} requisitos. Hasta que Dirección libere los recursos no se registran pagos ni disposiciones, y el contrato no cuenta en la cartera. <a href="#" class="lnk" data-act="tabContrato" data-v="formal">Ver formalización ›</a></div>`}
+      <div class="pill-row">${!cancel && ev.estatus !== 'liquidado' && formLiberado(c) ? `<button class="btn sm primary" data-act="cobSel" data-id="${c.id}">Aplicar pago</button>${esPR ? `<button class="btn sm" data-act="dispContrato" data-id="${c.id}">Registrar disposición</button>` : ''}` : ''}${!cancel && ev.estatus !== 'liquidado' ? `<button class="btn sm" data-act="eventoContrato" data-id="${c.id}">Evento</button>` : ''}<button class="btn sm" data-act="ecContrato" data-id="${c.id}">Estado de cuenta</button><button class="btn sm" data-act="editContrato" data-id="${c.id}">Editar</button>${cancel ? `<button class="btn sm danger" data-act="delContrato" data-id="${c.id}">Eliminar</button>` : `<button class="btn sm danger" data-act="cancelContrato" data-id="${c.id}">Cancelar</button>`}</div></div>
       <div class="ficha-top">${avanceHTML(av)}<div class="score-box" data-act="verScore" data-id="${c.id}" role="button" tabindex="0"><span class="muted small">Score de pago</span>${scoreBadge(sc, true)}<span class="more">Ver cálculo ›</span></div></div>
       <div class="kpis">
         <div class="kpi ${ev.exigibleHoy > 0 ? 'red' : 'green'}" ${g3}><div class="k">Exigible hoy</div><div class="v">${money(ev.exigibleHoy)}</div><div class="s">${ev.exigibleHoy > 0.005 ? ev.vencidasHoy + ' ' + (ev.vencidasHoy === 1 ? av.nombre.toLowerCase() : av.plural) + (ev.diasAtraso ? ' · ' + dias(ev.diasAtraso) + ' de atraso' : '') : 'al corriente'}</div></div>
@@ -3151,7 +3163,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
         <div class="kpi blue" ${g3}><div class="k">Pagado a la fecha</div><div class="v">${money(ev.totalPagado)}</div><div class="s">${ev.liquidadoEl ? 'liquidado el ' + fdate(ev.liquidadoEl) : av.pagadas + ' de ' + av.total + ' ' + av.plural + ' cubiertas'}</div></div>
       </div>
       <div class="desgs">${ev.exigibleHoy > 0.005 ? desgHTML('Exigible hoy: de qué se compone', desgExigible(c, ev), ev.exigibleHoy) : ''}${ev.estatus !== 'liquidado' && !cancel ? dDev + (PH && PH.modo !== 'ultima' && PH.total > 0.005 ? desgHTML('Si paga hoy: de qué se compone', desgPagoHoy(c, ev, PH), PH.total, pagoHoyNota(c, ev, PH)) : '') + desgHTML((ap ? 'Terminar hoy' : 'Para liquidar hoy') + ': de qué se compone', desgLiquidar(c, ev), ev.liquidarHoy) : ''}${ev.totalPagado > 0.005 ? desgHTML('Pagado a la fecha: a qué se aplicó', desgPagado(c, ev), ev.totalPagado) : ''}</div>
-      <div class="tabs">${[['tabla', esPR ? 'Cortes' : c.producto === 'AP' ? 'Rentas' : 'Tabla de amortización'], ['pagos', 'Movimientos (' + pagosC.length + ')'], ['mora', 'Moratorios'], ['score', 'Score de pago'], ['motor', 'Estado y análisis'], ['datos', 'Datos del contrato']].map(t => `<button data-act="tabContrato" data-v="${t[0]}" class="${tab === t[0] ? 'on' : ''}">${t[1]}</button>`).join('')}</div>${body}</div>`;
+      <div class="tabs">${[['tabla', esPR ? 'Cortes' : c.producto === 'AP' ? 'Rentas' : 'Tabla de amortización'], ['pagos', 'Movimientos (' + pagosC.length + ')'], ['mora', 'Moratorios'], ['score', 'Score de pago'], ['motor', 'Estado y análisis'], ['formal', 'Formalización' + (formLiberado(c) ? '' : ' ●')], ['datos', 'Datos del contrato']].map(t => `<button data-act="tabContrato" data-v="${t[0]}" class="${tab === t[0] ? 'on' : ''}">${t[1]}</button>`).join('')}</div>${body}</div>`;
   }
 
   /* ======== COBRANZA ======== */
@@ -3657,6 +3669,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
           ${Sel('¿El capital social se coloca en cartera?', 'capitalColocable', [['si', 'Sí, se coloca (entra al mapa de fondeo)'], ['no', 'No, se queda en cuenta como respaldo']], cfg.capitalColocable === false ? 'no' : 'si')}
           <div class="row">${F('Saldo real en cuentas bancarias ($)', 'bancoSaldo', 'number', cfg.bancoSaldo == null ? '' : cfg.bancoSaldo, 'step="0.01" min="0"')}${F('Fecha de ese saldo', 'bancoFecha', 'date', cfg.bancoFecha || S.hoy)}</div>
           <div class="row3">${F('Razón social', 'razonSocial', 'text', cfg.razonSocial || 'COLIUM, S.A. de C.V.')}${F('RFC', 'rfc', 'text', cfg.rfc || '')}${F('Estimación preventiva sobre cartera vencida (%)', 'estimacionPct', 'number', cfg.estimacionPct == null ? 0 : cfg.estimacionPct, 'step="1" min="0" max="100"')}</div>
+          <h3>Cuenta para cobranza</h3><div class="row3">${F('Banco', 'cobroBanco', 'text', cfg.cobroBanco || '')}${F('CLABE (18 dígitos)', 'cobroClabe', 'text', cfg.cobroClabe || '', 'inputmode="numeric" maxlength="22"')}${F('Titular', 'cobroTitular', 'text', cfg.cobroTitular || cfg.razonSocial || 'COLIUM, S.A. de C.V.')}</div><div class="note" style="margin:0 0 8px">Aparece en los estados de cuenta junto con la referencia de pago de cada contrato.</div>
           <h3>Política de tasas</h3><div class="row3">${F('Tasa mínima de colocación (% anual)', 'tasaMinColocacion', 'number', POLT().minCol, 'step="0.01" min="0"')}${F('Tasa máxima a inversionistas (% anual)', 'tasaMaxInversion', 'number', POLT().maxInv, 'step="0.01" min="0"')}${F('Tasa máxima de créditos recibidos (% anual)', 'tasaMaxCredito', 'number', POLT().maxCred, 'step="0.01" min="0"')}</div><div class="row3">${F('Default máximo tolerado (% de la cartera)', 'defaultMax', 'number', POLT().maxDef, 'step="0.1" min="0"')}<div></div><div></div></div><div class="note" style="margin:0 0 8px">El sistema no deja guardar un contrato por debajo de la tasa mínima, ni una inversión o un crédito por arriba de su tasa máxima.</div></form>
           <div class="pill-row"><button class="btn primary" data-act="guardarAdmin">Guardar</button></div>
           ${SB.capturado ? `<div class="kv" style="margin-top:12px"><span>Saldo que calcula el sistema a esa fecha</span><span>${money(SB.inicial - SB.ajuste)}</span><span>Saldo real capturado</span><span>${money(SB.inicial)}</span><span class="tot b">Ajuste de conciliación</span><span class="tot ${Math.abs(SB.ajuste) > 1 ? 'warn' : 'pos'}">${money(SB.ajuste)}</span></div><div class="note">A partir de esa fecha, el saldo en bancos se mueve solo con lo que registres aquí: cobros, pagos a inversionistas y otros movimientos. Si el ajuste no es cero, hay algo que el sistema no tiene registrado (o al revés).</div>` : ''}
@@ -3694,7 +3707,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
   /* ---------- PDF del simulador de crédito ---------- */
   function simCreditoPDFSpec() {
     const s = S.sim; if (!s) return null;
-    const c = { producto: s.producto, monto: Number(s.monto) || 0, tasa: Number(s.tasa) || 0, plazo: Math.max(1, parseInt(s.plazo) || 1), fechaPrimerPago: s.fechaPrimerPago || nextMonthISO(), residualPct: s.producto === 'AP' ? (Number(s.residualPct) || 0) : 0, iva: Number(s.iva) || 0, ivaSobre: s.ivaSobre };
+    const c = { producto: s.producto, monto: Number(s.monto) || 0, tasa: Number(s.tasa) || 0, plazo: Math.min(PLAZO_MAX, Math.max(1, parseInt(s.plazo) || 1)), fechaPrimerPago: s.fechaPrimerPago || nextMonthISO(), residualPct: s.producto === 'AP' ? (Number(s.residualPct) || 0) : 0, iva: Number(s.iva) || 0, ivaSobre: s.ivaSobre };
     const ivaR = c.iva / 100; const esPR = c.producto === 'PR'; const comision = c.monto * (Number(s.comision) || 0) / 100;
     const cond = [['Producto', prodNombre(c.producto)], [esPR ? 'Línea autorizada' : 'Monto financiado (sin IVA)', money(c.monto)], ['Tasa anual (sin IVA)', pct(c.tasa)], ['Tasa anual + IVA', pct(c.tasa * (1 + ivaR))], ['Tasa mensual', pct(c.tasa / 12, 4)], [esPR ? 'Vigencia' : 'Plazo', c.plazo + ' meses'], [esPR ? 'Primer corte' : 'Primer pago', fdate(c.fechaPrimerPago)], ['Tasa moratoria anual', pct(Number(s.tasaMora) || 0)], ['Comisión por apertura', pct(Number(s.comision) || 0, 2) + ' + IVA = ' + money(comision * (1 + ivaR))]];
     if (c.producto === 'AP') cond.push(['Valor residual', pct(c.residualPct, 1)]);
@@ -3860,7 +3873,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const V = a('ventas') / n0, CV = a('costo') / n0, GO = a('gastos') / n0, DEP = a('dep') / n0, GF = a('gfin') / n0, OI = a('otros') / n0;
     const isr = a('isr') / 100, SD = a('servicio'); const g = Math.pow(1 + a('crec') / 100, 1 / 12);
     const mb = V > 0 ? (V - CV) / V : 0; const mc = (s.dMargen === '' || s.dMargen == null) ? mb : a('dMargen') / 100; const dV = a('dVentas'), ah = a('ahorro');
-    const valor = a('valor'), engP = Math.min(0.9, a('enganche') / 100), N = Math.max(1, Math.min(prod === 'PR' ? 12 : 120, parseInt(s.plazo) || 1)), tasa = a('tasa'), i = tasa / 100, resP = a('residual') / 100, comP = a('comision') / 100, vida = Math.max(1, a('vida') || 5);
+    const valor = a('valor'), engP = Math.min(0.9, a('enganche') / 100), N = Math.max(1, Math.min(prod === 'PR' ? 12 : PLAZO_MAX, parseInt(s.plazo) || 1)), tasa = a('tasa'), i = tasa / 100, resP = a('residual') / 100, comP = a('comision') / 100, vida = Math.max(1, a('vida') || 5);
     const destinoActivo = s.destino !== 'capital';
     const { fpp, cal } = corrMesesCal(N);
     let pagos = [], cash0 = 0, activoNuevo = 0, financiado = 0, comision = 0, prepago = 0, residual = 0;
@@ -4009,7 +4022,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
         <div class="glass panel">${paso(1, 'Qué quiere contratar', 'El producto y las condiciones de la operación')}
           <div class="corr-prods">${CORR_PRODS.map(k => `<button type="button" data-act="corrProd" data-v="${k}" class="${s.producto === k ? 'on' : ''}"><b>${prodNombre(k)}</b><span>${CORR_DESC[k]}</span></button>`).join('')}</div>
           <div class="cgrid c3"><div class="f"><label>Cliente o prospecto</label><input name="prospecto" value="${esc(s.prospecto)}" placeholder="Empresa, S.A. de C.V."></div><div class="f"><label>Giro</label><input name="giro" value="${esc(s.giro)}"></div><div class="f"><label>Activo o destino</label><input name="activo" value="${esc(s.activo)}" placeholder="Ej. tractocamión, capital de trabajo"></div></div>
-          <div class="cgrid c6">${In(esPS ? 'Monto del proyecto' : 'Valor del activo (sin IVA)', 'valor')}${In(ap ? 'Pago inicial %' : 'Enganche %', 'enganche', 'min="0" max="90"')}${In(s.producto === 'PR' ? 'Plazo de la disposición (meses)' : 'Plazo (meses)', 'plazo', 'min="1" max="120" step="1"')}${In('Tasa anual % (sin IVA)', 'tasa', 'min="0"')}${ap ? In('Valor residual %', 'residual', 'min="0" max="60"') : In('Vida útil del activo (años)', 'vida', 'min="1" max="30"')}${In('Comisión por apertura %', 'comision', 'min="0"')}</div>
+          <div class="cgrid c6">${In(esPS ? 'Monto del proyecto' : 'Valor del activo (sin IVA)', 'valor')}${In(ap ? 'Pago inicial %' : 'Enganche %', 'enganche', 'min="0" max="90"')}${In(s.producto === 'PR' ? 'Plazo de la disposición (meses)' : 'Plazo (meses, máx. 36)', 'plazo', 'min="1" max="36" step="1"')}${In('Tasa anual % (sin IVA)', 'tasa', 'min="0"')}${ap ? In('Valor residual %', 'residual', 'min="0" max="60"') : In('Vida útil del activo (años)', 'vida', 'min="1" max="30"')}${In('Comisión por apertura %', 'comision', 'min="0"')}</div>
           ${esPS ? `<div class="cgrid c3"><div class="f"><label>Uso de los recursos</label><select name="destino"><option value="activo" ${s.destino !== 'capital' ? 'selected' : ''}>Compra de un activo</option><option value="capital" ${s.destino === 'capital' ? 'selected' : ''}>Capital de trabajo</option></select></div></div>` : ''}
         </div>
         <div class="grid2" style="margin-top:14px">
@@ -4450,6 +4463,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       secciones: [
         { titulo: 'Datos del acreditado', cols: 2, kv: [['Nombre o razón social', cl.nombre || '—'], ['RFC', (cl.rfc || '—').toUpperCase()], ['Domicilio', cl.direccion || '—'], ['Correo', cl.email || '—']] },
         { titulo: 'Contrato', cols: 2, kv: [['Producto', prodNombre(c.producto)], ['Activo / destino', c.activo || '—'], [esPR ? 'Línea autorizada' : esAP ? 'Valor del bien' : 'Monto', money(c.monto)], ['Tasa anual (sin IVA)', pct(c.tasa)], ['Plazo', c.plazo + (esPR ? ' meses de vigencia' : ' meses')], ['Inicio · vencimiento', fdate(c.fechaInicio) + ' · ' + (vence ? fdate(vence) : '—')], ['Tasa moratoria anual', pct(c.tasaMora || 0)], ['Folio', c.folio]] },
+        { titulo: 'Cómo pagar', cols: 2, kv: [['Referencia de pago', OPS.ref(c)], ['Banco', CFG().cobroBanco || '—'], ['CLABE', CFG().cobroClabe || '—'], ['Titular', CFG().cobroTitular || CFG().razonSocial || 'COLIUM, S.A. de C.V.']] },
         { titulo: 'Resumen del periodo', cols: 2, kv: [[esAP ? 'Rentas por vencer al inicio' : 'Saldo de capital al inicio', money(ev0 ? ev0.saldoCapital : 0)], [esAP ? 'Rentas por vencer al cierre' : 'Saldo de capital al cierre', money(ev.saldoCapital)], ['Cargos del periodo', money(cargos)], ['Pagos recibidos', money(abonos)], ['Moratorios + IVA al inicio', money(moraIni)], ['Moratorios + IVA al cierre', money(moraFin)], ['Adeudo vencido al cierre', money(ev.totalVencido)], ['Días de atraso', String(ev.diasAtraso || 0)], ['Próximo pago', prox ? fdate(prox.fecha) + ' · ' + money(prox.total) : '—'], ['Estatus', estatusTxt[ev.estatus] || ev.estatus]] }],
       tablas: [
         { titulo: 'Movimientos del periodo', head: esAP ? ['Fecha', 'Concepto', 'Renta', 'IVA', 'Cargo', 'Abono'] : ['Fecha', 'Concepto', 'Capital', 'Interés', 'IVA', 'Cargo', 'Abono'], align: esAP ? ['l', 'l', 'r', 'r', 'r', 'r'] : ['l', 'l', 'r', 'r', 'r', 'r', 'r'], widths: esAP ? [22, 75, 22, 20, 22, 22.9] : [20, 62, 20, 20, 18, 22, 21.9], rows: movs.length ? movs.map(x => esAP ? [fdate(x.fecha), x.concepto, x.renta ? money(x.renta) : '', x.iva ? money(x.iva) : '', x.cargo ? money(x.cargo) : '', x.abono ? money(x.abono) : ''] : [fdate(x.fecha), x.concepto, x.capital ? money(x.capital) : '', x.interes ? money(x.interes) : '', x.iva ? money(x.iva) : '', x.cargo ? money(x.cargo) : '', x.abono ? money(x.abono) : '']).concat([esAP ? ['', 'Totales del periodo', '', '', money(cargos), money(abonos)] : ['', 'Totales del periodo', '', '', '', money(cargos), money(abonos)]]) : [esAP ? ['', 'Sin cargos ni pagos en el periodo', '', '', '', ''] : ['', 'Sin cargos ni pagos en el periodo', '', '', '', '', '']], boldLast: !!movs.length },
@@ -4742,7 +4756,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const prod = base.producto || 'AF';
     const body = () => `<div class="row">${Sel('Acreditado *', 'clienteId', S.clientes.map(x => [x.id, x.nombre]), base.clienteId || (S.clientes[0] && S.clientes[0].id))}${Sel('Producto', 'producto', Object.keys(E.PRODUCTOS).map(k => [k, prodNombre(k)]), prod)}</div>
       <div class="row3">${F('Folio', 'folio', 'text', base.folio || nextFolio('ATX-' + prod + '-', 'contratos'))}${F(prod === 'PR' ? 'Línea autorizada *' : 'Monto financiado sin IVA *', 'monto', 'number', base.monto, 'step="0.01" min="0"')}${F('Tasa anual sin IVA % *', 'tasa', 'number', base.tasa == null ? 36 : base.tasa, 'step="0.01" min="0"')}</div>
-      <div class="row3">${F('Tasa moratoria anual % *', 'tasaMora', 'number', base.tasaMora == null ? 72 : base.tasaMora, 'step="0.01" min="0"')}${F(prod === 'PR' ? 'Vigencia (meses) *' : 'Plazo (meses) *', 'plazo', 'number', base.plazo || 36, 'step="1" min="1"')}${F('IVA %', 'iva', 'number', base.iva == null ? 16 : base.iva, 'step="1" min="0"')}</div>
+      <div class="row3">${F('Tasa moratoria anual % *', 'tasaMora', 'number', base.tasaMora == null ? 72 : base.tasaMora, 'step="0.01" min="0"')}${F(prod === 'PR' ? 'Vigencia (meses, máx. 36) *' : 'Plazo (meses, máx. 36) *', 'plazo', 'number', base.plazo || 36, 'step="1" min="1" max="36"')}${F('IVA %', 'iva', 'number', base.iva == null ? 16 : base.iva, 'step="1" min="0"')}</div>
       <div class="row3">${F('Fecha de inicio (firma / disposición)', 'fechaInicio', 'date', base.fechaInicio || S.hoy)}${F(prod === 'PR' ? 'Primer corte *' : 'Fecha del primer pago *', 'fechaPrimerPago', 'date', base.fechaPrimerPago || nextMonthISO())}${prod === 'AP' ? F('Valor residual %', 'residualPct', 'number', base.residualPct == null ? 20 : base.residualPct, 'step="0.5" min="0"') : prod === 'PR' ? '<div></div>' : Sel('IVA aplicado', 'ivaSobre', [['pago', 'Sobre cada pago'], ['interes', 'Sólo sobre intereses']].concat(prod === 'PS' ? [['exento', 'Interés exento']] : []), base.ivaSobre || E.PRODUCTOS[prod].ivaSobre)}</div>
       <div class="row3">${F('Activo / destino', 'activo', 'text', base.activo)}${F('Comisión apertura %', 'comision', 'number', base.comision == null ? 2.5 : base.comision, 'step="0.1" min="0"')}${F('Enganche $', 'enganche', 'number', base.enganche || 0, 'step="0.01" min="0"')}</div>
       ${prod === 'PR' && !c.id ? `<div class="row">${F('Monto que dispone al inicio (se registra como disposición)', 'disposicionInicial', 'number', base.disposicionInicial == null ? (base.monto || '') : base.disposicionInicial, 'step="0.01" min="0"')}<div class="note" style="align-self:end">Si lo dejas igual a la línea, dispone todo desde el inicio. Puedes registrar más disposiciones y abonos después.</div></div>` : ''}
@@ -4759,13 +4773,14 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       <div class="note">${prod === 'AF' ? 'Arrendamiento financiero (LGTOC 408–418): renta = recuperación del bien + carga financiera ACT/360 + accesorios + IVA; sin valor residual.' : prod === 'AP' ? 'Arrendamiento puro: renta por valor presente (ACT/360) con valor residual que queda en ATRIX; IVA sobre la renta; el bien se deprecia (NIF D-5).' : prod === 'PS' ? 'Crédito simple: interés ACT/360 sobre saldo insoluto; IVA sólo sobre intereses salvo que sea exento.' : 'Revolvente: interés diario ACT/360 sólo sobre el saldo dispuesto; cortes mensuales; capital al vencimiento o según pago mínimo.'}</div>`;
     openModal(c.id ? 'Editar contrato' : 'Nuevo contrato', body(), {
       onSubmit: async v => {
-        if (!v.clienteId) return toast('Selecciona un acreditado', true); if (!(v.monto > 0)) return toast('Captura el monto', true); if (!(v.plazo >= 1)) return toast('Captura el plazo', true); if (!v.fechaPrimerPago) return toast('Captura la fecha del primer pago', true);
+        if (!v.clienteId) return toast('Selecciona un acreditado', true); if (!(v.monto > 0)) return toast('Captura el monto', true); if (!(v.plazo >= 1)) return toast('Captura el plazo', true); if (v.plazo > PLAZO_MAX) return toast('El plazo máximo de ATRIX es de ' + PLAZO_MAX + ' meses', true); if (!v.fechaPrimerPago) return toast('Captura la fecha del primer pago', true);
         if (v.fechaInicio && v.fechaPrimerPago < v.fechaInicio) return toast('El primer pago no puede ser antes del inicio', true);
         if (!(v.tasa >= POLT().minCol)) return toast('La tasa mínima de colocación es ' + pct(POLT().minCol) + ' anual (Administración › Política de tasas)', true);
-        const obj = { ...c, ...v, plazo: Math.round(v.plazo), id: c.id || uid('con'), creado: c.creado || S.hoy }; if (obj.producto !== 'AP') delete obj.residualPct; if (obj.producto === 'PR') obj.ivaSobre = 'interes'; for (const k of ['clausulaVA', 'rentaProporcional']) if (k in obj) obj[k] = obj[k] !== 'no'; if ('vaAutomatico' in obj) obj.vaAutomatico = obj.vaAutomatico === 'si';
-        const dispIni = obj.disposicionInicial; delete obj.disposicionInicial;
+        const obj = { ...c, ...v, plazo: Math.round(v.plazo), id: c.id || uid('con'), creado: c.creado || S.hoy };
+        if (!c.id) { obj.formalizacion = { items: {}, creada: S.hoy }; obj.referenciaPago = OPS.ref(obj); } // 17.33 · candado de formalización y referencia de pago if (obj.producto !== 'AP') delete obj.residualPct; if (obj.producto === 'PR') obj.ivaSobre = 'interes'; for (const k of ['clausulaVA', 'rentaProporcional']) if (k in obj) obj[k] = obj[k] !== 'no'; if ('vaAutomatico' in obj) obj.vaAutomatico = obj.vaAutomatico === 'si';
+        const dispIni = obj.disposicionInicial; delete obj.disposicionInicial; if (obj.producto === 'PR' && !c.id && dispIni > 0) obj.disposicionPendiente = E.r2(dispIni); // 17.33: se registra al liberar los recursos
         await Store.save('contratos', obj);
-        if (obj.producto === 'PR' && !c.id && dispIni > 0) await Store.save('pagos', { id: uid('pag'), contratoId: obj.id, tipo: 'disposicion', fecha: obj.fechaInicio || obj.fechaPrimerPago, monto: E.r2(dispIni), referencia: 'Disposición inicial', creado: new Date().toISOString() }); closeModal(); toast('Contrato guardado'); ACT.fichaContrato({ id: obj.id });
+        closeModal(); toast(c.id ? 'Contrato guardado' : 'Contrato guardado · queda por formalizar'); ACT.fichaContrato({ id: obj.id, tab: c.id ? '' : 'formal' });
       }
     });
     // cambiar producto redibuja el formulario
@@ -4790,6 +4805,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
       submitText: 'Registrar evento', onSubmit: async v => {
         if (!v.fecha) return toast('Captura la fecha efectiva', true);
         if (v.tipo === 'reestructura' && !(v.plazo >= 1)) return toast('Captura el plazo', true);
+        if (v.tipo === 'reestructura' && v.plazo * ({ bimestral: 2, trimestral: 3, semestral: 6 }[c.periodicidad] || 1) > PLAZO_MAX) return toast('El plazo de la reestructura no puede pasar de ' + PLAZO_MAX + ' meses', true);
         if (v.tipo === 'condonacion' && !(v.monto > 0)) return toast('Captura el monto', true);
         if ((v.tipo === 'cambioTasa' || (v.tipo === 'reestructura' && !esAP)) && v.tasa != null && v.tasa !== '' && v.tasa < POLT().minCol) return toast('La tasa mínima de colocación es ' + pct(POLT().minCol) + ' anual (Administración › Política de tasas)', true);
         const obj = { id: uid('evt'), contratoId: c.id, tipo: v.tipo, fecha: v.fecha, referencia: v.referencia || '', creado: new Date().toISOString() };
@@ -4997,7 +5013,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const pPre = solPub(s, 'pre'), pApr = solPub(s, 'apr'), aV = solAceptVigente(s); const tb = (v, t, c) => `<button type="button" class="${SOL.tab === v ? 'on' : ''}" data-act="solTab" data-v="${v}">${t}${c ? ' <i>' + c + '</i>' : ''}</button>`;
     const tabs = `<div class="seg sol-tabs">${tb('exp', 'Expediente', rev ? rev + ' por revisar' : '')}${tb('pre', 'Preaprobación', pPre ? 'en el portal' : '')}${tb('apr', 'Aprobación', aV ? 'aceptada' : pApr ? (solPropVigente(pApr) ? 'en el portal' : 'vencida') : '')}</div>`;
     return `<div class="sol-back"><button class="btn" data-act="solVolver"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Atrás · Solicitudes</button><span class="muted small">${g === 'pendientes' ? esc(solMotivo(s)) + ' · ' + solHace(solCliMov(s)) : g === 'atendidas' ? 'Atendida el ' + solF(N.atendido, true) : 'Solicitud cerrada'}</span></div>
-      <div class="glass panel"><div class="ph"><h2>${esc(s.folio)} ${chip(e[1], e[0])} ${chip(g === 'pendientes' ? 'atrasado' : g === 'atendidas' ? 'ok' : 'gray', g === 'pendientes' ? 'Pendiente' : g === 'atendidas' ? 'Atendida' : 'Cerrada')}</h2><div class="pill-row"><button class="btn primary" data-act="solEtapa" data-id="${s.id}">Etapa y mensaje</button><button class="btn" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>${g === 'pendientes' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="1">Marcar atendida</button>` : g === 'atendidas' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="0">Regresar a pendientes</button>` : ''}${cli ? `<button class="btn" data-act="selCliente" data-id="${cli.id}">Abrir acreditado</button>` : `<button class="btn" data-act="solConvertir" data-id="${s.id}">Convertir en acreditado</button>`}<button class="btn danger" data-act="solEliminar" data-id="${s.id}">Borrar solicitud</button></div></div>
+      <div class="glass panel"><div class="ph"><h2>${esc(s.folio)} ${chip(e[1], e[0])} ${chip(g === 'pendientes' ? 'atrasado' : g === 'atendidas' ? 'ok' : 'gray', g === 'pendientes' ? 'Pendiente' : g === 'atendidas' ? 'Atendida' : 'Cerrada')}</h2><div class="pill-row"><button class="btn primary" data-act="solEtapa" data-id="${s.id}">Etapa y mensaje</button><button class="btn" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>${g === 'pendientes' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="1">Marcar atendida</button>` : g === 'atendidas' ? `<button class="btn" data-act="solAtendida" data-id="${s.id}" data-v="0">Regresar a pendientes</button>` : ''}${cli ? `<button class="btn" data-act="selCliente" data-id="${cli.id}">Abrir acreditado</button>` : `<button class="btn" data-act="solConvertir" data-id="${s.id}">Convertir en acreditado</button>`}<button class="btn" data-act="solArchivar" data-id="${s.id}">Pasar expediente al acreditado</button><button class="btn danger" data-act="solEliminar" data-id="${s.id}">Borrar solicitud</button></div></div>
         <div style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:2px 0 12px;overflow-wrap:anywhere">${esc(s.nombre)}</div>
         <div class="kpis"><div class="kpi glass"><div class="k">Producto</div><div class="v" style="font-size:16px">${esc(SOL_PROD[s.producto] || s.producto)}</div><div class="s">${D.plazo ? esc(D.plazo) + (/^\d+$/.test(D.plazo) ? ' meses' : '') : 'plazo por definir'}</div></div><div class="kpi glass blue"><div class="k">Monto solicitado</div><div class="v">${money(s.monto)}</div><div class="s">sin IVA</div></div><div class="kpi glass ${cargado && en(1) === de1 ? 'green' : 'orange'}"><div class="k">Para preaprobación</div><div class="v">${cargado ? en(1) + ' de ' + de1 : '…'}</div><div class="s">${cargado ? (en(1) === de1 ? 'completo · ' : 'cargados · ') + en(1, 'aceptado') + ' aceptados' : 'consultando expediente'}</div></div><div class="kpi glass green"><div class="k">Documentos aceptados</div><div class="v">${ok} de ${req.length}</div><div class="s"><span class="sol-pb"><i style="width:${req.length ? Math.round(ok / req.length * 100) : 0}%"></i></span></div></div><div class="kpi glass ${rev ? 'orange' : ''}"><div class="k">Por revisar</div><div class="v">${cargado ? rev : '…'}</div><div class="s">${cargado ? falta + ' sin cargar · ' + nArch + ' archivo' + (nArch === 1 ? '' : 's') : 'consultando expediente'}</div></div></div>
         ${s.mensaje ? `<div class="note"><b>Mensaje visible para el solicitante:</b> ${esc(s.mensaje)}</div>` : ''}</div>
@@ -5039,7 +5055,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     return (SOL.props[k] = Object.assign(base, solPick(solPub(s, tipo), tipo), solPick(N[tipo + '_b'], tipo)));
   }
   function solPropCalc(f) { // todo lo que se deriva de lo capturado: tasas mensuales, IVA, comisión y tabla
-    const monto = Number(f.monto) || 0, tasa = Number(f.tasa) || 0, plazo = Math.max(1, parseInt(f.plazo) || 1), k = 1 + SOL_IVA / 100, P = f.producto;
+    const monto = Number(f.monto) || 0, tasa = Number(f.tasa) || 0, plazo = Math.min(PLAZO_MAX, Math.max(1, parseInt(f.plazo) || 1)), k = 1 + SOL_IVA / 100, P = f.producto;
     const o = { monto, tasa, plazo, tasaMes: tasa / 12, tasaIva: tasa * k, tasaMesIva: tasa / 12 * k }; const tm = Number(f.tasaMora) || 0; o.tasaMora = tm; o.moraMes = tm / 12; o.moraIva = tm * k; o.moraMesIva = tm / 12 * k;
     o.comisionPct = Number(f.comision) || 0; o.comision = E.r2(monto * o.comisionPct / 100); o.comisionIva = E.r2(o.comision * SOL_IVA / 100);
     if (P !== 'PR' && monto > 0) { try { const pm = P === 'CE' ? 'PS' : P; const c = { producto: pm, monto, tasa, plazo, fechaPrimerPago: f.primerPago || nextMonthISO(), residualPct: P === 'AP' ? (Number(f.residualPct) || 0) : 0, iva: SOL_IVA, ivaSobre: E.PRODUCTOS[pm].ivaSobre }; if (P === 'CE' && f.periodicidad && f.periodicidad !== 'mensual') c.periodicidad = f.periodicidad;
@@ -5092,10 +5108,10 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const nota = !pub ? 'El solicitante aún no ve nada: en su página esta sección aparece bloqueada hasta que la cargues.' : 'Cargada el ' + solF(pub.publicado, true) + (tipo === 'apr' ? ' · vence el ' + solF(pub.vence) : '') + '.' + (aV ? ' Aceptada por ' + aV.nombre + (aV.cargo ? ' (' + aV.cargo + ')' : '') + ' el ' + solF(aV.fecha, true) + '.' : tipo === 'apr' && a ? ' El solicitante aceptó una versión anterior; esta aún no.' : '') + (sinPublicar ? ' Hay cambios sin cargar: el solicitante sigue viendo la versión anterior.' : '');
     const T = (l, n, v, ph) => `<div class="f"><label>${l}</label><textarea name="${n}" placeholder="${esc(ph || '')}">${esc(v || '')}</textarea></div>`;
     const form = tipo === 'pre' ? `<div class="row">${Sel('Producto', 'producto', Object.keys(SOL_PP).map(k => [k, SOL_PP[k]]), P)}${F('Monto tentativo (sin IVA) *', 'monto', 'number', f.monto, 'step="0.01" min="0"')}</div>
-        <div class="row3">${F('Tasa anual tentativa % *', 'tasa', 'number', f.tasa, 'step="0.01" min="0"')}${F('Plazo tentativo (meses) *', 'plazo', 'number', f.plazo, 'step="1" min="1"')}${F('Comisión apertura %', 'comision', 'number', f.comision, 'step="0.1" min="0"')}</div>
+        <div class="row3">${F('Tasa anual tentativa % *', 'tasa', 'number', f.tasa, 'step="0.01" min="0"')}${F('Plazo tentativo (meses, máx. 36) *', 'plazo', 'number', f.plazo, 'step="1" min="1" max="36"')}${F('Comisión apertura %', 'comision', 'number', f.comision, 'step="0.1" min="0"')}</div>
         ${T('Observaciones para el solicitante (opcional)', 'notas', f.notas, 'Ej. Sujeta a la entrega de los estados financieros y a la visita al negocio.')}`
       : `<div class="row">${Sel('Producto aprobado', 'producto', Object.keys(SOL_PP).map(k => [k, SOL_PP[k]]), P)}${F(esPR ? 'Línea autorizada *' : 'Monto autorizado (sin IVA) *', 'monto', 'number', f.monto, 'step="0.01" min="0"')}</div>
-        <div class="row3">${F('Tasa anual de interés ordinario % *', 'tasa', 'number', f.tasa, 'step="0.01" min="0"')}${F('Tasa anual de interés moratorio % *', 'tasaMora', 'number', f.tasaMora, 'step="0.01" min="0"')}${F(esPR ? 'Tiempo de la línea (meses) *' : 'Tiempo de la línea / plazo (meses) *', 'plazo', 'number', f.plazo, 'step="1" min="1"')}</div>
+        <div class="row3">${F('Tasa anual de interés ordinario % *', 'tasa', 'number', f.tasa, 'step="0.01" min="0"')}${F('Tasa anual de interés moratorio % *', 'tasaMora', 'number', f.tasaMora, 'step="0.01" min="0"')}${F(esPR ? 'Tiempo de la línea (meses) *' : 'Tiempo de la línea / plazo (meses, máx. 36) *', 'plazo', 'number', f.plazo, 'step="1" min="1" max="36"')}</div>
         <div class="row3">${F('Comisión apertura %', 'comision', 'number', f.comision, 'step="0.1" min="0"')}${esPR ? '<div></div>' : F('Fecha estimada del primer pago', 'primerPago', 'date', f.primerPago)}${esAP ? F('Valor residual %', 'residualPct', 'number', f.residualPct, 'step="0.5" min="0"') : P === 'CE' ? Sel('Pago de capital', 'periodicidad', [['mensual', 'Mensual'], ['bimestral', 'Bimestral'], ['trimestral', 'Trimestral']], f.periodicidad || 'mensual') : '<div></div>'}</div>
         ${T('Garantía', 'garantia', f.garantia, 'Ej. El propio activo arrendado, con factura a nombre de ATRIX, seguro y dos GPS.')}
         <div class="row">${Sel('Aval', 'aval', [['si', 'Sí'], ['no', 'No']], f.aval === 'no' ? 'no' : 'si')}${f.aval === 'no' ? '<div></div>' : F('¿Quiénes serán los avales?', 'avales', 'text', f.avales, 'placeholder="Nombre de cada aval" maxlength="800"')}</div>
@@ -5118,7 +5134,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     solTab: d => { SOL.tab = d.v; render(); },
     solPropGuardar: async d => { const s = solDe(d.id); if (!s) return; if (await solInterno(s, { [d.tipo + '_b']: solPick(solProp(s, d.tipo), d.tipo) })) toast('Borrador guardado (el solicitante no lo ve)'); },
     solPropPublicar: d => { const s = solDe(d.id); if (!s) return; const tipo = d.tipo; const f = solProp(s, tipo); const X = solPropCalc(f);
-      if (!(X.monto > 0)) return toast('Captura el monto', true); if (!(X.tasa > 0)) return toast('Captura la tasa anual', true); if (tipo === 'apr' && !(X.tasaMora > 0)) return toast('Captura la tasa moratoria anual', true); if (X.err) return toast('Revisa los datos: no se pudo calcular la tabla', true);
+      if (!(X.monto > 0)) return toast('Captura el monto', true); if (!(X.tasa > 0)) return toast('Captura la tasa anual', true); if ((parseInt(f.plazo) || 0) > PLAZO_MAX) return toast('El plazo máximo de ATRIX es de ' + PLAZO_MAX + ' meses', true); if (tipo === 'apr' && !(X.tasaMora > 0)) return toast('Captura la tasa moratoria anual', true); if (X.err) return toast('Revisa los datos: no se pudo calcular la tabla', true);
       if (tipo === 'apr' && f.aval !== 'no' && !String(f.avales || '').trim()) return toast('Indica quiénes serán los avales o elige «No»', true);
       const sube = tipo === 'pre' ? ['recibida', 'documentos', 'revision'].includes(s.etapa) : !SOL_CERRADA.includes(s.etapa) && s.etapa !== 'aprobada';
       confirmar(tipo === 'pre' ? 'Cargar la preaprobación al portal' : 'Cargar la aprobación al portal', s.nombre + ' la verá de inmediato en su página' + (tipo === 'apr' ? ', con su tabla de amortización, y podrá aceptarla durante 30 días naturales' : '') + '.' + (sube ? ' La solicitud pasará a la etapa «' + (tipo === 'pre' ? 'Preaprobada' : 'Aprobada') + '».' : '') + (tipo === 'apr' && solAcept(s) ? ' Como es una versión nueva, el solicitante tendrá que aceptarla otra vez.' : ''), async () => {
@@ -5233,14 +5249,341 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     solPass: d => { const s = solDe(d.id); if (!s) return; confirmar('Nueva contraseña', 'Se generará una contraseña nueva para ' + s.nombre + '. La anterior dejará de funcionar.', async () => { const p = portalPass(); const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'pass', user_id: s.user_id, password: p }));
       if (r.status === 200 && r.json && r.json.ok) openInfo('Nueva contraseña', `<p style="margin:0 0 10px">Compártela con el solicitante por un medio seguro. No se volverá a mostrar.</p><div class="kv"><span>Página</span><span>${SOL_WEB}</span><span>Usuario (RFC)</span><span>${esc(s.rfc)}</span><span>Contraseña</span><span>${esc(p)}</span></div>`, `<button class="btn" type="button" data-act="portalCopiar" data-v="${esc('Solicitud ATRIX ' + s.folio + '\n' + SOL_WEB + '\nUsuario (RFC): ' + s.rfc + '\nContraseña: ' + p)}">Copiar datos</button>`); else toast('No se pudo cambiar: ' + solErr(r), true); }); },
     solEliminar: d => { const s = solDe(d.id); if (!s) return;
-      openModal('Borrar solicitud ' + s.folio, `<p style="margin:0 0 8px">Se borrarán la solicitud de <b>${esc(s.nombre)}</b>, su acceso y <b>todos sus documentos</b>. No se puede deshacer.</p><div class="note">Si quieres conservar el expediente, primero usa «Exportar expediente»: se descarga un .zip con la carátula y todos los documentos.</div>`,
-        { submitText: 'Borrar definitivamente', left: `<button class="btn" type="button" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>`, onSubmit: async () => { closeModal(); const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'eliminar', user_id: s.user_id }));
+      openModal('Borrar solicitud ' + s.folio, `<p style="margin:0 0 8px">Se borrarán la solicitud de <b>${esc(s.nombre)}</b>, su acceso y <b>todos sus documentos</b>. No se puede deshacer.</p><div class="note">${['aprobada', 'formalizada'].includes(s.etapa) ? '<b>Esta solicitud ya está ' + (s.etapa === 'formalizada' ? 'formalizada' : 'aprobada') + ':</b> su expediente debe conservarse por el plazo legal. Usa «Pasar al expediente del acreditado» en vez de borrar.' : 'Si quieres conservar el expediente, usa «Pasar al expediente del acreditado» (queda en el servidor) o «Exportar expediente» (.zip en tu computadora).'}</div>`,
+        { submitText: 'Borrar definitivamente', left: `<button class="btn" type="button" data-act="solArchivar" data-id="${s.id}">Pasar al expediente del acreditado</button><button class="btn" type="button" data-act="solExportar" data-id="${s.id}">Exportar expediente</button>`, onSubmit: async () => { closeModal(); const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'eliminar', user_id: s.user_id }));
           if (r.status === 200 && r.json && r.json.ok) { SOL.lista = SOL.lista.filter(x => x.id !== s.id); delete SOL.int[s.id]; delete SOL.files[s.id]; if (SOL.sel === s.id) SOL.sel = null; toast('Solicitud borrada'); renderNav(); render(); } else toast('No se pudo borrar: ' + solErr(r), true); } }); }
+  };
+
+  /* ======== 17.33 · OPERACIÓN: formalización y garantías, referencia de pago, conciliación bancaria, usuarios por rol, bitácora y expediente ======== */
+  const OPS = {
+    rol: null, nombre: '', sqlPendiente: false, usuarios: null, bit: null, bitF: { desde: '', usuario: '', col: '', q: '' }, expCache: {}, conc: { sel: {} },
+    ROLES: { direccion: 'Dirección', riesgos: 'Riesgos', contabilidad: 'Contabilidad', consulta: 'Consulta' },
+    ROL_DESC: {
+      direccion: 'Todo: condiciones de contratos, liberación de recursos, eliminaciones, administración y usuarios.',
+      riesgos: 'Solicitudes, propuestas, acreditados, contratos antes de liberarse, formalización y corridas. No registra dinero ni elimina.',
+      contabilidad: 'Cobros, pagos a inversionistas, conciliación bancaria, caja y fondo; documentos de formalización. No cambia condiciones ni libera.',
+      consulta: 'Solo ver y descargar. No guarda cambios.'
+    },
+    rolActual() { return this.rol || 'direccion'; },
+    rolTxt() { return this.ROLES[this.rolActual()] || this.rolActual(); },
+    esDir() { return this.rolActual() === 'direccion'; },
+    usuarioTxt() { try { return (Nube._dentro && Nube.usuario()) || (NATIVO ? 'Mac' : 'Local'); } catch (e) { return 'Local'; } },
+    async cargarRol() {
+      if (!Nube._dentro || !Nube.sesion) { this.rol = 'direccion'; return; }
+      const e = String(Nube.sesion.email || '').toLowerCase();
+      const r = await this._req('GET', '/rest/v1/sistema_usuarios?select=*&email=eq.' + encodeURIComponent(e));
+      if (r.status === 200 && Array.isArray(r.json) && r.json[0]) { const f = r.json[0]; this.sqlPendiente = !('activo' in f); this.rol = !f.rol || f.rol === 'admin' ? 'direccion' : f.rol; this.nombre = f.nombre || ''; }
+      else { this.sqlPendiente = true; this.rol = 'direccion'; }
+      try { renderNav(); render(); } catch (x) { }
+      this.bitSubir();
+    },
+    _req(method, path, body, extra) { return OPS_REQ0 ? OPS_REQ0(method, path, body, extra) : Promise.resolve({ status: 0, text: 'sin conexión', json: null }); },
+    /* ---- Permisos (en el navegador; el servidor además impide que Consulta guarde y que alguien altere la bitácora) ---- */
+    difKeys(a, b) { const ks = new Set(Object.keys(a || {}).concat(Object.keys(b || {}))); return [...ks].filter(k => JSON.stringify((a || {})[k]) !== JSON.stringify((b || {})[k])); },
+    puede(col, obj, prev, borrar) {
+      const rol = this.rolActual(); if (rol === 'direccion') return true;
+      if (rol === 'consulta') return 'Tu usuario es de Consulta: solo puede ver y descargar.';
+      if (borrar) return 'Solo Dirección puede eliminar registros.';
+      const cambia = prev ? this.difKeys(prev, obj) : null;
+      const liberaAhora = obj && obj.formalizacion && obj.formalizacion.liberado && !(prev && prev.formalizacion && prev.formalizacion.liberado);
+      if (col === 'contratos') {
+        if (liberaAhora) return 'Solo Dirección puede liberar los recursos de un contrato.';
+        if (rol === 'riesgos') { if (prev && formLiberado(prev) && cambia.some(k => !['formalizacion', 'notas'].includes(k))) return 'El contrato ya se liberó: solo Dirección puede cambiar sus condiciones.'; return true; }
+        if (rol === 'contabilidad') { if (!prev) return 'Contabilidad no da de alta contratos.'; return cambia.every(k => k === 'formalizacion') ? true : 'Contabilidad solo registra la documentación de formalización; las condiciones las cambia Dirección.'; }
+      }
+      if (col === 'config') {
+        if (obj.id === 'general') { if (rol === 'contabilidad' && prev && cambia.every(k => ['bancoSaldo', 'bancoFecha'].includes(k))) return true; return 'La configuración general solo la cambia Dirección.'; }
+        return true;
+      }
+      if (rol === 'riesgos') return ['clientes', 'corridas'].includes(col) ? true : 'Riesgos no registra pagos ni movimientos de dinero.';
+      if (rol === 'contabilidad') {
+        if (col === 'pagos') return ['pago', 'abonoCapital', 'disposicion'].includes(obj.tipo) || !obj.tipo ? true : 'Los eventos (reestructura, cambio de tasa, condonación, vencimiento anticipado) los registra Dirección.';
+        return ['pagosInv', 'caja', 'fondo', 'clientes', 'inversionistas'].includes(col) ? true : 'Contabilidad no puede cambiar este registro; pídelo a Dirección.';
+      }
+      return true;
+    },
+    reqPermitido(method, path) {
+      const rol = this.rolActual(); if (rol === 'direccion' || method === 'GET') return true;
+      const lectura = /^\/auth\/v1\/token|^\/storage\/v1\/object\/(sign|list)\/|^\/rest\/v1\/sistema_bitacora/.test(path);
+      if (rol === 'consulta') return lectura || /^\/rest\/v1\/rpc\/(rol_sistema|es_admin_sistema)/.test(path) ? true : 'Tu usuario es de Consulta: solo puede ver.';
+      if (rol === 'contabilidad' && /^\/rest\/v1\/solicitudes|^\/functions\/v1\/solicitud-alta/.test(path)) return 'Las solicitudes las califica Riesgos o Dirección.';
+      return true;
+    },
+    /* ---- Bitácora ---- */
+    BIT_PEND: 'atrix-bitacora-pend',
+    resumen(col, obj, prev, accion) {
+      const nom = col === 'contratos' ? 'Contrato ' + (obj.folio || obj.id) : col === 'clientes' ? 'Acreditado ' + (obj.nombre || obj.id) : col === 'pagos' ? ({ pago: 'Pago', abonoCapital: 'Abono a capital', disposicion: 'Disposición' }[obj.tipo] || 'Evento ' + (obj.tipo || '')) + ' ' + money(obj.monto || 0) + ' · ' + ((S.contratos.find(c => c.id === obj.contratoId) || {}).folio || '') : col === 'inversiones' ? 'Inversión ' + (obj.folio || obj.id) : col === 'pagosInv' ? 'Pago a inversionista ' + money(obj.monto || 0) : col === 'config' ? 'Configuración ' + obj.id : col + ' ' + (obj.folio || obj.nombre || obj.id);
+      if (accion !== 'cambio') return (accion === 'alta' ? 'Alta · ' : 'Baja · ') + nom;
+      const ks = this.difKeys(prev, obj).filter(k => !['actualizado'].includes(k));
+      if (ks.includes('formalizacion')) { const a0 = (prev.formalizacion || {}), a1 = (obj.formalizacion || {}); const its = this.difKeys(a0.items, a1.items); const nm = k => ((this.items(obj).find(x => x.k === k) || {}).n || k); const det = its.map(k => { const x = (a1.items || {})[k] || {}; return nm(k) + ': ' + (x.na ? 'no aplica (' + (x.motivo || '') + ')' : x.ok ? 'cumplido' + (x.vence ? ' hasta ' + x.vence : '') : 'pendiente'); }); if (a1.liberado && !a0.liberado) det.push('RECURSOS LIBERADOS el ' + a1.liberado.fecha); if (!prev.formalizacion) det.push('inicia control de formalización'); const otros = ks.filter(k => k !== 'formalizacion'); return 'Formalización · ' + nom + ' · ' + det.join(' · ') + (otros.length ? ' · también: ' + otros.join(', ') : ''); }
+      const v = x => x == null ? '—' : typeof x === 'object' ? '(…)' : String(x).slice(0, 40);
+      return 'Cambio · ' + nom + ' · ' + ks.slice(0, 6).map(k => k + ': ' + v(prev[k]) + ' → ' + v(obj[k])).join(' · ') + (ks.length > 6 ? ' · +' + (ks.length - 6) : '');
+    },
+    recorta(o, ks) { if (!o) return null; const r = {}; (ks || Object.keys(o)).forEach(k => { if (k in o) r[k] = /pass|secret|llave/i.test(k) ? '***' : o[k]; }); const t = JSON.stringify(r); return t.length > 12000 ? { recortado: true, llaves: Object.keys(r) } : r; },
+    registrar(col, obj, prev, accion) {
+      if (col === 'config' && obj && ['conciliacion'].includes(obj.id) && accion === 'cambio') return; // la carga del estado de cuenta se registra aparte
+      const ks = accion === 'cambio' ? this.difKeys(prev, obj) : null; if (accion === 'cambio' && !ks.length) return;
+      this.bitPush({ coleccion: col, registro_id: String(obj && obj.id || ''), accion, resumen: this.resumen(col, obj, prev, accion).slice(0, 500), antes: accion === 'alta' ? null : this.recorta(prev, ks), despues: accion === 'baja' ? null : this.recorta(obj, ks), equipo: Nube.equipo || '' });
+    },
+    bitPush(e) { e.creado_local = new Date().toISOString(); let q = []; try { q = JSON.parse(localStorage.getItem(this.BIT_PEND) || '[]'); } catch (x) { } q.push(e); if (q.length > 3000) q = q.slice(-3000); try { localStorage.setItem(this.BIT_PEND, JSON.stringify(q)); } catch (x) { } this.bitSubir(); },
+    _subiendo: false,
+    async bitSubir() {
+      if (this._subiendo || !Nube._dentro || this.sqlPendiente) return; let q = []; try { q = JSON.parse(localStorage.getItem(this.BIT_PEND) || '[]'); } catch (x) { } if (!q.length) return;
+      this._subiendo = true;
+      try {
+        const lote = q.slice(0, 200).map(e => { const o = Object.assign({}, e); const cl = o.creado_local; delete o.creado_local; if (cl) o.resumen = (o.resumen || '') + (Date.now() - Date.parse(cl) > 120000 ? ' · (capturado ' + new Date(cl).toLocaleString('es-MX') + ')' : ''); return o; });
+        const r = await this._req('POST', '/rest/v1/sistema_bitacora', JSON.stringify(lote), { Prefer: 'return=minimal' });
+        if (r.status >= 200 && r.status < 300) { let q2 = []; try { q2 = JSON.parse(localStorage.getItem(this.BIT_PEND) || '[]'); } catch (x) { } localStorage.setItem(this.BIT_PEND, JSON.stringify(q2.slice(lote.length))); if (q2.length > lote.length) setTimeout(() => this.bitSubir(), 500); }
+        else if (/sistema_bitacora|relation|does not exist|42P01|PGRST2/.test(r.text || '')) this.sqlPendiente = true;
+      } catch (x) { } finally { this._subiendo = false; }
+    },
+    bitPendientes() { try { return JSON.parse(localStorage.getItem(this.BIT_PEND) || '[]').length; } catch (x) { return 0; } },
+    /* ---- Referencia de pago (única por contrato, con dígito verificador) ---- */
+    ref(c) {
+      if (!c) return ''; if (c.referenciaPago) return c.referenciaPago;
+      let h = 2166136261; const s = String(c.id || c.folio || ''); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+      const n = h % 10000000; const chk = (97 - (n * 100) % 97) % 97; return 'ATX' + String(n).padStart(7, '0') + String(chk).padStart(2, '0');
+    },
+    refValida(r) { const m = /^ATX(\d{7})(\d{2})$/.exec(String(r || '').toUpperCase()); if (!m) return false; const n = Number(m[1]); return (97 - (n * 100) % 97) % 97 === Number(m[2]); },
+    /* ---- Formalización ---- */
+    items(c) {
+      const p = c.producto, arr = p === 'AF' || p === 'AP', cred = p === 'PS' || p === 'PR';
+      const L = [
+        ['contrato', 'Contrato firmado por todas las partes', { req: 1 }],
+        ['ratificacion', 'Firmas ratificadas ante fedatario público', { req: 1 }],
+        ['pagare', 'Pagaré suscrito y avalado', { req: 1 }],
+        ['aval', 'Aval u obligado solidario firmó', { req: 1 }],
+        ['kyc', 'Expediente completo e identificación del cliente y su beneficiario controlador', { req: 1 }],
+        ['seguro', arr ? 'Seguro del bien con ATRIX como beneficiario preferente' : 'Seguro de la garantía con ATRIX como beneficiario preferente', { req: 1, seguro: 1 }]
+      ];
+      if (arr) L.push(['factura', 'Factura del bien a nombre de ' + (CFG().razonSocial || 'COLIUM, S.A. de C.V.'), { req: 1 }], ['gpsLoc', 'GPS de localización instalado', { req: 1, na: 1 }], ['gpsMotor', 'GPS con paro de motor instalado', { req: 1, na: 1 }], ['comision', 'Comisión de apertura cobrada a la firma', { req: 1, na: 1 }]);
+      if (cred || p === 'CE') L.push(['fideicomiso', 'Garantía inmobiliaria aportada a fideicomiso (Click Seguridad Jurídica)', { req: 1, na: p === 'CE' ? 1 : 0 }]);
+      return L.map(([k, n, o]) => ({ k, n, ...o }));
+    },
+    F(c) { return c.formalizacion || null; },
+    estadoItem(c, it) {
+      const x = ((this.F(c) || {}).items || {})[it.k] || {};
+      if (x.na && it.na) return { ok: true, txt: 'No aplica', cls: 'gray', det: x.motivo || '' };
+      if (!x.ok) return { ok: false, txt: 'Pendiente', cls: 'atrasado', det: '' };
+      if (it.seguro) { if (!x.vence) return { ok: false, txt: 'Falta vigencia', cls: 'atrasado', det: [x.aseguradora, x.poliza].filter(Boolean).join(' · ') }; const d = E.daysBetween(S.hoy, x.vence); return { ok: d >= 0, txt: d < 0 ? 'Vencido' : d <= 30 ? 'Vence en ' + dias(d) : 'Vigente', cls: d < 0 ? 'vencido' : d <= 30 ? 'atrasado' : 'vigente', det: [x.aseguradora, x.poliza ? 'póliza ' + x.poliza : '', 'hasta ' + fdate(x.vence)].filter(Boolean).join(' · ') }; }
+      return { ok: true, txt: 'Cumplido', cls: 'vigente', det: [x.fecha ? fdate(x.fecha) : '', x.nota || ''].filter(Boolean).join(' · ') };
+    },
+    avance(c) { const its = this.items(c); const ok = its.filter(it => this.estadoItem(c, it).ok); return { total: its.length, ok: ok.length, faltan: its.filter(it => !this.estadoItem(c, it).ok), completo: ok.length === its.length }; },
+    porFormalizar() { return S.contratos.filter(c => c.estatus !== 'cancelado' && !formLiberado(c)); },
+    seguros() { const out = []; for (const c of S.contratos) { if (c.estatus === 'cancelado' || !c.formalizacion) continue; let ev; try { ev = EV(c); } catch (e) { continue; } if (ev.estatus === 'liquidado') continue; const x = (c.formalizacion.items || {}).seguro || {}; out.push({ c, x, d: x.vence ? E.daysBetween(S.hoy, x.vence) : null }); } return out.sort((a, b) => (a.d == null ? -1e9 : a.d) - (b.d == null ? -1e9 : b.d)); },
+    alertas() { const sg = this.seguros(); return this.porFormalizar().length + sg.filter(s => s.d == null || s.d <= 30).length; },
+    formalHTML(c) {
+      const Fz = this.F(c); const ref = this.ref(c);
+      if (!Fz) return `<div class="note">Este contrato se registró antes del control de formalización (versión 17.33), así que no tiene candado. Puedes iniciar el control para llevar aquí la vigencia del seguro, los GPS y los documentos.</div><div class="kv" style="max-width:520px"><span>Referencia de pago</span><span class="b">${ref}</span></div><div class="pill-row" style="margin-top:10px"><button class="btn primary" data-act="formIniciar" data-id="${c.id}">Iniciar control de formalización</button></div>`;
+      const A = this.avance(c); const lib = Fz.liberado;
+      const filas = this.items(c).map(it => { const e = this.estadoItem(c, it); return `<tr><td class="l">${esc(it.n)}${it.na ? ' <span class="muted small">(puede no aplicar)</span>' : ''}</td><td class="l">${chip(e.cls, e.txt)}</td><td class="l small">${esc(e.det)}</td><td><button class="btn sm" data-act="formItem" data-id="${c.id}" data-k="${it.k}">${e.ok && e.txt !== 'No aplica' ? 'Editar' : 'Registrar'}</button></td></tr>`; }).join('');
+      const estado = lib ? `<div class="note" style="border-color:var(--green)"><b>Recursos liberados</b> el ${fdate(lib.fecha)} por ${esc(lib.por || '—')}.${A.completo ? '' : ' Hoy faltan ' + A.faltan.length + ' requisito(s): revisa el seguro o los documentos.'}</div>`
+        : `<div class="note" style="border-color:${A.completo ? 'var(--green)' : 'var(--orange)'}"><b>${A.completo ? 'Listo para liberar recursos.' : 'Candado activo: faltan ' + A.faltan.length + ' de ' + A.total + ' requisitos.'}</b> ${A.completo ? 'Dirección puede liberar los recursos.' : 'Mientras no esté completo, no se puede liberar ni registrar pagos o disposiciones.'}</div>`;
+      return `${estado}<div class="kv" style="max-width:640px;margin:8px 0 12px"><span>Avance</span><span class="b">${A.ok} de ${A.total}</span><span>Referencia de pago del cliente</span><span class="b">${ref} <button class="btn sm" data-act="portalCopiar" data-v="${ref}">Copiar</button></span>${CFG().cobroClabe ? `<span>Depositar en</span><span>${esc(CFG().cobroBanco || '')} · CLABE ${esc(CFG().cobroClabe)}</span>` : '<span>Cuenta de cobranza</span><span class="muted">Captúrala en Administración › Datos de la empresa</span>'}</div>
+        <div class="tscroll"><table><thead><tr><th class="l">Requisito</th><th class="l">Estado</th><th class="l">Detalle</th><th></th></tr></thead><tbody>${filas}</tbody></table></div>
+        ${!lib ? `<div class="pill-row" style="margin-top:12px"><button class="btn primary" data-act="formLiberar" data-id="${c.id}" ${A.completo && this.esDir() ? '' : 'disabled title="' + (A.completo ? 'Solo Dirección libera recursos' : 'Completa los requisitos') + '"'}>Liberar recursos</button>${c.disposicionPendiente ? `<span class="muted small">Al liberar se registrará la disposición inicial de ${money(c.disposicionPendiente)}.</span>` : ''}</div>` : ''}`;
+    },
+    /* ---- Conciliación bancaria ---- */
+    concDoc() { return S.config.find(x => x.id === 'conciliacion') || { id: 'conciliacion', movs: [] }; },
+    num(s) { s = String(s == null ? '' : s).trim(); if (!s) return null; let neg = /^\(.*\)$/.test(s) || /^-|-$/.test(s.replace(/\s/g, '')); s = s.replace(/[^\d.,]/g, ''); if (!s) return null; if (/,\d{1,2}$/.test(s) && (s.match(/,/g) || []).length === 1) s = s.replace(/\./g, '').replace(',', '.'); else s = s.replace(/,/g, ''); const n = Number(s); return isFinite(n) ? (neg ? -n : n) : null; },
+    fecha(s) {
+      s = String(s || '').trim().toLowerCase(); let m;
+      if ((m = /^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/.exec(s))) return m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0');
+      if ((m = /^(\d{1,2})[-/. ](\d{1,2})[-/. ](\d{2,4})/.exec(s))) { const y = m[3].length === 2 ? '20' + m[3] : m[3]; return y + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0'); }
+      const MS = { ene: 1, jan: 1, feb: 2, mar: 3, abr: 4, apr: 4, may: 5, jun: 6, jul: 7, ago: 8, aug: 8, sep: 9, set: 9, oct: 10, nov: 11, dic: 12, dec: 12 };
+      if ((m = /^(\d{1,2})[-/. ]([a-zé]{3})[a-z.]*[-/. ](\d{2,4})/.exec(s)) && MS[m[2]]) { const y = m[3].length === 2 ? '20' + m[3] : m[3]; return y + '-' + String(MS[m[2]]).padStart(2, '0') + '-' + m[1].padStart(2, '0'); }
+      return null;
+    },
+    filas(texto) {
+      const L = String(texto || '').replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim()); if (!L.length) return [];
+      const muestra = L.slice(0, 15).join('\n'); const cnt = ch => (muestra.match(new RegExp(ch === '\t' ? '\\t' : '\\' + ch, 'g')) || []).length;
+      const d = ['\t', ';', ',', '|'].sort((a, b) => cnt(b) - cnt(a))[0];
+      const split = l => { const out = []; let cur = '', q = false; for (let i = 0; i < l.length; i++) { const ch = l[i]; if (ch === '"') { if (q && l[i + 1] === '"') { cur += '"'; i++; } else q = !q; } else if (ch === d && !q) { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out.map(x => x.trim()); };
+      return L.map(split);
+    },
+    leer(texto) {
+      const R = this.filas(texto); const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+      let hi = R.findIndex((r, i) => i < 25 && r.some(c => /fecha/.test(norm(c))) && r.some(c => /abono|deposito|credito|importe|monto|ingreso|cargo|retiro/.test(norm(c))));
+      if (hi < 0) return { error: 'No encontré los encabezados (Fecha, Concepto, Abono/Depósito o Importe). Descarga el estado de cuenta en CSV desde la banca en línea.' };
+      const H = R[hi].map(norm); const col = re => H.findIndex(h => re.test(h));
+      const cF = col(/fecha( de)? (operacion|movimiento)|^fecha$|fecha/), cA = col(/abono|deposito|credito|ingreso/), cC = col(/cargo|retiro|debito|egreso/), cI = col(/importe|monto/);
+      const cD = H.findIndex((h, i) => i !== cF && /concepto|descripcion|referencia|detalle|movimiento|leyenda/.test(h));
+      const cR = H.findIndex((h, i) => i !== cD && i !== cF && /referencia|rastreo|folio/.test(h));
+      if (cF < 0 || (cA < 0 && cI < 0)) return { error: 'El archivo no trae columna de abonos/depósitos ni de importe.' };
+      const movs = []; let leidas = 0;
+      for (const r of R.slice(hi + 1)) {
+        const f = this.fecha(r[cF]); if (!f) continue; leidas++;
+        let m = cA >= 0 ? this.num(r[cA]) : null; if (m == null && cI >= 0) { const im = this.num(r[cI]); if (im != null) { if (cC >= 0 && cA < 0) m = im; else m = im; } }
+        if (cA < 0 && cC >= 0 && cI < 0) m = null;
+        if (m == null || m <= 0.004) continue;
+        const concepto = [cD >= 0 ? r[cD] : '', cR >= 0 && cR !== cD ? r[cR] : ''].filter(Boolean).join(' · ').replace(/\s+/g, ' ').slice(0, 240);
+        movs.push({ fecha: f, concepto, monto: E.r2(m) });
+      }
+      return { movs, leidas };
+    },
+    hash(m) { const s = m.fecha + '|' + m.monto.toFixed(2) + '|' + m.concepto; let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return 'mv' + h.toString(36) + m.monto.toFixed(0); },
+    aplicado(h) { return S.pagos.find(p => p.conc === h) || null; },
+    sugerir(m) {
+      const up = String(m.concepto || '').toUpperCase(); const vivos = vivosCartera().filter(x => formLiberado(x.c)); const out = [];
+      const refs = up.match(/ATX\s*-?\s*\d{9}/g) || [];
+      for (const { c, ev } of vivos) {
+        const r = this.ref(c); let pts = 0, por = [];
+        if (refs.some(x => x.replace(/[^A-Z0-9]/g, '') === r)) { pts += 100; por.push('referencia'); }
+        else if (c.folio && up.replace(/\s/g, '').includes(String(c.folio).toUpperCase().replace(/\s/g, ''))) { pts += 80; por.push('folio'); }
+        const montos = [ev.exigibleHoy, ev.proximo && ev.proximo.total].concat(ev.rows.filter(rw => rowPend(rw) > 0.005 && rw.fecha <= E.iso(E.addDays(m.fecha, 20))).slice(0, 3).map(rw => rowPend(rw))).filter(x => x > 0);
+        if (montos.some(x => Math.abs(x - m.monto) <= 1)) { pts += 40; por.push('importe exacto'); }
+        const cl = cliente(c.clienteId); const pal = String(cl && cl.nombre || '').toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(/[^A-Z0-9]+/).filter(w => w.length >= 4 && !['GRUPO', 'SERVICIOS', 'COMERCIAL', 'MEXICO'].includes(w));
+        const upn = up.normalize('NFD').replace(/[̀-ͯ]/g, ''); const hits = pal.filter(w => upn.includes(w)).length; if (hits) { pts += 15 * Math.min(2, hits); por.push('nombre'); }
+        if (pts) out.push({ c, pts, por });
+      }
+      return out.sort((a, b) => b.pts - a.pts);
+    },
+    /* ---- Expediente del acreditado ---- */
+    async cargarExp(rfc) {
+      rfc = String(rfc || '').toUpperCase(); if (!rfc || !Nube._dentro) { this.expCache[rfc] = { lista: [], error: Nube._dentro ? '' : 'Disponible con sesión en internet' }; return; }
+      this.expCache[rfc] = { cargando: true }; const r = await this._req('GET', '/rest/v1/expedientes?select=folio,nombre,ruta,documentos,archivado,archivado_por&rfc=eq.' + encodeURIComponent(rfc) + '&order=archivado.desc');
+      this.expCache[rfc] = r.status === 200 && Array.isArray(r.json) ? { lista: r.json } : { lista: [], error: /expedientes|42P01|PGRST2/.test(r.text || '') ? 'Falta correr operacion_17_33.sql en Supabase' : 'No se pudo leer (' + r.status + ')' };
+      try { render(); } catch (e) { }
+    },
+    expHTML(cl) {
+      const rfc = String(cl.rfc || '').toUpperCase(); if (!rfc) return `<h3>Expediente</h3><div class="note">Captura el RFC del acreditado para ligar su expediente.</div>`;
+      const E0 = this.expCache[rfc]; if (!E0) { setTimeout(() => this.cargarExp(rfc), 0); return `<h3>Expediente</h3><div class="note">Cargando expediente…</div>`; }
+      if (E0.cargando) return `<h3>Expediente</h3><div class="note">Cargando expediente…</div>`;
+      if (E0.error) return `<h3>Expediente</h3><div class="note">${esc(E0.error)}</div>`;
+      if (!E0.lista.length) return `<h3>Expediente</h3><div class="note">Aún no hay expediente archivado. Se guarda desde Solicitudes con «Pasar expediente al acreditado».</div>`;
+      return `<h3>Expediente (se conserva por el plazo legal)</h3>${E0.lista.map(x => `<div class="kv" style="margin-bottom:6px"><span class="b">Solicitud ${esc(x.folio)}</span><span>archivada el ${fdate(String(x.archivado).slice(0, 10))}${x.archivado_por ? ' · ' + esc(String(x.archivado_por).replace(NUBE_DOM, '')) : ''}</span></div><div class="tscroll"><table><tbody>${(x.documentos || []).map(d => `<tr><td class="l">${esc(d.nombre)}</td><td>${(d.tam / 1048576).toFixed(1)} MB</td><td><button class="btn sm" data-act="expVer" data-ruta="${esc(x.ruta + d.nombre)}" data-nom="${esc(d.nombre)}" data-mime="${esc(d.tipo || '')}">Abrir</button></td></tr>`).join('') || '<tr><td class="l muted">Sin documentos</td></tr>'}</tbody></table></div>`).join('')}`;
+    }
+  };
+  const formLiberado = c => !c.formalizacion || !!c.formalizacion.liberado;
+  // Envuelve las llamadas al servidor: permisos por rol y bitácora de lo que se cambia en Solicitudes y usuarios
+  const OPS_REQ0 = Nube.req.bind(Nube);
+  Nube.req = async function (method, path, body, extra, sinToken) {
+    const m = String(method || 'GET').toUpperCase(); const ok = sinToken ? true : OPS.reqPermitido(m, String(path || ''));
+    if (ok !== true) { toast(ok, true); return { status: 403, text: ok, json: { error: ok } }; }
+    const r = await OPS_REQ0(method, path, body, extra, sinToken);
+    try {
+      const esSol = /^\/rest\/v1\/(solicitudes|solicitudes_interno|expedientes)|^\/functions\/v1\/solicitud-alta/.test(path), esUsr = /^\/functions\/v1\/portal-admin/.test(path) && /"accion":"usr(Alta|Cambio|Pass)"/.test(String(body || ''));
+      if (m !== 'GET' && r.status >= 200 && r.status < 300 && (esSol || esUsr)) {
+        let b = {}; try { b = JSON.parse(body || '{}'); } catch (e) { } if (b && typeof b === 'object') { for (const k of Object.keys(b)) if (/pass|password/i.test(k)) b[k] = '***'; }
+        const reg = String(path).split('?')[0].split('/').pop(); const id = (String(path).match(/id=eq\.([^&]+)/) || [])[1] || b.user_id || b.usuario || '';
+        OPS.bitPush({ coleccion: /portal-admin/.test(path) ? 'usuarios' : 'solicitudes', registro_id: decodeURIComponent(String(id)).slice(0, 80), accion: b.accion || m.toLowerCase(), resumen: ((b.accion ? b.accion + ' · ' : '') + reg + ' · ' + JSON.stringify(b).slice(0, 300)).slice(0, 500), antes: null, despues: OPS.recorta(b), equipo: Nube.equipo || '' });
+      }
+    } catch (e) { }
+    return r;
+  };
+
+  VIEWS.garantias = () => {
+    const pf = OPS.porFormalizar(); const sg = OPS.seguros(); const venc = sg.filter(s => s.d != null && s.d < 0), prox = sg.filter(s => s.d != null && s.d >= 0 && s.d <= 30), sin = sg.filter(s => s.d == null);
+    const k = (cls, t, v, s) => `<div class="glass kpi ${cls}"><div class="k">${t}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+    return `<div class="kpis">${k(pf.length ? 'orange' : 'green', 'Por formalizar', pf.length, money(sum(pf, c => Number(c.monto) || 0)) + ' sin liberar')}${k(venc.length ? 'red' : 'green', 'Seguros vencidos', venc.length, venc.length ? 'renuévalos de inmediato' : 'ninguno')}${k(prox.length ? 'orange' : 'blue', 'Seguros por vencer', prox.length, 'en los próximos 30 días')}${k(sin.length ? 'gray' : 'blue', 'Sin vigencia capturada', sin.length, 'contratos vivos con control de formalización')}</div>
+      <div class="glass panel ${pf.length ? 'alerta' : ''}" style="margin-top:14px"><div class="ph"><h2>Contratos por formalizar</h2><span class="muted small">El candado impide liberar recursos, registrar pagos o disposiciones mientras falte algo</span></div>
+        ${pf.length ? `<div class="tscroll"><table><thead><tr><th class="l">Folio</th><th class="l">Acreditado</th><th class="l">Producto</th><th>Monto</th><th>Avance</th><th class="l">Falta</th><th>Días</th></tr></thead><tbody>${pf.map(c => { const A = OPS.avance(c); return `<tr class="click" data-act="fichaContrato" data-id="${c.id}" data-tab="formal"><td class="l b">${esc(c.folio)}</td><td class="l">${esc(clienteNombre(c.clienteId))}</td><td class="l">${esc(prodNombre(c.producto))}</td><td>${money(c.monto)}</td><td>${A.ok} / ${A.total}</td><td class="l small">${esc(A.faltan.map(x => x.n).join(' · ') || 'Listo para liberar')}</td><td>${c.creado ? Math.max(0, E.daysBetween(c.creado, S.hoy)) : '—'}</td></tr>`; }).join('')}</tbody></table></div>` : emptyBox('Todo formalizado', 'No hay contratos esperando liberación.')}</div>
+      <div class="glass panel ${venc.length ? 'alerta' : ''}" style="margin-top:14px"><div class="ph"><h2>Seguros de los bienes y garantías</h2><span class="muted small">Aviso 30 días antes del vencimiento</span></div>
+        ${sg.length ? `<div class="tscroll"><table><thead><tr><th class="l">Folio</th><th class="l">Acreditado</th><th class="l">Aseguradora</th><th class="l">Póliza</th><th>Vence</th><th class="l">Estado</th></tr></thead><tbody>${sg.map(s => `<tr class="click" data-act="fichaContrato" data-id="${s.c.id}" data-tab="formal"><td class="l b">${esc(s.c.folio)}</td><td class="l">${esc(clienteNombre(s.c.clienteId))}</td><td class="l">${esc(s.x.aseguradora || '—')}</td><td class="l">${esc(s.x.poliza || '—')}</td><td>${s.x.vence ? fdate(s.x.vence) : '—'}</td><td class="l">${s.d == null ? chip('gray', 'Sin capturar') : s.d < 0 ? chip('vencido', 'Vencido hace ' + dias(-s.d)) : s.d <= 30 ? chip('atrasado', 'Vence en ' + dias(s.d)) : chip('vigente', 'Vigente')}</td></tr>`).join('')}</tbody></table></div>` : emptyBox('Sin seguros registrados', 'Se registran en la pestaña Formalización de cada contrato.')}</div>`;
+  };
+
+  VIEWS.conciliacion = () => {
+    const D = OPS.concDoc(); const movs = (D.movs || []).slice().sort((a, b) => a.fecha < b.fecha ? 1 : -1); const f = OPS.conc.f || 'pend';
+    const est = m => OPS.aplicado(m.h) ? 'aplicado' : m.ign ? 'ignorado' : 'pend';
+    const pend = movs.filter(m => est(m) === 'pend'), apl = movs.filter(m => est(m) === 'aplicado'), ign = movs.filter(m => est(m) === 'ignorado');
+    const ver = f === 'pend' ? pend : f === 'aplicado' ? apl : f === 'ignorado' ? ign : movs;
+    const k = (cls, key, t, a) => `<div class="glass kpi ${cls} click ${f === key ? 'on' : ''}" data-act="concFiltro" data-v="${key}" role="button" tabindex="0"><div class="k">${t}</div><div class="v">${money(sum(a, x => x.monto))}</div><div class="s">${a.length} depósito${a.length === 1 ? '' : 's'}</div></div>`;
+    const fila = m => { const e = est(m); const p = OPS.aplicado(m.h); const sg = e === 'pend' ? OPS.sugerir(m) : []; const sel = OPS.conc.sel[m.h] || (sg[0] && sg[0].c.id) || '';
+      const opciones = vivosCartera().filter(x => formLiberado(x.c)).map(x => x.c);
+      return `<tr class="${e !== 'pend' ? 'dim' : ''}"><td class="l">${fdate(m.fecha)}</td><td class="l small">${esc(m.concepto || '—')}</td><td class="b">${money(m.monto)}</td><td class="l">${e === 'aplicado' ? chip('vigente', 'Aplicado a ' + ((S.contratos.find(c => c.id === p.contratoId) || {}).folio || '')) : e === 'ignorado' ? chip('gray', 'No es cobranza') + (m.motivo ? ' <span class="muted small">' + esc(m.motivo) + '</span>' : '') : sg.length ? '<span class="small">Sugerido: <b>' + esc(sg[0].c.folio) + '</b> · ' + esc(clienteNombre(sg[0].c.clienteId)) + ' <span class="muted">(' + sg[0].por.join(', ') + ')</span></span>' : '<span class="muted small">Sin coincidencia</span>'}</td>
+        <td class="l">${e === 'pend' ? `<div class="pill-row" style="flex-wrap:nowrap"><select class="search" data-act-change="concSel" data-h="${m.h}" style="max-width:190px"><option value="">Elegir contrato…</option>${opciones.map(c => `<option value="${c.id}" ${sel === c.id ? 'selected' : ''}>${esc(c.folio)} · ${esc(clienteNombre(c.clienteId)).slice(0, 26)}</option>`).join('')}</select><button class="btn sm primary" data-act="concAplicar" data-h="${m.h}">Aplicar</button><button class="btn sm" data-act="concIgnorar" data-h="${m.h}">No es cobranza</button></div>` : e === 'ignorado' ? `<button class="btn sm" data-act="concRestaurar" data-h="${m.h}">Regresar a pendientes</button>` : ''}</td></tr>`; };
+    return `<div class="glass panel"><div class="ph"><h2>Cargar estado de cuenta del banco</h2><div class="pill-row"><label class="btn primary" style="cursor:pointer">Elegir archivo CSV<input type="file" accept=".csv,.txt,.tsv,text/csv,text/plain" data-act-change="concArchivo" style="display:none"></label><button class="btn" data-act="concPegar">Pegar movimientos</button>${pend.length ? '<button class="btn" data-act="concCSV">Descargar pendientes</button>' : ''}</div></div>
+        <div class="note" style="margin:0">Descarga los movimientos de la banca en línea en <b>CSV</b> (o cópialos de la tabla y pégalos). El sistema toma solo los <b>depósitos</b>, no repite los que ya cargaste y sugiere a qué contrato corresponden: primero por la <b>referencia de pago</b> (ATX + 9 dígitos), luego por folio, importe exacto y nombre. Al aplicar se abre el cobro ya llenado para que lo confirmes.</div></div>
+      <div class="kpis" style="margin-top:14px">${k(pend.length ? 'orange' : 'green', 'pend', 'Pendientes de aplicar', pend)}${k('green', 'aplicado', 'Aplicados a contratos', apl)}${k('gray', 'ignorado', 'No son cobranza', ign)}${k('accent', 'todos', 'Todo lo cargado', movs)}</div>
+      <div class="glass panel" style="margin-top:14px"><div class="ph"><h2>Depósitos ${({ pend: 'pendientes', aplicado: 'aplicados', ignorado: 'que no son cobranza', todos: 'cargados' })[f]}</h2><span class="muted small">${ver.length} movimiento${ver.length === 1 ? '' : 's'}</span></div>
+        ${ver.length ? `<div class="tscroll"><table><thead><tr><th class="l">Fecha</th><th class="l">Concepto del banco</th><th>Depósito</th><th class="l">Resultado</th><th class="l"></th></tr></thead><tbody>${ver.slice(0, 400).map(fila).join('')}</tbody></table></div>` : emptyBox(f === 'pend' ? 'Nada pendiente' : 'Sin movimientos', f === 'pend' ? 'Carga el estado de cuenta para conciliar.' : '')}</div>`;
+  };
+
+  VIEWS.usuarios = () => {
+    const rol = OPS.rolActual(); const B = OPS.bit; const bf = OPS.bitF; const pend = OPS.bitPendientes();
+    const U = OPS.usuarios; if (OPS.esDir() && Nube._dentro && !U && !OPS._cargandoU) setTimeout(() => ACT.usrCargar(), 0);
+    const usuariosHTML = !OPS.esDir() ? '' : `<div class="glass panel" style="margin-top:14px"><div class="ph"><h2>Usuarios del sistema</h2><div class="pill-row"><button class="btn sm primary" data-act="usrNuevo" ${Nube._dentro ? '' : 'disabled'}>Nuevo usuario</button><button class="btn sm" data-act="usrCargar" ${Nube._dentro ? '' : 'disabled'}>Actualizar</button></div></div>
+      ${!Nube._dentro ? '<div class="note">Los usuarios se administran con sesión en internet.</div>' : OPS.sqlPendiente ? '<div class="note" style="border-color:var(--orange)">Para usar roles y bitácora falta correr una sola vez <b>operacion_17_33.sql</b> en Supabase › SQL Editor y publicar las funciones actualizadas (ver la guía de la versión 17.33).</div>' : ''}
+      ${U && U.error ? `<div class="note">${esc(U.error)}</div>` : ''}
+      ${U && U.lista ? `<div class="tscroll"><table><thead><tr><th class="l">Usuario</th><th class="l">Nombre</th><th class="l">Rol</th><th class="l">Estado</th><th class="l">Último acceso</th><th class="l"></th></tr></thead><tbody>${U.lista.map(u => { const us = String(u.email).replace(NUBE_DOM, ''); const yo = String(u.email) === String((Nube.sesion || {}).email || '').toLowerCase(); return `<tr class="${u.activo === false ? 'dim' : ''}"><td class="l b">${esc(us)}${yo ? ' <span class="muted small">(tú)</span>' : ''}</td><td class="l">${esc(u.nombre || '—')}</td><td class="l">${yo ? esc(OPS.ROLES[u.rol] || u.rol) : `<select class="search" data-act-change="usrRol" data-u="${esc(us)}">${Object.keys(OPS.ROLES).map(r => `<option value="${r}" ${u.rol === r ? 'selected' : ''}>${OPS.ROLES[r]}</option>`).join('')}</select>`}</td><td class="l">${u.activo === false ? chip('gray', 'Desactivado') : chip('vigente', 'Activo')}</td><td class="l small">${u.ultimo ? new Date(u.ultimo).toLocaleString('es-MX') : 'Nunca'}</td><td class="l">${yo ? '' : `<div class="pill-row" style="flex-wrap:nowrap"><button class="btn sm" data-act="usrPass" data-u="${esc(us)}">Nueva contraseña</button><button class="btn sm ${u.activo === false ? '' : 'danger'}" data-act="usrActivo" data-u="${esc(us)}" data-v="${u.activo === false ? '1' : '0'}">${u.activo === false ? 'Activar' : 'Desactivar'}</button></div>`}</td></tr>`; }).join('')}</tbody></table></div>` : Nube._dentro ? '<div class="note">Cargando usuarios…</div>' : ''}
+      <div class="grid2" style="margin-top:10px">${Object.keys(OPS.ROLES).map(r => `<div class="kv"><span class="b">${OPS.ROLES[r]}</span><span class="small">${esc(OPS.ROL_DESC[r])}</span></div>`).join('')}</div></div>`;
+    const bitHTML = `<div class="glass panel" style="margin-top:14px"><div class="ph"><h2>Bitácora</h2><div class="pill-row">${B && B.lista && B.lista.length ? '<button class="btn sm" data-act="bitCSV">Descargar CSV</button>' : ''}${pend ? `<button class="btn sm" data-act="bitSubirAhora">Subir ${pend} pendiente${pend === 1 ? '' : 's'}</button>` : ''}</div></div>
+      <div class="note" style="margin:0 0 10px">Registra quién cambió qué y cuándo, con el valor anterior y el nuevo. Se guarda en el servidor y <b>no se puede modificar ni borrar</b>.${pend ? ' Hay ' + pend + ' registro(s) en esta computadora esperando subir.' : ''}</div>
+      <form id="bitForm" class="row3" style="align-items:end">${F('Desde', 'desde', 'date', bf.desde || E.iso(E.addDays(S.hoy, -30)))}${F('Usuario', 'usuario', 'text', bf.usuario, 'placeholder="Todos"')}${Sel('Qué', 'col', [['', 'Todo'], ['contratos', 'Contratos'], ['pagos', 'Pagos y eventos'], ['clientes', 'Acreditados'], ['inversiones', 'Inversiones'], ['pagosInv', 'Pagos a inversionistas'], ['caja', 'Caja'], ['config', 'Configuración'], ['solicitudes', 'Solicitudes'], ['usuarios', 'Usuarios']], bf.col)}</form>
+      <div class="pill-row" style="margin:8px 0 12px"><input class="search" id="bitQ" placeholder="Buscar en el resumen (folio, nombre…)" value="${esc(bf.q || '')}" style="min-width:260px"><button class="btn primary" data-act="bitCargar" ${Nube._dentro ? '' : 'disabled'}>Consultar</button></div>
+      ${!Nube._dentro ? '<div class="note">La bitácora se consulta con sesión en internet.</div>' : !B ? '' : B.cargando ? '<div class="note">Consultando…</div>' : B.error ? `<div class="note">${esc(B.error)}</div>` : B.lista.length ? `<div class="tscroll" style="max-height:560px;overflow:auto"><table><thead><tr><th class="l">Fecha y hora</th><th class="l">Usuario</th><th class="l">Rol</th><th class="l">Acción</th><th class="l">Resumen</th><th></th></tr></thead><tbody>${B.lista.map((x, i) => `<tr><td class="l small">${new Date(x.creado).toLocaleString('es-MX')}</td><td class="l">${esc(String(x.email || '').replace(NUBE_DOM, ''))}</td><td class="l small">${esc(OPS.ROLES[x.rol] || x.rol || '')}</td><td class="l">${esc(x.accion)}</td><td class="l small">${esc(x.resumen || '')}</td><td><button class="btn sm" data-act="bitVer" data-i="${i}">Detalle</button></td></tr>`).join('')}</tbody></table></div><div class="muted small" style="margin-top:6px">${B.lista.length} registro(s)${B.lista.length >= 500 ? ' · se muestran los 500 más recientes; acota con los filtros' : ''}</div>` : emptyBox('Sin registros', 'No hay movimientos con esos filtros.')}</div>`;
+    return `<div class="glass panel"><div class="ph"><h2>Mi usuario</h2></div><div class="kv" style="max-width:640px"><span>Usuario</span><span class="b">${esc(OPS.usuarioTxt())}${OPS.nombre ? ' · ' + esc(OPS.nombre) : ''}</span><span>Rol</span><span class="b">${esc(OPS.rolTxt())}</span><span>Puede</span><span>${esc(OPS.ROL_DESC[rol])}</span></div></div>${usuariosHTML}${bitHTML}`;
+  };
+
+  const OPS_ACT = {
+    /* Formalización */
+    formIniciar: async d => { const c = S.contratos.find(x => x.id === d.id); if (!c) return; await Store.save('contratos', { ...c, referenciaPago: OPS.ref(c), formalizacion: { items: {}, creada: S.hoy, liberado: { fecha: c.fechaInicio || S.hoy, por: 'registrado antes de 17.33' } } }); toast('Control de formalización iniciado'); },
+    formItem: d => { const c = S.contratos.find(x => x.id === d.id); if (!c || !c.formalizacion) return; const it = OPS.items(c).find(x => x.k === d.k); if (!it) return; const x = (c.formalizacion.items || {})[it.k] || {};
+      const body = `<p class="muted small" style="margin:0 0 10px">${esc(c.folio)} · ${esc(clienteNombre(c.clienteId))}</p><div class="row">${Chk('Cumplido', 'ok', x.ok)}${it.na ? Chk('No aplica a esta operación', 'na', x.na) : '<div></div>'}</div>
+        ${it.seguro ? `<div class="row3">${F('Aseguradora', 'aseguradora', 'text', x.aseguradora || '')}${F('Póliza', 'poliza', 'text', x.poliza || '')}${F('Vigente hasta *', 'vence', 'date', x.vence || '')}</div>` : ''}
+        <div class="row">${F('Fecha', 'fecha', 'date', x.fecha || S.hoy)}${it.na ? F('Motivo si no aplica', 'motivo', 'text', x.motivo || '', 'placeholder="Ej. cafetera: no lleva GPS por política"') : '<div></div>'}</div>${F('Nota o soporte (número de escritura, notaría, folio…)', 'nota', 'text', x.nota || '')}`;
+      openModal(it.n, body, { onSubmit: async v => {
+        if (v.na && !v.motivo) return toast('Escribe por qué no aplica', true); if (it.seguro && v.ok && !v.vence) return toast('Captura hasta cuándo está vigente el seguro', true);
+        const c2 = S.contratos.find(y => y.id === c.id); const Fz = JSON.parse(JSON.stringify(c2.formalizacion)); Fz.items = Fz.items || {};
+        Fz.items[it.k] = { ok: !!v.ok && !v.na, na: !!v.na, fecha: v.fecha || S.hoy, nota: v.nota || '', motivo: v.na ? v.motivo : '', por: OPS.usuarioTxt(), ...(it.seguro ? { aseguradora: v.aseguradora || '', poliza: v.poliza || '', vence: v.vence || '' } : {}) };
+        await Store.save('contratos', { ...c2, formalizacion: Fz }); closeModal(); toast('Requisito actualizado'); } }); },
+    formLiberar: d => { const c = S.contratos.find(x => x.id === d.id); if (!c) return; if (!OPS.esDir()) return toast('Solo Dirección libera recursos', true); const A = OPS.avance(c); if (!A.completo) return toast('Faltan requisitos: ' + A.faltan.map(x => x.n).join(', '), true);
+      openModal('Liberar recursos · ' + c.folio, `<p style="margin:0 0 10px">Se liberan los recursos de <b>${esc(clienteNombre(c.clienteId))}</b> por <b>${money(c.monto)}</b>. Desde ese momento el contrato entra a cobranza.</p>${F('Fecha de liberación', 'fecha', 'date', S.hoy)}${c.disposicionPendiente ? `<div class="note">Se registrará la disposición inicial de ${money(c.disposicionPendiente)} con esta fecha.</div>` : ''}`, { submitText: 'Liberar recursos', onSubmit: async v => {
+        const c2 = S.contratos.find(y => y.id === c.id); const Fz = JSON.parse(JSON.stringify(c2.formalizacion)); Fz.liberado = { fecha: v.fecha || S.hoy, por: OPS.usuarioTxt() + (OPS.nombre ? ' (' + OPS.nombre + ')' : '') };
+        const disp = Number(c2.disposicionPendiente) || 0; const o = { ...c2, formalizacion: Fz }; delete o.disposicionPendiente; await Store.save('contratos', o);
+        if (disp > 0) await Store.save('pagos', { id: uid('pag'), contratoId: c2.id, tipo: 'disposicion', fecha: Fz.liberado.fecha, monto: E.r2(disp), referencia: 'Disposición inicial', creado: new Date().toISOString() });
+        closeModal(); toast('Recursos liberados'); render(); } }); },
+    /* Conciliación */
+    concFiltro: d => { OPS.conc.f = d.v; render(); },
+    concSel: (d, el) => { OPS.conc.sel[d.h] = el.value; },
+    concArchivo: async (d, el) => { const f = el.files && el.files[0]; if (!f) return; if (f.size > 8 * 1048576) return toast('El archivo pesa más de 8 MB', true); let txt = await f.text(); if (/�/.test(txt)) { try { txt = new TextDecoder('windows-1252').decode(await f.arrayBuffer()); } catch (e) { } } el.value = ''; await OPS_ACT._concCargar(txt, f.name); },
+    concPegar: () => openModal('Pegar movimientos del banco', `<p class="small muted" style="margin:0 0 8px">Copia la tabla de movimientos (con su renglón de encabezados: Fecha, Concepto, Cargo, Abono…) y pégala aquí.</p><div class="f"><textarea name="txt" style="min-height:220px;font-family:ui-monospace,monospace;font-size:12px"></textarea></div>`, { submitText: 'Cargar', onSubmit: async v => { closeModal(); await OPS_ACT._concCargar(v.txt, 'pegado'); } }),
+    _concCargar: async (txt, origen) => { const L = OPS.leer(txt); if (L.error) return toast(L.error, true); const D = OPS.concDoc(); const ya = new Set((D.movs || []).map(m => m.h)); const nuevos = [];
+      for (const m of L.movs) { const h = OPS.hash(m); if (ya.has(h)) continue; ya.add(h); nuevos.push({ h, ...m, cargado: S.hoy }); }
+      if (!nuevos.length) return toast(L.movs.length ? 'Esos depósitos ya estaban cargados' : 'El archivo no trae depósitos', !L.movs.length);
+      const movs = (D.movs || []).concat(nuevos).sort((a, b) => a.fecha < b.fecha ? 1 : -1).slice(0, 2500); await Store.save('config', { ...D, id: 'conciliacion', movs });
+      OPS.bitPush({ coleccion: 'conciliacion', registro_id: origen, accion: 'carga', resumen: 'Estado de cuenta cargado (' + origen + '): ' + nuevos.length + ' depósito(s) nuevo(s) por ' + money(sum(nuevos, x => x.monto)), antes: null, despues: { depositos: nuevos.length }, equipo: Nube.equipo || '' });
+      OPS.conc.f = 'pend'; toast(nuevos.length + ' depósito(s) nuevo(s) cargado(s)'); render(); },
+    concAplicar: d => { const m = (OPS.concDoc().movs || []).find(x => x.h === d.h); if (!m) return; const sg = OPS.sugerir(m); const cid = OPS.conc.sel[d.h] || (sg[0] && sg[0].c.id); if (!cid) return toast('Elige el contrato al que corresponde', true);
+      S.cob.contratoId = cid; S.cob.fecha = m.fecha; S.cob.monto = m.monto; S.cob.referencia = ('Banco · ' + (m.concepto || '')).slice(0, 120); S.cob.metodo = 'Transferencia'; S.cob.autoKey = null; S.cob.autoMonto = null; S.cob.conc = m.h; abrirFicha('cobrar', 'x'); },
+    concIgnorar: d => openModal('No es cobranza', `<div class="f"><label>¿Qué es este depósito?</label><input name="motivo" placeholder="Ej. aportación de capital, fondeo de inversionista, traspaso"></div>`, { onSubmit: async v => { const D = OPS.concDoc(); await Store.save('config', { ...D, movs: D.movs.map(m => m.h === d.h ? { ...m, ign: true, motivo: v.motivo || '' } : m) }); closeModal(); render(); } }),
+    concRestaurar: async d => { const D = OPS.concDoc(); await Store.save('config', { ...D, movs: D.movs.map(m => { if (m.h !== d.h) return m; const o = { ...m }; delete o.ign; delete o.motivo; return o; }) }); render(); },
+    concCSV: () => { const D = OPS.concDoc(); const L = [['Fecha', 'Concepto', 'Depósito', 'Sugerido']]; for (const m of D.movs || []) { if (OPS.aplicado(m.h) || m.ign) continue; const s = OPS.sugerir(m)[0]; L.push([m.fecha, m.concepto, m.monto, s ? s.c.folio : '']); } descargar('ATRIX_depositos_pendientes_' + S.hoy + '.csv', L.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\n')); },
+    /* Usuarios */
+    usrCargar: async () => { OPS._cargandoU = true; const r = await Nube.req('POST', '/functions/v1/portal-admin', JSON.stringify({ accion: 'usrLista' })); OPS._cargandoU = false;
+      OPS.usuarios = r.status === 200 && r.json && r.json.ok ? { lista: r.json.usuarios || [] } : { lista: null, error: r.json && r.json.error ? r.json.error + (/Acción no válida|Operación no permitida/.test(r.json.error) ? ' · falta publicar la función portal-admin de la versión 17.33' : '') : 'No se pudieron leer los usuarios (' + r.status + ')' }; render(); },
+    usrNuevo: () => { const p = OPS_ACT._pass(); openModal('Nuevo usuario del sistema', `<div class="row">${F('Usuario *', 'usuario', 'text', '', 'placeholder="Ej. oscar" autocomplete="off"')}${F('Nombre', 'nombre', 'text', '', 'placeholder="Óscar Luna"')}</div><div class="row">${Sel('Rol', 'rol', Object.keys(OPS.ROLES).map(r => [r, OPS.ROLES[r]]), 'consulta')}${F('Contraseña temporal *', 'password', 'text', p)}</div><div class="note">Entra en ${esc(SISTEMA_WEB)} con su usuario y esta contraseña. Compártela por un medio seguro.</div>`, { submitText: 'Crear usuario', onSubmit: async v => {
+      if (!/^[a-z0-9._-]{3,}$/i.test(v.usuario || '')) return toast('El usuario lleva al menos 3 letras o números, sin espacios', true);
+      const r = await Nube.req('POST', '/functions/v1/portal-admin', JSON.stringify({ accion: 'usrAlta', usuario: v.usuario, nombre: v.nombre, rol: v.rol, password: v.password }));
+      if (r.status === 200 && r.json && r.json.ok) { closeModal(); openInfo('Usuario creado', `<div class="kv"><span>Página</span><span>${esc(SISTEMA_WEB)}</span><span>Usuario</span><span>${esc(v.usuario.toLowerCase())}</span><span>Contraseña</span><span>${esc(v.password)}</span><span>Rol</span><span>${esc(OPS.ROLES[v.rol])}</span></div>`, `<button class="btn" type="button" data-act="portalCopiar" data-v="${esc('Sistema ATRIX\n' + SISTEMA_WEB + '\nUsuario: ' + v.usuario.toLowerCase() + '\nContraseña: ' + v.password)}">Copiar datos</button>`); ACT.usrCargar(); }
+      else toast((r.json && r.json.error) || 'No se pudo crear (' + r.status + ')', true); } }); },
+    usrRol: async (d, el) => { const r = await Nube.req('POST', '/functions/v1/portal-admin', JSON.stringify({ accion: 'usrCambio', usuario: d.u, rol: el.value })); if (r.status === 200 && r.json && r.json.ok) { toast('Rol actualizado'); ACT.usrCargar(); } else { toast((r.json && r.json.error) || 'No se pudo cambiar', true); ACT.usrCargar(); } },
+    usrActivo: d => confirmar(d.v === '1' ? 'Activar usuario' : 'Desactivar usuario', d.v === '1' ? d.u + ' podrá volver a entrar.' : d.u + ' ya no podrá entrar al sistema. Su historial en la bitácora se conserva.', async () => { const r = await Nube.req('POST', '/functions/v1/portal-admin', JSON.stringify({ accion: 'usrCambio', usuario: d.u, activo: d.v === '1' })); if (r.status === 200 && r.json && r.json.ok) { toast('Listo'); ACT.usrCargar(); } else toast((r.json && r.json.error) || 'No se pudo', true); }),
+    usrPass: d => { const p = OPS_ACT._pass(); confirmar('Nueva contraseña', 'Se generará una contraseña nueva para ' + d.u + '. La anterior dejará de funcionar.', async () => { const r = await Nube.req('POST', '/functions/v1/portal-admin', JSON.stringify({ accion: 'usrPass', usuario: d.u, password: p })); if (r.status === 200 && r.json && r.json.ok) openInfo('Nueva contraseña', `<div class="kv"><span>Usuario</span><span>${esc(d.u)}</span><span>Contraseña</span><span>${esc(p)}</span></div>`, `<button class="btn" type="button" data-act="portalCopiar" data-v="${esc('Usuario: ' + d.u + '\nContraseña: ' + p)}">Copiar</button>`); else toast((r.json && r.json.error) || 'No se pudo', true); }); },
+    _pass: () => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz'; const N = '23456789'; const b = new Uint32Array(12); crypto.getRandomValues(b); let s = ''; for (let i = 0; i < 12; i++) s += (i % 4 === 3 ? N : A)[b[i] % (i % 4 === 3 ? N : A).length]; return s; },
+    /* Bitácora */
+    bitCargar: async () => { const f = $('#bitForm'); const v = f ? formValues(f) : {}; OPS.bitF = { desde: v.desde || '', usuario: v.usuario || '', col: v.col || '', q: ($('#bitQ') || {}).value || '' }; OPS.bit = { cargando: true }; render();
+      let q = '/rest/v1/sistema_bitacora?select=*&order=creado.desc&limit=500'; if (OPS.bitF.desde) q += '&creado=gte.' + encodeURIComponent(OPS.bitF.desde + 'T00:00:00-06:00'); if (OPS.bitF.usuario) q += '&email=ilike.' + encodeURIComponent('*' + OPS.bitF.usuario.toLowerCase() + '*'); if (OPS.bitF.col) q += '&coleccion=eq.' + encodeURIComponent(OPS.bitF.col); if (OPS.bitF.q) q += '&resumen=ilike.' + encodeURIComponent('*' + OPS.bitF.q.replace(/[*,()]/g, ' ') + '*');
+      const r = await Nube.req('GET', q); OPS.bit = r.status === 200 && Array.isArray(r.json) ? { lista: r.json } : { lista: [], error: /sistema_bitacora|42P01|PGRST2/.test(r.text || '') ? 'Falta correr operacion_17_33.sql en Supabase para activar la bitácora.' : 'No se pudo consultar (' + r.status + ')' }; render(); },
+    bitVer: d => { const x = OPS.bit && OPS.bit.lista && OPS.bit.lista[Number(d.i)]; if (!x) return; const js = o => o ? `<pre style="white-space:pre-wrap;font-size:12px;max-height:40vh;overflow:auto;background:var(--glass-3);padding:10px;border-radius:10px">${esc(JSON.stringify(o, null, 2))}</pre>` : '<div class="muted small">—</div>';
+      openInfo('Bitácora · ' + new Date(x.creado).toLocaleString('es-MX'), `<div class="kv" style="margin-bottom:10px"><span>Usuario</span><span>${esc(x.email)}</span><span>Rol</span><span>${esc(OPS.ROLES[x.rol] || x.rol || '')}</span><span>Equipo</span><span>${esc(x.equipo || '')}</span><span>Registro</span><span>${esc(x.coleccion)} · ${esc(x.registro_id || '')}</span><span>Resumen</span><span>${esc(x.resumen || '')}</span></div><div class="grid2"><div><h3>Antes</h3>${js(x.antes)}</div><div><h3>Después</h3>${js(x.despues)}</div></div>`); },
+    bitCSV: () => { const L = [['Fecha', 'Usuario', 'Rol', 'Equipo', 'Colección', 'Registro', 'Acción', 'Resumen']]; for (const x of (OPS.bit && OPS.bit.lista) || []) L.push([x.creado, x.email, x.rol || '', x.equipo || '', x.coleccion, x.registro_id || '', x.accion, x.resumen || '']); descargar('ATRIX_bitacora_' + S.hoy + '.csv', L.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n')); },
+    bitSubirAhora: async () => { if (!Nube._dentro) return toast('Inicia sesión en internet para subir la bitácora', true); await OPS.bitSubir(); toast(OPS.bitPendientes() ? 'Aún quedan pendientes: revisa que el SQL de la 17.33 esté corrido' : 'Bitácora al día'); render(); },
+    /* Expediente */
+    expVer: async d => { toast('Abriendo documento…'); const r = await Nube.req('POST', '/storage/v1/object/sign/expedientes/' + d.ruta.split('/').map(encodeURIComponent).join('/'), JSON.stringify({ expiresIn: 3600 }));
+      if (r.status !== 200 || !r.json || !r.json.signedURL) return toast('No se pudo abrir: ' + ((r.json && (r.json.message || r.json.error)) || r.status), true); const u = NUBE_URL + '/storage/v1' + r.json.signedURL; const img = /^image\//.test(d.mime) || /\.(jpe?g|png|webp|heic|heif)$/i.test(d.nom);
+      openInfo(d.nom, img ? `<div style="max-height:72vh;overflow:auto;text-align:center;border-radius:12px;background:#f2f2f5"><img src="${esc(u)}" alt="" style="max-width:100%;display:block;margin:0 auto"></div>` : `<iframe src="${esc(u)}" title="Documento" style="width:100%;height:72vh;border:1px solid var(--line);border-radius:12px;background:#fff"></iframe>`, `<button class="btn" type="button" data-act="portalCopiar" data-v="${esc(u)}">Copiar enlace (1 hora)</button>${NATIVO ? '' : `<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">Abrir en otra pestaña</a>`}`); },
+    solArchivar: d => { const s = solDe(d.id); if (!s) return; if (!['direccion', 'riesgos'].includes(OPS.rolActual())) return toast('Lo hace Riesgos o Dirección', true); const nDocs = (SOL.files[s.id] || []).length; const cl = S.clientes.find(x => String(x.rfc || '').toUpperCase() === String(s.rfc || '').toUpperCase());
+      openModal('Pasar expediente al acreditado · ' + s.folio, `<p style="margin:0 0 10px">Los documentos de <b>${esc(s.nombre)}</b>${nDocs ? ' (' + nDocs + ')' : ''}, sus datos y las notas de Riesgos se copian al expediente permanente ${cl ? 'de <b>' + esc(cl.nombre) + '</b>' : 'y se da de alta como acreditado'}. Se conservan por el plazo legal aunque la solicitud se cierre.</p>${Chk('Cerrar la solicitud y quitar su acceso al portal de solicitud (recomendado una vez formalizada)', 'cerrar', s.etapa === 'formalizada')}`, { submitText: 'Pasar expediente', onSubmit: async v => {
+        let c = cl; if (!c) { const D = s.datos || {}; c = { id: uid('cli'), nombre: s.nombre, tipo: s.tipo === 'PM' ? 'PM' : 'PF', rfc: s.rfc, telefono: D.telefono || '', email: D.correo || '', contacto: D.contacto || '', giro: D.giro || '', direccion: D.municipio ? D.municipio + ', Nuevo León' : '', notas: 'Origen: solicitud en línea ' + s.folio + (s.promotor ? ' · promotor ' + s.promotor : ''), creado: S.hoy, solicitud: s.folio }; await Store.save('clientes', c); }
+        closeModal(); toast('Copiando documentos al expediente…'); const r = await Nube.req('POST', '/functions/v1/solicitud-alta', JSON.stringify({ accion: 'archivar', user_id: s.user_id, cliente_id: c.id, cerrar: !!v.cerrar }));
+        if (r.status === 200 && r.json && r.json.ok) { delete OPS.expCache[String(s.rfc || '').toUpperCase()]; if (v.cerrar) { SOL.lista = SOL.lista.filter(x => x.id !== s.id); delete SOL.int[s.id]; delete SOL.files[s.id]; if (SOL.sel === s.id) SOL.sel = null; } toast('Expediente archivado' + (v.cerrar ? ' y solicitud cerrada' : '')); renderNav(); render(); }
+        else toast('No se pudo archivar: ' + ((r.json && r.json.error) || solErr(r)) + (/Acción no válida/.test((r.json && r.json.error) || '') ? ' · falta publicar la función solicitud-alta de la 17.33' : ''), true); } }); }
   };
 
   /* ---------- Acciones ---------- */
   const ACT = {
-    ...SOL_ACT, ...SOL_PROP_ACT,
+    ...SOL_ACT, ...SOL_PROP_ACT, ...OPS_ACT,
     nav: d => { S.view = d.view; render(); if (d.view === 'ajustes') pedirEstadoUpd(); },
     actualizarSistema: () => actualizarSistema(),
     portalCfgGuardar: async () => { const f = $('#portalForm'); if (!f) return; const v = formValues(f); const url = String(v.url || '').trim().replace(/\/+$/, ''); const pub = String(v.pub || '').trim(); const sec = String(v.secret || '').trim();
@@ -5277,23 +5620,23 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     delCliente: d => { const n = S.contratos.filter(c => c.clienteId === d.id).length; if (n) return toast('Tiene ' + n + ' contrato(s); elimínalos o cancélalos primero', true); confirmar('Eliminar acreditado', 'Se eliminará el registro de forma permanente.', async () => { await Store.remove('clientes', d.id); S.sel.cliente = null; toast('Eliminado'); }); },
     nuevoContrato: d => formContrato(null, d.cliente ? { clienteId: d.cliente } : null), editContrato: d => formContrato(S.contratos.find(c => c.id === d.id)),
     selContrato: d => ACT.fichaContrato(d), goContrato: d => ACT.fichaContrato(d),
-    fichaContrato: d => { closeModal(); const t = fichaTop(); if (!(t && t.t === 'contrato' && t.id === d.id)) S.tab.contrato = 'tabla'; abrirFicha('contrato', d.id); },
+    fichaContrato: d => { closeModal(); const t = fichaTop(); if (!(t && t.t === 'contrato' && t.id === d.id) || d.tab) S.tab.contrato = d.tab || 'tabla'; abrirFicha('contrato', d.id); },
     fichaInversion: d => { closeModal(); const t = fichaTop(); if (!(t && t.t === 'inversion' && t.id === d.id)) S.tab.inversion = 'cortes'; abrirFicha('inversion', d.id); },
     fichaCerrar: () => cerrarFicha(true), fichaAtras: () => cerrarFicha(false),
     verScore: d => { const c = S.contratos.find(x => x.id === d.id); if (c) verScore(c); },
     cobDesg: d => verCobDesg(d.id, d.k, d.est === '1'), cobFiltro: d => { S.cob.f = S.cob.f === d.v ? 'todas' : d.v; render(); },
-    cobAbrir: () => { S.cob.fecha = S.hoy; S.cob.monto = ''; S.cob.referencia = ''; S.cob.autoKey = null; S.cob.autoMonto = null; abrirFicha('cobrar', 'x'); },
+    cobAbrir: () => { S.cob.fecha = S.hoy; S.cob.monto = ''; S.cob.referencia = ''; S.cob.conc = null; S.cob.autoKey = null; S.cob.autoMonto = null; abrirFicha('cobrar', 'x'); },
     defVer: d => verDefault(d.k), verCarteraDesg: () => verCarteraDesg(), verExigibleDesg: () => verExigibleDesg(), verPasivoDesg: () => verPasivoDesg(false), verExigInv: () => verPasivoDesg(true), verSpreadDesg: () => verSpreadDesg(),
     tabCorr: d => { S.tab.corr = d.v; render(); }, verSueldosDesg: () => verSueldosDesg(), verImpEnterarDesg: () => verImpEnterarDesg(), verFondoDesg: () => verFondoDesg(),
     tabContrato: d => { S.tab.contrato = d.v; render(); },
     eventoContrato: d => formEvento(S.contratos.find(c => c.id === d.id)),
-    pagoContrato: d => formPago(S.contratos.find(c => c.id === d.id), 'pago'), dispContrato: d => formPago(S.contratos.find(c => c.id === d.id), 'disposicion'),
+    pagoContrato: d => { const c = S.contratos.find(x => x.id === d.id); if (c && !formLiberado(c)) return toast('Contrato por formalizar: primero se liberan los recursos', true); formPago(c, 'pago'); }, dispContrato: d => { const c = S.contratos.find(x => x.id === d.id); if (c && !formLiberado(c)) return toast('Contrato por formalizar: primero se liberan los recursos', true); formPago(c, 'disposicion'); },
     cancelContrato: d => confirmar('Cancelar contrato', 'El contrato saldrá de la cartera activa; se conserva su historial.', async () => { const c = S.contratos.find(x => x.id === d.id); await Store.save('contratos', { ...c, estatus: 'cancelado' }); toast('Contrato cancelado'); }),
     delContrato: d => confirmar('Eliminar contrato', 'Se eliminarán el contrato y sus pagos de forma permanente.', async () => { for (const p of S.pagos.filter(p => p.contratoId === d.id)) await Store.remove('pagos', p.id); await Store.remove('contratos', d.id); S.sel.contrato = null; toast('Eliminado'); }),
     delPago: d => confirmar('Eliminar pago', 'Se eliminará el movimiento y se recalculará el contrato.', async () => { await Store.remove('pagos', d.id); toast('Pago eliminado'); }),
     copyTabla: d => { const c = S.contratos.find(x => x.id === d.id); copiar(tablaTSV(c, EV(c))); },
-    cobMonto: d => { S.cob.monto = E.r2(Number(d.v)); render(); }, cobCorte: d => { if (S.cob.corte !== d.v && S.cob.excedente !== 'liquidar') S.cob.excedente = 'adelantar'; S.cob.corte = d.v; if (!(Number(S.cob.monto) > 0) && Number(d.m) > 0) S.cob.monto = E.r2(Number(d.m)); render(); }, verPagoHoy: d => verPagoHoy(d.id), cobSel: d => { closeModal(); S.cob.contratoId = d.id; S.cob.fecha = S.hoy; S.cob.monto = ''; S.cob.referencia = ''; S.cob.autoKey = null; S.cob.autoMonto = null; abrirFicha('cobrar', 'x'); },
-    cobAplicar: async () => { const cb = S.cob; const c = S.contratos.find(x => x.id === cb.contratoId); if (!c) return toast('Selecciona un contrato', true); if (!(Number(cb.monto) > 0)) return toast('Captura el monto', true); if (!cb.fecha) return toast('Captura la fecha', true); const obj = { id: uid('pag'), contratoId: c.id, tipo: 'pago', fecha: cb.fecha, monto: E.r2(Number(cb.monto)), metodo: cb.metodo || 'Transferencia', referencia: cb.referencia || '', excedente: cb.excedente || 'adelantar', creado: new Date().toISOString() }; if (E.evaluar(c, S.pagos, cb.fecha).pagoHoy) obj.corte = (cb.corte || 'hoy') === 'hoy' ? 'hoy' : 'fecha'; await Store.save('pagos', obj); S.cob.monto = ''; S.cob.referencia = ''; S.cob.autoMonto = null; evCache.clear(); const evd = E.evaluar(c, S.pagos, S.hoy); toast('Pago aplicado a ' + c.folio + (evd.estatus === 'liquidado' ? ' · quedó liquidado' : evd.exigibleHoy > 0.005 ? ' · aún debe ' + money(evd.exigibleHoy) : ' · quedó al corriente')); if ((fichaTop() || {}).t === 'cobrar') S.ficha.pop(); render(); },
+    cobMonto: d => { S.cob.monto = E.r2(Number(d.v)); render(); }, cobCorte: d => { if (S.cob.corte !== d.v && S.cob.excedente !== 'liquidar') S.cob.excedente = 'adelantar'; S.cob.corte = d.v; if (!(Number(S.cob.monto) > 0) && Number(d.m) > 0) S.cob.monto = E.r2(Number(d.m)); render(); }, verPagoHoy: d => verPagoHoy(d.id), cobSel: d => { closeModal(); S.cob.contratoId = d.id; S.cob.fecha = S.hoy; S.cob.monto = ''; S.cob.referencia = ''; S.cob.conc = null; S.cob.autoKey = null; S.cob.autoMonto = null; abrirFicha('cobrar', 'x'); },
+    cobAplicar: async () => { const cb = S.cob; const c = S.contratos.find(x => x.id === cb.contratoId); if (c && !formLiberado(c)) return toast('El contrato ' + c.folio + ' está por formalizar: primero se liberan los recursos', true); if (!c) return toast('Selecciona un contrato', true); if (!(Number(cb.monto) > 0)) return toast('Captura el monto', true); if (!cb.fecha) return toast('Captura la fecha', true); const obj = { id: uid('pag'), contratoId: c.id, tipo: 'pago', fecha: cb.fecha, monto: E.r2(Number(cb.monto)), metodo: cb.metodo || 'Transferencia', referencia: cb.referencia || '', excedente: cb.excedente || 'adelantar', creado: new Date().toISOString() }; if (cb.conc) obj.conc = cb.conc; if (E.evaluar(c, S.pagos, cb.fecha).pagoHoy) obj.corte = (cb.corte || 'hoy') === 'hoy' ? 'hoy' : 'fecha'; await Store.save('pagos', obj); S.cob.monto = ''; S.cob.referencia = ''; S.cob.conc = null; S.cob.autoMonto = null; evCache.clear(); const evd = E.evaluar(c, S.pagos, S.hoy); toast('Pago aplicado a ' + c.folio + (evd.estatus === 'liquidado' ? ' · quedó liquidado' : evd.exigibleHoy > 0.005 ? ' · aún debe ' + money(evd.exigibleHoy) : ' · quedó al corriente')); if ((fichaTop() || {}).t === 'cobrar') S.ficha.pop(); render(); },
     nuevoInversionista: () => formInversionista(), editInversionista: d => formInversionista(inversionista(d.id)), selInversionista: d => { closeModal(); abrirFicha('inversionista', d.id); },
     delInversionista: d => { const n = S.inversiones.filter(i => i.inversionistaId === d.id).length; if (n) return toast('Tiene ' + n + ' inversión(es); elimínalas primero', true); confirmar('Eliminar inversionista', 'Se eliminará el registro.', async () => { await Store.remove('inversionistas', d.id); S.sel.inversionista = null; toast('Eliminado'); }); },
     nuevaInversion: d => formInversion(null, d.inv ? { inversionistaId: d.inv } : null), editInversion: d => formInversion(S.inversiones.find(i => i.id === d.id)),
@@ -5313,7 +5656,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     goAdmin: () => { S.view = 'admin'; render(); },
     admMes: d => { const k = S.admMes || S.hoy.slice(0, 7); S.admMes = E.iso(E.addMonths(k + '-01', Number(d.v))).slice(0, 7); render(); },
     cargaOmitir: () => { try { localStorage.setItem('atrix-carga-omitida', (window.ATRIX_CARGA || {}).id || ''); } catch (e) { } closeModal(); },
-    guardarAdmin: async () => { const v = formValues($('#adminForm')); const obj = { ...CFG(), id: 'general', capitalSocial: Number(v.capitalSocial) || 0, fechaConstitucion: v.fechaConstitucion || '', capitalColocable: v.capitalColocable !== 'no', bancoSaldo: v.bancoSaldo == null ? '' : Number(v.bancoSaldo), bancoFecha: v.bancoFecha || S.hoy, razonSocial: v.razonSocial || 'COLIUM, S.A. de C.V.', rfc: v.rfc || '', estimacionPct: Number(v.estimacionPct) || 0, tasaMinColocacion: v.tasaMinColocacion == null ? 30 : Number(v.tasaMinColocacion), tasaMaxInversion: v.tasaMaxInversion == null ? 15 : Number(v.tasaMaxInversion), tasaMaxCredito: v.tasaMaxCredito == null ? 23 : Number(v.tasaMaxCredito), defaultMax: v.defaultMax == null ? 5 : Number(v.defaultMax) }; await Store.save('config', obj); toast('Guardado'); render(); },
+    guardarAdmin: async () => { const v = formValues($('#adminForm')); const obj = { ...CFG(), id: 'general', capitalSocial: Number(v.capitalSocial) || 0, fechaConstitucion: v.fechaConstitucion || '', capitalColocable: v.capitalColocable !== 'no', bancoSaldo: v.bancoSaldo == null ? '' : Number(v.bancoSaldo), bancoFecha: v.bancoFecha || S.hoy, razonSocial: v.razonSocial || 'COLIUM, S.A. de C.V.', rfc: v.rfc || '', cobroBanco: v.cobroBanco || '', cobroClabe: String(v.cobroClabe || '').replace(/\D/g, ''), cobroTitular: v.cobroTitular || '', estimacionPct: Number(v.estimacionPct) || 0, tasaMinColocacion: v.tasaMinColocacion == null ? 30 : Number(v.tasaMinColocacion), tasaMaxInversion: v.tasaMaxInversion == null ? 15 : Number(v.tasaMaxInversion), tasaMaxCredito: v.tasaMaxCredito == null ? 23 : Number(v.tasaMaxCredito), defaultMax: v.defaultMax == null ? 5 : Number(v.defaultMax) }; await Store.save('config', obj); toast('Guardado'); render(); },
     otroMov: () => formOtroMov(),
     regPagoInv: async d => { const inv = S.inversiones.find(i => i.id === d.id); if (!inv) return; await Store.save('pagosInv', { id: uid('pin'), inversionId: inv.id, fecha: S.hoy, monto: E.r2(Number(d.monto)), metodo: 'Transferencia', referencia: 'Corte ' + d.k, creado: S.hoy }); toast('Pago registrado · ' + inv.folio); render(); },
     regTodosPagosInv: async d => { const rp = E.resumenPasivo(S.inversiones, S.pagosInv, S.hoy); const y = Number(d.mes.slice(0, 4)), m = Number(d.mes.slice(5, 7)); const fin = E.iso(new Date(Date.UTC(y, m, 0))); let n = 0; for (const { inv, ev } of rp.inversiones) { if (inv.estatus === 'cancelado') continue; let pend = 0; for (const r of ev.rows) { if (r.fecha <= fin && r.fecha <= S.hoy) pend += Math.max(0, r.total - r.pagado); } if (pend > 0.005) { await Store.save('pagosInv', { id: uid('pin'), inversionId: inv.id, fecha: S.hoy, monto: E.r2(pend), metodo: 'Transferencia', referencia: 'Pago de cortes pendientes', creado: S.hoy }); n++; } } toast(n ? n + ' pago(s) registrado(s)' : 'Nada vencido a la fecha de corte'); render(); },
@@ -5353,7 +5696,8 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     else if (k === 'solProp') { const s0 = solDe(f.dataset.id); if (s0 && e.target.tagName !== 'SELECT') { Object.assign(solProp(s0, f.dataset.tipo), rawValues(f)); rerenderSoft(); } }
   });
   document.addEventListener('change', e => {
-    const el = e.target; if (el.dataset.actChange === 'corrAbrir') { const c = S.corridas.find(x => x.id === el.value); if (c) { S.corr = Object.assign(corrDefaults(), c.datos || {}, { id: c.id }); render(); } return; }
+    const el = e.target; if (['concSel', 'concArchivo', 'usrRol'].includes(el.dataset.actChange)) { OPS_ACT[el.dataset.actChange](el.dataset, el); return; }
+    if (el.dataset.actChange === 'corrAbrir') { const c = S.corridas.find(x => x.id === el.value); if (c) { S.corr = Object.assign(corrDefaults(), c.datos || {}, { id: c.id }); render(); } return; }
     if (el.tagName === 'SELECT' && el.closest('form[data-act-input="solProp"]')) { const fp = el.closest('form'); const s0 = solDe(fp.dataset.id); if (s0) { Object.assign(solProp(s0, fp.dataset.tipo), rawValues(fp)); render(); } } else if (el.dataset.actChange === 'solProd') { SOL.fProd = el.value; render(); } else if (el.dataset.actChange === 'filtroProd') { S.filtro.prod = el.value; render(); } else if (el.dataset.actChange === 'filtroEst') { S.filtro.est = el.value; render(); }
     else if (el.id === 'hoy') { if (el.value) { S.hoy = el.value; S.hoyManual = el.value !== E.todayISO(); render(); } }
     else if (el.closest('[data-act-input="cob"]') && el.name === 'contratoId') { S.cob.contratoId = el.value; render(); }
