@@ -2255,7 +2255,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.35';
+  const SISTEMA_VERSION = '17.36';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -4920,7 +4920,8 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     } else {
       a('Titular', 'id_titular', 'INE', INE); a('Titular', 'csf', 'CSF actualizada', CSF); a('Titular', 'domicilio', 'Comprobante de domicilio', DOM); a('Titular', 'buro', 'Buró de Crédito', BURO);
     }
-    a('Información financiera', 'ef_3m', 'Estados financieros de los últimos 3 meses', pm ? 'Balance y estado de resultados.' : 'Balance y estado de resultados, en caso de tenerlos.', !pm);
+    a('Información financiera', 'ef_3m', 'Estados financieros de los últimos 3 meses', pm ? 'Balance y estado de resultados de los últimos 3 meses.' : 'Balance y estado de resultados de los últimos 3 meses (su contador puede prepararlos).');
+    a('Información financiera', 'declaracion', 'Declaración anual del último ejercicio', 'Declaración anual de impuestos presentada ante el SAT, con su acuse de recibo.');
     a('Información financiera', 'edosfin', 'Estados financieros anuales (último año)', pm ? 'Balance y estado de resultados del último ejercicio.' : 'Del último ejercicio, en caso de tenerlos.', !pm);
     a('Información financiera', 'edoscta', 'Estados de cuenta bancarios', CTA);
     if (D.aval_tipo === 'PM') { const g = 'Aval · persona moral';
@@ -4932,8 +4933,9 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     }
     if (cred) { a('Garantía inmobiliaria', 'escritura', 'Escritura del inmueble en garantía', 'Con datos de inscripción en el Registro Público de la Propiedad.', s.producto === 'CE'); a('Garantía inmobiliaria', 'predial', 'Predial y certificado de libertad de gravamen', 'Boleta predial del año en curso y certificado reciente.', s.producto === 'CE'); }
     if (!D.carta) a('Solicitud', 'carta', 'Carta de Crédito', cred ? 'Carta firmada donde explique para qué requiere el crédito y qué tipo de crédito solicita.' : 'Carta firmada donde explique para qué requiere el arrendamiento y qué tipo de arrendamiento solicita (financiero o puro).');
+    a('Solicitud', 'cotizacion', 'Cotización del proveedor', cred ? 'Si ya tiene un presupuesto o cotización relacionado con el destino del crédito, adjúntelo.' : 'Si ya tiene cotización del activo que quiere arrendar, adjúntela (puede subir varias).', 1);
     a('Adicional', 'otros', 'Otros documentos', 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', 1);
-    const F1 = ['acta', 'reformas', 'poderes', 'csf', 'pr_ine', 'pr_csf', 's2_ine', 's2_csf', 'id_titular', 'ef_3m', 'edosfin', 'edoscta']; L.forEach(d => { d.f = F1.includes(d.c) ? 1 : 2; });
+    const F1 = ['acta', 'reformas', 'poderes', 'csf', 'pr_ine', 'pr_csf', 's2_ine', 's2_csf', 'id_titular', 'ef_3m', 'edosfin', 'declaracion', 'edoscta', 'cotizacion']; L.forEach(d => { d.f = F1.includes(d.c) ? 1 : 2; });
     return L.filter(d => d.f === 1).concat(L.filter(d => d.f === 2)); };
   const solExtras = s => Array.isArray((s.revision || {})._extra) ? s.revision._extra.filter(x => x && x.c && x.n) : [];
   const solDocs = s => CATALOGO(s).concat(solExtras(s).map(x => ({ g: 'Solicitados por ATRIX', c: x.c, n: x.n, a: x.a || '', opc: false, extra: true })));
@@ -5047,8 +5049,8 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     const kv = (a, b) => b ? `<span>${a}</span><span>${esc(b)}</span>` : '';
     return `<div class="glass panel" style="margin-bottom:14px"><h2>Carta solicitud ${chip('ok', 'Recibida ' + solF(C.fecha, true))}${C.version > 1 ? ' ' + chip('gray', 'versión ' + C.version) : ''}</h2>
       <div class="sol-c3"><div><span>Monto (sin IVA)</span><b>${money(C.monto)}</b></div><div><span>Arrendamiento</span><b>${esc(SOL_TARR[C.arrendamiento] || C.arrendamiento || '—')}</b></div><div><span>Plazo</span><b>${C.plazo ? esc(C.plazo) + ' meses' : '—'}</b></div></div>
-      <div class="kv sol-kv">${kv('A qué se dedica', C.dedica)}${kv('Giro', C.giro)}${kv('Años operando', C.antiguedad)}${kv('Municipio', C.municipio)}${kv('Empleados', C.empleados)}${kv('Ventas anuales', C.ventas ? '$' + C.ventas : '')}${kv('Firma', [C.firmante, C.cargo].filter(Boolean).join(' · '))}${kv('WhatsApp', C.telefono)}${kv('Correo', C.correo)}</div>
-      <div class="sol-carta"><b>Activos solicitados</b><table><thead><tr><th>Activo</th><th>Descripción</th><th style="text-align:right">Cant.</th><th style="text-align:right">Valor aprox.</th></tr></thead><tbody>${(C.activos || []).map(a => `<tr><td>${esc(a.tipo)}</td><td>${esc(a.desc)}<span class="muted"> · ${a.estado === 'seminuevo' ? 'seminuevo' : 'nuevo'}</span></td><td class="n">${esc(a.cant || 1)}</td><td class="n">${a.valor ? money(Number(a.valor) * (Number(a.cant) || 1)) : '—'}</td></tr>`).join('')}</tbody></table></div></div>`;
+      <div class="kv sol-kv">${kv('A qué se dedica', C.dedica)}${kv('Giro', C.giro)}${kv('Años operando', C.antiguedad)}${kv('Municipio', C.municipio)}${kv('Empleados', C.empleados)}${kv('Ventas anuales', C.ventas ? '$' + C.ventas : '')}${kv('Cotización', C.cot === 'si' ? 'Sí · ' + (C.proveedor || 'proveedor sin nombre') + ' (archivo en «Cotización del proveedor»)' : C.cot === 'no' ? 'Todavía no tiene' : '')}${kv('Firma', [C.firmante, C.cargo].filter(Boolean).join(' · '))}${kv('WhatsApp', C.telefono)}${kv('Correo', C.correo)}</div>
+      <div class="sol-carta"><b>Activos solicitados</b><table><thead><tr><th>Activo</th><th>Descripción</th><th style="text-align:right">Cant.</th><th style="text-align:right">Valor aprox.</th></tr></thead><tbody>${(C.activos || []).map(a => `<tr><td>${esc(a.tipo === 'Otro' && a.tipoOtro ? a.tipoOtro : a.tipo)}</td><td>${esc(a.desc)}<span class="muted"> · ${a.estado === 'seminuevo' ? 'seminuevo' : 'nuevo'}</span></td><td class="n">${esc(a.cant || 1)}</td><td class="n">${a.valor ? money(Number(a.valor) * (Number(a.cant) || 1)) : '—'}</td></tr>`).join('')}</tbody></table></div></div>`;
   }
   function solAccesoTexto(nombre, rfc, pass, contacto) { return 'Hola' + (contacto ? ' ' + String(contacto).split(' ')[0] : '') + ', le comparto su acceso a ATRIX Financiera para su solicitud de arrendamiento:\n' + SOL_WEB + '?entrar&u=' + rfc + '\nUsuario (RFC): ' + rfc + '\nContraseña: ' + pass + ' (temporal: al entrar creará la suya)\n\nDespués llene su carta solicitud (3 pasos, menos de 3 minutos) y cargue sus documentos desde el celular o la computadora. Cualquier duda, aquí estoy.'; }
   function solAccesoInfo(t, nombre, rfc, pass, tel, contacto, folio) {
