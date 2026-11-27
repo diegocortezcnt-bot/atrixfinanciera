@@ -441,6 +441,11 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
 @media (max-width:380px){.wzb small{font-size:10px}.wzn .btn.big{padding-left:16px;padding-right:16px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .mm:empty{display:none}
+.upz{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 8px;width:100%;border:1.5px dashed #b9c6dc;border-radius:14px;padding:12px 14px;background:#f7f9fd;color:var(--navy);font-weight:600;font-size:13.5px;cursor:pointer;min-height:50px;text-align:center;transition:background .15s,border-color .15s}
+.upz:hover{border-color:var(--blue);background:#eef3fb}
+.upz small{font-weight:500;color:var(--ink-3);font-size:11.5px}
+
+.cotz{border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;margin:0 0 14px;background:linear-gradient(180deg,#fbfcfe,#fff)}
 </style>
 </head>
 <body>
@@ -576,7 +581,8 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     } else {
       a('Titular', 'id_titular', 'INE', INE); a('Titular', 'csf', 'CSF actualizada', CSF); a('Titular', 'domicilio', 'Comprobante de domicilio', DOM); a('Titular', 'buro', 'Buró de Crédito', BURO);
     }
-    a('Información financiera', 'ef_3m', 'Estados financieros de los últimos 3 meses', pm ? 'Balance y estado de resultados.' : 'Balance y estado de resultados, en caso de tenerlos.', !pm);
+    a('Información financiera', 'ef_3m', 'Estados financieros de los últimos 3 meses', pm ? 'Balance y estado de resultados de los últimos 3 meses.' : 'Balance y estado de resultados de los últimos 3 meses (su contador puede prepararlos).');
+    a('Información financiera', 'declaracion', 'Declaración anual del último ejercicio', 'Declaración anual de impuestos presentada ante el SAT, con su acuse de recibo.');
     a('Información financiera', 'edosfin', 'Estados financieros anuales (último año)', pm ? 'Balance y estado de resultados del último ejercicio.' : 'Del último ejercicio, en caso de tenerlos.', !pm);
     a('Información financiera', 'edoscta', 'Estados de cuenta bancarios', CTA);
     if (D.aval_tipo === 'PM') { const g = 'Aval · persona moral';
@@ -588,8 +594,9 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     }
     if (cred) { a('Garantía inmobiliaria', 'escritura', 'Escritura del inmueble en garantía', 'Con datos de inscripción en el Registro Público de la Propiedad.', s.producto === 'CE'); a('Garantía inmobiliaria', 'predial', 'Predial y certificado de libertad de gravamen', 'Boleta predial del año en curso y certificado reciente.', s.producto === 'CE'); }
     if (!D.carta) a('Solicitud', 'carta', 'Carta de Crédito', cred ? 'Carta firmada donde explique el destino del crédito (adquisición de activos, capital de trabajo o proyecto específico) y qué tipo de crédito solicita.' : 'Carta firmada donde explique para qué requiere el arrendamiento y qué tipo de arrendamiento solicita (financiero o puro).');
+    a('Solicitud', 'cotizacion', 'Cotización del proveedor', cred ? 'Si ya tiene un presupuesto o cotización relacionado con el destino del crédito, adjúntelo.' : 'Si ya tiene cotización del activo que quiere arrendar, adjúntela (puede subir varias).', 1);
     a('Adicional', 'otros', 'Otros documentos', 'Cualquier documento adicional que quiera compartir o que ATRIX le solicite.', 1);
-    const F1 = ['acta', 'reformas', 'poderes', 'csf', 'pr_ine', 'pr_csf', 's2_ine', 's2_csf', 'id_titular', 'ef_3m', 'edosfin', 'edoscta']; L.forEach(d => { d.f = F1.includes(d.c) ? 1 : 2; });
+    const F1 = ['acta', 'reformas', 'poderes', 'csf', 'pr_ine', 'pr_csf', 's2_ine', 's2_csf', 'id_titular', 'ef_3m', 'edosfin', 'declaracion', 'edoscta', 'cotizacion']; L.forEach(d => { d.f = F1.includes(d.c) ? 1 : 2; });
     return L.filter(d => d.f === 1).concat(L.filter(d => d.f === 2)); };
   const extrasDe = s => (Array.isArray((s.revision || {})._extra) ? s.revision._extra : []).filter(x => x && x.c && x.n).map(x => ({ g: 'Solicitados por ATRIX', c: String(x.c), n: String(x.n), a: x.a ? String(x.a) : 'Documento adicional solicitado por el área de Riesgos.', opc: false }));
   const docsDe = s => extrasDe(s).concat(CATALOGO(s));
@@ -819,6 +826,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   const EMPL = ['1 a 10', '11 a 50', '51 a 200', 'Más de 200'];
   const TARR = { AF: ['Financiero', 'Al terminar, el activo es suyo.'], AP: ['Puro', 'Paga una renta deducible; al final lo renueva o lo regresa.'], '?': ['Ayúdenme a elegir', 'Un asesor le recomienda el mejor.'] };
   const WPASOS = [['Su empresa', 'Cuéntenos a qué se dedica'], ['Lo que necesita', 'Monto, activos y plazo'], ['Confirmar', 'Revise su carta y envíela']];
+  const UPI = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>';
   const numTxt = v => Number(String(v == null ? '' : v).replace(/[^\d]/g, '')) || 0;
   const cartaKey = () => 'atrix_carta_' + (st.sol ? st.sol.id : '');
   const cartaPend = S => !(S.datos || {}).carta && !!(S.datos || {}).carta_pendiente;
@@ -828,18 +836,20 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const g0 = D.giro || C.giro || ''; const gEs = GIROS.includes(g0);
     return { p: 0, err: '', d: { dedica: C.dedica || '', giro: g0 ? (gEs ? g0 : 'Otro') : '', giroOtro: g0 && !gEs ? g0 : '', antiguedad: C.antiguedad || D.antiguedad || '', municipio: C.municipio || D.municipio || '', empleados: C.empleados || '', ventas: C.ventas || D.ventas || '',
       monto: C.monto ? miles(Math.round(C.monto)) : D.carta_pendiente ? '' : miles(Math.round(S.monto || 0)), activos: (C.activos && C.activos.length ? C.activos : [{ tipo: '', desc: D.activo && !D.carta_pendiente ? D.activo : '', valor: '', estado: 'nuevo', cant: 1 }]).map(a => ({ ...a })),
-      arrendamiento: C.arrendamiento || (['AF', 'AP'].includes(S.producto) && !D.carta_pendiente ? S.producto : ''), plazo: Number(C.plazo || D.plazo) || 24, firmante: C.firmante || D.contacto || '', cargo: C.cargo || D.cargo || '', telefono: C.telefono || D.telefono || '', correo: C.correo || D.correo || '', ok: false } };
+      cot: C.cot || '', proveedor: C.proveedor || '', arrendamiento: C.arrendamiento || (['AF', 'AP'].includes(S.producto) && !D.carta_pendiente ? S.producto : ''), plazo: Number(C.plazo || D.plazo) || 24, firmante: C.firmante || D.contacto || '', cargo: C.cargo || D.cargo || '', telefono: C.telefono || D.telefono || '', correo: C.correo || D.correo || '', ok: false } };
   }
   const wzGuardar = () => { try { localStorage.setItem(cartaKey(), JSON.stringify({ p: st.wz.p, d: st.wz.d, t: Date.now() })); } catch (e) { } };
   const wzBorrar = () => { try { localStorage.removeItem(cartaKey()); } catch (e) { } };
   const giroDe = d => d.giro === 'Otro' ? String(d.giroOtro || '').trim() : d.giro;
-  const resumenAct = a => a.map(x => `${Number(x.cant) > 1 ? x.cant + ' × ' : ''}${x.tipo}: ${String(x.desc || '').trim()}${x.estado === 'seminuevo' ? ' (seminuevo)' : ''}${numTxt(x.valor) ? ' · aprox. ' + money(numTxt(x.valor) * (Number(x.cant) || 1)) : ''}`).join('; ');
+  const tipoDe = a => a.tipo === 'Otro' ? (String(a.tipoOtro || '').trim() || 'Otro') : a.tipo;
+  const resumenAct = a => a.map(x => `${Number(x.cant) > 1 ? x.cant + ' × ' : ''}${tipoDe(x)}: ${String(x.desc || '').trim()}${x.estado === 'seminuevo' ? ' (seminuevo)' : ''}${numTxt(x.valor) ? ' · aprox. ' + money(numTxt(x.valor) * (Number(x.cant) || 1)) : ''}`).join('; ');
   function cartaTexto(S, c) {
     const fch = new Date(c.fecha || Date.now()).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Monterrey' }); const t = TARR[c.arrendamiento] || TARR['?'];
     const tipo = c.arrendamiento === 'AF' ? 'un arrendamiento financiero' : c.arrendamiento === 'AP' ? 'un arrendamiento puro' : 'un arrendamiento (financiero o puro, según me recomiende ATRIX)';
     return `<div class="cart"><p class="fe">Monterrey, Nuevo León, a ${esc(fch)}</p><p><b>COLIUM, S.A. de C.V.</b> (ATRIX Financiera)<br>Presente</p>
       <p><b>${esc(S.nombre)}</b>${S.rfc ? ', con RFC ' + esc(S.rfc) : ''}, empresa dedicada a ${esc((t0 => /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]/.test(t0) ? t0[0].toLowerCase() + t0.slice(1) : t0)(String(c.dedica || '').trim().replace(/\.$/, '')))}${c.giro ? ' (giro: ' + esc(c.giro) + ')' : ''}${c.antiguedad ? ', con ' + esc(c.antiguedad) + ' año' + (String(c.antiguedad) === '1' ? '' : 's') + ' de operación' : ''}${c.municipio ? ' en ' + esc(c.municipio) : ''}, solicita a ATRIX ${tipo} por <b>${money(numTxt(c.monto))}</b> a un plazo de <b>${esc(c.plazo)} meses</b>, para los siguientes activos:</p>
-      <ul>${(c.activos || []).map(a => `<li>${Number(a.cant) > 1 ? esc(a.cant) + ' × ' : ''}<b>${esc(a.tipo)}</b>: ${esc(a.desc)}${a.estado === 'seminuevo' ? ' (seminuevo)' : ' (nuevo)'}${numTxt(a.valor) ? ', valor aproximado ' + money(numTxt(a.valor)) + (Number(a.cant) > 1 ? ' c/u' : '') : ''}</li>`).join('')}</ul>
+      <ul>${(c.activos || []).map(a => `<li>${Number(a.cant) > 1 ? esc(a.cant) + ' × ' : ''}<b>${esc(tipoDe(a))}</b>: ${esc(a.desc)}${a.estado === 'seminuevo' ? ' (seminuevo)' : ' (nuevo)'}${numTxt(a.valor) ? ', valor aproximado ' + money(numTxt(a.valor)) + (Number(a.cant) > 1 ? ' c/u' : '') : ''}</li>`).join('')}</ul>
+      ${c.cot === 'si' ? `<p>Cuento con cotización del proveedor <b>${esc(c.proveedor || '')}</b>, que adjunto a mi expediente.</p>` : ''}
       <p>Esta carta es una solicitud: no me obliga a contratar ni obliga a ATRIX a otorgar el arrendamiento, que queda sujeto a su análisis de crédito.</p>
       <p class="fi">Atentamente,<br><b>${esc(c.firmante || '')}</b>${c.cargo ? '<br>' + esc(c.cargo) : ''}${c.telefono ? '<br>WhatsApp ' + esc(c.telefono) : ''}${c.correo ? ' · ' + esc(c.correo) : ''}</p></div>`;
   }
@@ -847,7 +857,8 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const d = st.wz.d;
     if (p === 0) { if (String(d.dedica).trim().length < 5) return ['dedica', 'Cuéntenos en pocas palabras a qué se dedica su empresa.']; if (!giroDe(d)) return ['giro', d.giro === 'Otro' ? 'Escriba el giro de su empresa.' : 'Elija el giro de su empresa.']; if (!(numTxt(d.antiguedad) >= 0) || String(d.antiguedad).trim() === '') return ['antiguedad', 'Indique cuántos años lleva operando.']; if (String(d.municipio).trim().length < 3) return ['municipio', 'Escriba el municipio donde opera.']; }
     if (p === 1) { const m = numTxt(d.monto); if (m < 100000 || m > 2500000) return ['monto', 'El monto va de $100,000 a $2,500,000 pesos.'];
-      for (let i = 0; i < d.activos.length; i++) { const a = d.activos[i]; if (!a.tipo) return ['a' + i + 'tipo', 'Elija qué tipo de activo es el activo ' + (i + 1) + '.']; if (String(a.desc || '').trim().length < 3) return ['a' + i + 'desc', 'Describa el activo ' + (i + 1) + ' (marca, modelo o características).']; if (!(Number(a.cant) >= 1)) return ['a' + i + 'cant', 'La cantidad debe ser 1 o más.']; }
+      for (let i = 0; i < d.activos.length; i++) { const a = d.activos[i]; if (!a.tipo) return ['a' + i + 'tipo', 'Elija qué tipo de activo es el activo ' + (i + 1) + '.']; if (a.tipo === 'Otro' && String(a.tipoOtro || '').trim().length < 3) return ['a' + i + 'tipoOtro', 'Escriba qué activo es el activo ' + (i + 1) + '.']; if (String(a.desc || '').trim().length < 3) return ['a' + i + 'desc', 'Describa el activo ' + (i + 1) + ' (marca, modelo o características).']; if (!(Number(a.cant) >= 1)) return ['a' + i + 'cant', 'La cantidad debe ser 1 o más.']; }
+      if (d.cot === 'si') { if (String(d.proveedor || '').trim().length < 2) return ['proveedor', 'Escriba el nombre del proveedor de la cotización.']; if (!st.files.some(f => f.clave === 'cotizacion')) return ['cotz', 'Adjunte la cotización (PDF o foto) o elija «Todavía no».']; }
       if (!d.arrendamiento) return ['arr', 'Elija el tipo de arrendamiento o «Ayúdenme a elegir».']; }
     if (p === 2) { if (String(d.firmante).trim().length < 3) return ['firmante', 'Escriba el nombre de quien firma la carta.']; const t = String(d.telefono || '').replace(/\D/g, ''); if (t && t.length !== 10) return ['telefono', 'El WhatsApp debe tener 10 dígitos.']; if (d.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(d.correo).trim())) return ['correo', 'Revise el correo electrónico.']; if (!d.ok) return ['ok', 'Marque la casilla para confirmar que la información es correcta.']; }
     return null;
@@ -855,6 +866,13 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   const inp = (k, lab, v, extra, ayuda) => `<div class="f"><label for="w_${k}">${lab}</label><input id="w_${k}" data-wf="${k}" value="${esc(v)}" ${extra || ''}>${ayuda ? `<small>${ayuda}</small>` : ''}</div>`;
   function wzCobHTML(d) { const m = numTxt(d.monto), tot = d.activos.reduce((s, a) => s + numTxt(a.valor) * (Number(a.cant) || 1), 0); if (!m || !tot) return ''; const cob = Math.min(100, Math.round(tot / m * 100));
     return `<span>Valor de sus activos: <b>${money(tot)}</b></span><span>${cob >= 100 ? 'Cubre el monto solicitado' : cob + ' % del monto solicitado'}</span><span class="tb"><i style="width:${cob}%"></i></span>`; }
+  function cotHTML(d) {
+    const fs = st.files.filter(f => f.clave === 'cotizacion'), sub = st.sub.cotizacion;
+    return `<div class="cotz" id="w_cotz" data-doc="cotizacion">${inp('proveedor', 'Proveedor', d.proveedor || '', 'maxlength="120" autocomplete="off" placeholder="Ej. Kenworth del Norte"')}
+      <div class="msg err" id="dErr" role="alert" hidden></div>
+      ${fs.length ? `<ul class="files">${fs.map(f => `<li><span class="n" title="${esc(f.nombre)}">${esc(f.nombre)}</span><span class="m">${peso(f.tam)}</span><button class="btn txt sm" type="button" data-ver-arch="${esc(f.ruta)}">Ver</button><button class="btn txt sm bad" type="button" data-del="${esc(f.ruta)}" data-nom="${esc(f.nombre)}">Quitar</button></li>`).join('')}</ul>` : ''}
+      ${sub ? `<div class="act"><span style="font-size:12.5px;color:var(--ink-2)">${esc(sub.txt)}</span><span class="prog"><i style="width:${sub.pct}%"></i></span></div>` : fs.length < MAX_ARCH ? `<label class="upz" style="margin-top:8px">${UPI}<input type="file" hidden multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp,application/pdf,image/*" data-up="cotizacion">${fs.length ? 'Agregar otra cotización' : 'Adjuntar cotización'} <small>PDF o foto · puede elegir varias</small></label>` : ''}</div>`;
+  }
   function wizard(S) {
     const W = st.wz, d = W.d, p = W.p; const pct = i => i < p ? 100 : i === p ? 50 : 0;
     const bar = `<div class="wzb">${WPASOS.map((x, i) => `<div class="${i <= p ? 'on' : ''}"><span><i style="width:${pct(i)}%"></i></span><small>${i + 1}. ${x[0]}</small></div>`).join('')}</div>`;
@@ -870,12 +888,15 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       <h3>¿Para qué activo(s)?</h3>
       ${d.activos.map((a, i) => `<div class="ac"><div class="n">Activo ${i + 1}</div>${d.activos.length > 1 ? `<button type="button" class="btn txt sm bad no" data-wdel="${i}">Quitar</button>` : ''}
         <div class="pk" id="w_a${i}tipo">${TACT.map(t => `<button type="button" data-wact="${i}" data-k="tipo" data-v="${esc(t)}" class="${a.tipo === t ? 'on' : ''}">${esc(t)}</button>`).join('')}</div>
+        ${a.tipo === 'Otro' ? `<div class="f"><label for="w_a${i}tipoOtro">¿Qué activo es?</label><input id="w_a${i}tipoOtro" data-wa="${i}" data-k="tipoOtro" value="${esc(a.tipoOtro || '')}" maxlength="80" autocomplete="off" placeholder="Ej. planta de luz, horno industrial, dron agrícola"></div>` : ''}
         <div class="f"><label for="w_a${i}desc">Descripción</label><input id="w_a${i}desc" data-wa="${i}" data-k="desc" value="${esc(a.desc)}" maxlength="200" autocomplete="off" placeholder="Marca, modelo, año o características"></div>
         <div class="r3"><div class="f"><label for="w_a${i}valor">Valor aproximado c/u</label><input id="w_a${i}valor" data-wa="${i}" data-k="valor" data-num="1" inputmode="numeric" maxlength="11" value="${esc(a.valor)}" autocomplete="off" placeholder="$ opcional"></div>
         <div class="f"><label>Estado</label><div class="pk" style="margin:0"><button type="button" data-wact="${i}" data-k="estado" data-v="nuevo" class="${a.estado !== 'seminuevo' ? 'on' : ''}">Nuevo</button><button type="button" data-wact="${i}" data-k="estado" data-v="seminuevo" class="${a.estado === 'seminuevo' ? 'on' : ''}">Seminuevo</button></div></div>
         <div class="f"><label for="w_a${i}cant">Cantidad</label><input id="w_a${i}cant" data-wa="${i}" data-k="cant" inputmode="numeric" maxlength="3" value="${esc(a.cant)}" autocomplete="off"></div></div></div>`).join('')}
       ${d.activos.length < 10 ? `<button type="button" class="btn" data-wadd="1" style="margin:0 0 14px">+ Agregar otro activo</button>` : ''}
       <div class="mm" id="w_mm">${wzCobHTML(d)}</div>
+      <h3>¿Ya tiene cotización de algún proveedor?</h3><div class="pk" id="w_cot">${[['si', 'Sí, ya tengo'], ['no', 'Todavía no']].map(v => `<button type="button" data-wset="cot" data-v="${v[0]}" class="${d.cot === v[0] ? 'on' : ''}">${v[1]}</button>`).join('')}</div>
+      ${d.cot === 'si' ? cotHTML(d) : ''}
       <h3>Tipo de arrendamiento</h3><div class="tl3" id="w_arr">${Object.keys(TARR).map(k => `<button type="button" data-wset="arrendamiento" data-v="${k}" class="${d.arrendamiento === k ? 'on' : ''}"><b>${TARR[k][0]}</b><span>${TARR[k][1]}</span></button>`).join('')}</div>
       <h3>Plazo</h3><div class="pl"><input type="range" min="12" max="36" step="1" value="${Number(d.plazo) || 24}" data-wf="plazo" aria-label="Plazo en meses"><b id="w_plv">${Number(d.plazo) || 24} <em>meses</em></b></div>
       <div class="pk">${[12, 18, 24, 30, 36].map(n => `<button type="button" data-wset="plazo" data-v="${n}" class="${Number(d.plazo) === n ? 'on' : ''}">${n} meses</button>`).join('')}</div>`; }
@@ -893,15 +914,15 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
   const wzArriba = () => { const w = $('#wz'); if (w) { const y = w.getBoundingClientRect().top + window.scrollY - 70; window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' }); } };
   async function wzEnviar(b) {
     const d = st.wz.d; if (!(await sesionVigente())) return mostrarLand('Su sesión terminó. Vuelva a entrar.');
-    const act = d.activos.map(a => ({ tipo: a.tipo, desc: String(a.desc || '').trim().slice(0, 200), valor: numTxt(a.valor) || null, estado: a.estado === 'seminuevo' ? 'seminuevo' : 'nuevo', cant: Math.max(1, Math.min(999, parseInt(a.cant, 10) || 1)) }));
-    const p = { dedica: String(d.dedica).trim().slice(0, 400), giro: giroDe(d).slice(0, 120), antiguedad: String(numTxt(d.antiguedad)), municipio: String(d.municipio).trim().slice(0, 80), empleados: d.empleados || null, ventas: numTxt(d.ventas) ? miles(numTxt(d.ventas)) : null, monto: numTxt(d.monto), activos: act, arrendamiento: d.arrendamiento, plazo: Number(d.plazo) || 24, firmante: String(d.firmante).trim().slice(0, 120), cargo: String(d.cargo || '').trim().slice(0, 80), telefono: String(d.telefono || '').replace(/\D/g, '').slice(-10), correo: String(d.correo || '').trim().slice(0, 120), resumen: resumenAct(act).slice(0, 600) };
+    const act = d.activos.map(a => ({ tipo: a.tipo, tipoOtro: a.tipo === 'Otro' ? String(a.tipoOtro || '').trim().slice(0, 80) : undefined, desc: String(a.desc || '').trim().slice(0, 200), valor: numTxt(a.valor) || null, estado: a.estado === 'seminuevo' ? 'seminuevo' : 'nuevo', cant: Math.max(1, Math.min(999, parseInt(a.cant, 10) || 1)) }));
+    const p = { dedica: String(d.dedica).trim().slice(0, 400), giro: giroDe(d).slice(0, 120), antiguedad: String(numTxt(d.antiguedad)), municipio: String(d.municipio).trim().slice(0, 80), empleados: d.empleados || null, ventas: numTxt(d.ventas) ? miles(numTxt(d.ventas)) : null, monto: numTxt(d.monto), activos: act, arrendamiento: d.arrendamiento, cot: d.cot || null, proveedor: d.cot === 'si' ? String(d.proveedor || '').trim().slice(0, 120) : null, plazo: Number(d.plazo) || 24, firmante: String(d.firmante).trim().slice(0, 120), cargo: String(d.cargo || '').trim().slice(0, 80), telefono: String(d.telefono || '').replace(/\D/g, '').slice(-10), correo: String(d.correo || '').trim().slice(0, 120), resumen: resumenAct(act).slice(0, 600) };
     b.disabled = true; b.innerHTML = '<span class="spin"></span> Enviando…';
     const r = await api('/rest/v1/rpc/solicitud_cliente', { method: 'POST', auth: true, body: { accion: 'carta', p } });
     if (r.ok && r.json) { st.sol = r.json; st.wz = null; st.cartaOk = true; wzBorrar(); pintar(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     b.disabled = false; b.textContent = 'Enviar mi carta'; wzError('x', errTxt(r.json));
   }
   function wzClick(e) {
-    const W = st.wz; if (!W) return false; const t = e.target;
+    const W = st.wz; if (!W) return false; const t = e.target; if (t.closest('[data-del],[data-ver-arch],[data-up]')) return false;
     const set = t.closest('[data-wset]'); if (set) { const k = set.dataset.wset; W.d[k] = k === 'plazo' ? Number(set.dataset.v) : set.dataset.v; W.err = ''; wzGuardar(); pintar(); return true; }
     const ac = t.closest('[data-wact]'); if (ac) { W.d.activos[+ac.dataset.wact][ac.dataset.k] = ac.dataset.v; W.err = ''; wzGuardar(); pintar(); return true; }
     if (t.closest('[data-wadd]')) { W.d.activos.push({ tipo: '', desc: '', valor: '', estado: 'nuevo', cant: 1 }); wzGuardar(); pintar(); const n = document.getElementById('w_a' + (W.d.activos.length - 1) + 'tipo'); if (n) n.scrollIntoView({ block: 'center', behavior: 'smooth' }); return true; }
@@ -973,12 +994,12 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
     const C = D.carta || null, pend = cartaPend(S), editable = !cerrada && ['recibida', 'documentos'].includes(S.etapa);
     const cat0 = docsDe(S); st.claves = cat0.map(d => d.c); const docs = cat0.map(d => ({ ...d, x: estadoDoc(d, S) }));
     const req = docs.filter(d => !d.opc), listos = req.filter(d => d.x.e === 'recibido' || d.x.e === 'aceptado').length, falt = req.length - listos, corr = docs.filter(d => d.x.e === 'rechazado').length, acept = req.filter(d => d.x.e === 'aceptado').length, avPct = req.length ? Math.round(listos / req.length * 100) : 0;
-    const cargado = d => d.x.e === 'recibido' || d.x.e === 'aceptado'; const req1 = req.filter(d => d.f === 1), req2 = req.filter(d => d.f !== 1), ok1 = req1.filter(cargado).length, falt1 = req1.length - ok1, falt2 = req2.length - req2.filter(cargado).length; const F1TXT = S.tipo === 'PM' ? 'información financiera, documentación legal de la sociedad, y CSF e identificación del socio mayoritario' : 'información financiera, su identificación y su CSF';
+    const cargado = d => d.x.e === 'recibido' || d.x.e === 'aceptado'; const req1 = req.filter(d => d.f === 1), req2 = req.filter(d => d.f !== 1), ok1 = req1.filter(cargado).length, falt1 = req1.length - ok1, falt2 = req2.length - req2.filter(cargado).length; const F1TXT = S.tipo === 'PM' ? 'información financiera (estados financieros, declaración anual y estados de cuenta), documentación legal de la sociedad, y CSF e identificación del socio mayoritario' : 'información financiera (estados financieros, declaración anual y estados de cuenta), su identificación y su CSF';
     const idx = ORDEN.indexOf(S.etapa), et = ETAPA[S.etapa] || [S.etapa, '']; const pPre = pubDe(S, 'pre'), pApr = pubDe(S, 'apr'), aOk = aceptDe(S); if (!st.tab) st.tab = pApr && !aOk ? 'apr' : 'exp';
     const glob = S.etapa === 'formalizada' ? 100 : Math.round((C ? 20 : 0) + avPct * 0.8);
     const cartaCard = C ? `<div class="card cok"><div class="t"><b><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Su carta solicitud</b><span class="chip ok">Enviada el ${fdt(C.fecha)}</span></div>
         <div class="g3"><div><span>Monto</span><b>${money(C.monto)}</b></div><div><span>Arrendamiento</span><b>${esc((TARR[C.arrendamiento] || TARR['?'])[0])}</b></div><div><span>Plazo</span><b>${esc(C.plazo)} meses</b></div></div>
-        <div class="acts">${(C.activos || []).map(a => `<span title="${esc(a.desc)}">${Number(a.cant) > 1 ? esc(a.cant) + ' × ' : ''}${esc(a.tipo)} · ${esc(a.desc)}</span>`).join('')}</div>
+        <div class="acts">${(C.activos || []).map(a => `<span title="${esc(a.desc)}">${Number(a.cant) > 1 ? esc(a.cant) + ' × ' : ''}${esc(tipoDe(a))} · ${esc(a.desc)}</span>`).join('')}</div>
         <div class="acts" style="margin-top:12px"><button class="btn sm" type="button" data-carta="ver">Ver mi carta</button>${editable ? '<button class="btn sm" type="button" data-carta="abrir">Editar</button>' : ''}</div></div>`
       : editable ? `<div class="card cta"><div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></div><div class="tx"><b>${pend ? 'Empiece aquí: su carta solicitud' : 'Llene su carta solicitud en línea'}</b><p>Cuéntenos qué necesita en 3 pasos: a qué se dedica su empresa, el monto y los activos. Sin formatos ni firmas${pend ? '' : '; sustituye la carta firmada de la lista de documentos'}.</p></div><button class="btn p big" type="button" data-carta="abrir">${(() => { try { return localStorage.getItem(cartaKey()) ? 'Continuar mi carta' : 'Llenar mi carta'; } catch (e) { return 'Llenar mi carta'; } })()}</button></div>` : '';
     const pasos = PASOS.map((p, i) => `<div class="${idx > i || S.etapa === 'formalizada' ? 'done' : idx === i ? 'cur' : ''}"><i></i><b>${p[0]}</b><span>${p[1]}</span></div>`).join('');
@@ -998,7 +1019,7 @@ main{max-width:1120px;margin:0 auto;padding:28px var(--g) 60px}
       return `${h}<div class="doc" data-doc="${d.c}"><div class="top"><div><h4>${esc(d.n)}${d.opc ? '<em>opcional</em>' : ''}</h4><div class="ay">${esc(d.a)}</div></div><span class="chip ${x.chip[1]}">${x.chip[0]}</span></div>
         ${x.e === 'rechazado' ? `<div class="mot"><b>Motivo:</b> ${esc(x.motivo || 'El documento no cumple con lo solicitado.')} Cargue una nueva versión.</div>` : ''}
         ${x.fs.length ? `<ul class="files">${x.fs.map(f => `<li><span class="n" title="${esc(f.nombre)}">${esc(f.nombre)}</span><span class="m">${peso(f.tam)} · ${fdt(f.fecha)}</span><button class="btn txt sm" type="button" data-ver-arch="${esc(f.ruta)}">Ver</button>${!cerrada && x.e !== 'aceptado' ? `<button class="btn txt sm bad" type="button" data-del="${esc(f.ruta)}" data-nom="${esc(f.nombre)}">Quitar</button>` : ''}</li>`).join('')}</ul>` : ''}
-        ${sub ? `<div class="act"><span style="font-size:12.5px;color:var(--ink-2)">${esc(sub.txt)}</span><span class="prog"><i style="width:${sub.pct}%"></i></span></div>` : puede ? `<div class="act"><label class="btn sm"><input type="file" hidden multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp,application/pdf,image/*" data-up="${d.c}">${x.fs.length ? 'Agregar archivo' : 'Subir archivo'}</label></div>` : ''}</div>`; }).join('');
+        ${sub ? `<div class="act"><span style="font-size:12.5px;color:var(--ink-2)">${esc(sub.txt)}</span><span class="prog"><i style="width:${sub.pct}%"></i></span></div>` : puede ? `<div class="act"><label class="upz">${UPI}<input type="file" hidden multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,.webp,application/pdf,image/*" data-up="${d.c}">${x.fs.length ? 'Agregar más archivos' : 'Subir archivos'} <small>PDF o foto · puede elegir varios</small></label></div>` : ''}</div>`; }).join('');
     $('#vPanel').innerHTML = `
       <div class="hx"><div class="tx"><div class="k">Solicitud ${esc(S.folio)}</div><h1>${esc(S.nombre)}</h1><div class="s">${pend ? 'Monto y activos: en su carta solicitud' : esc(PROD[S.producto] || S.producto) + ' · ' + money(S.monto)} · iniciada el ${fdt(S.creado)}</div><span class="chip">${et[0]}</span></div>
         <div class="ring" role="img" aria-label="Avance general ${glob} %"><svg viewBox="0 0 120 120"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ea0ff"/><stop offset="1" stop-color="#7fe0a6"/></linearGradient></defs><circle class="bg" cx="60" cy="60" r="50"/><circle class="fg" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="${(314.16 * (1 - glob / 100)).toFixed(1)}"/></svg><div><b>${glob} %</b><span>Avance</span></div></div>
