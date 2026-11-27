@@ -205,6 +205,12 @@
   .ctx button:hover, .ctx button:focus-visible { background: var(--blue); color: #fff; outline: none; }
   tr.click:focus-visible td, .item:focus-visible, .kpi.click:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
   tr.click:focus-visible { outline: none; }
+  /* 17.38 · foco de teclado y menú de clic derecho en todo el sistema */
+  tbody tr:focus { outline: none; } tbody tr:focus > td { background: rgba(0,113,227,0.10); box-shadow: inset 0 1px 0 var(--blue), inset 0 -1px 0 var(--blue); }
+  .item:focus, .kpi:focus, .sol-file:focus, .def-col:focus, .def-bar:focus { outline: 2px solid var(--blue); outline-offset: -2px; }
+  tr.kmark > td, .item.kmark, .kpi.kmark, .sol-file.kmark, .def-col.kmark, .def-bar.kmark { background: var(--row-hover); }
+  .ctx { max-width: 340px; max-height: calc(100vh - 16px); overflow-y: auto; } .ctx button { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: none; }
+  .ctx i.sep { display: block; height: 1px; margin: 4px 8px; background: var(--line); flex: none; }
   .kpi.click { cursor: pointer; transition: box-shadow .14s, transform .14s; } .kpi.click:hover { box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 14px 32px rgba(0,0,0,0.09); transform: translateY(-1px); }
   .kpi .more { font-size: 11.5px; color: var(--blue); font-weight: 700; margin-top: 6px; }
   tr.final td { background: var(--chip-orange); font-weight: 700; }
@@ -2255,7 +2261,7 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
      La misma página funciona en www.atrixfinanciera.com/sistema/ y en la app de Mac. Los datos viven en una sola fila
      (public.sistema_datos, id «principal») que solo puede leer y escribir un usuario dado de alta en public.sistema_usuarios.
      Cada guardado sube la versión; si otra computadora guardó antes, se recarga lo más reciente en lugar de pisarlo. */
-  const SISTEMA_VERSION = '17.37';
+  const SISTEMA_VERSION = '17.38';
   const NUBE_URL = 'https://sikxhcbxtgpuxoxxqona.supabase.co', NUBE_PUB = 'sb_publishable_QkSJuoLTXHvPmf_6hPg0PQ_CI7arc3m';
   const NUBE_DOM = '@sistema.atrixfinanciera.com', NUBE_FILA = 'principal', NUBE_SES = 'atrix-sesion', SISTEMA_WEB = 'https://www.atrixfinanciera.com/sistema/';
   const WEB = !NATIVO && /^https?:$/.test(location.protocol) && !(window.claude && window.claude.use);
@@ -5775,7 +5781,9 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     else if (el.id === 'hoy') { if (el.value) { S.hoy = el.value; S.hoyManual = el.value !== E.todayISO(); render(); } }
     else if (el.closest('[data-act-input="cob"]') && el.name === 'contratoId') { S.cob.contratoId = el.value; render(); }
   });
-  // Menú contextual (clic derecho) sobre filas de contratos, acreditados, inversionistas e inversiones
+  // 17.38 · Clic derecho y teclado en todo el sistema.
+  // Clic derecho: sobre cualquier renglón, tarjeta, botón o menú muestra lo que ahí se puede hacer (las mismas acciones de sus botones) y permite copiar el dato, el renglón o la tabla.
+  // Teclado: ↑↓ recorren renglones y tarjetas (también dentro de fichas y ventanas), Enter abre o confirma, ←→ cambian de vista o de pestaña, Esc cierra, tecla Menú o Mayús+F10 abre el menú del renglón.
   const CTX = {
     selContrato: id => [['Abrir', 'goContrato'], ['Aplicar pago', 'pagoContrato'], ['Editar', 'editContrato'], ['Cancelar contrato', 'cancelContrato'], ['Eliminar (si está cancelado)', 'delContrato']],
     goContrato: id => CTX.selContrato(id),
@@ -5785,31 +5793,82 @@ if (typeof module !== 'undefined') module.exports = LevelDBChrome;
     goInversion: id => CTX.selInversion(id),
     editFondoMov: id => [['Editar', 'editFondoMov'], ['Eliminar', 'delFondoMov']]
   };
-  function closeCtx() { const m = $('#ctxMenu'); if (m) m.remove(); }
-  document.addEventListener('contextmenu', e => {
-    const row = e.target.closest('[data-act]'); if (!row || !CTX[row.dataset.act]) return; e.preventDefault(); closeCtx();
-    const id = row.dataset.id; const items = CTX[row.dataset.act](id);
-    const m = document.createElement('div'); m.id = 'ctxMenu'; m.className = 'glass ctx'; m.innerHTML = items.map(it => `<button type="button" data-ctx="${it[1]}" data-key="${it[2] || 'id'}">${it[0]}</button>`).join('');
-    document.body.appendChild(m); const w = m.offsetWidth, h = m.offsetHeight; m.style.left = Math.min(e.clientX, window.innerWidth - w - 8) + 'px'; m.style.top = Math.min(e.clientY, window.innerHeight - h - 8) + 'px';
-    m.addEventListener('click', ev => { const b = ev.target.closest('[data-ctx]'); if (!b) return; closeCtx(); const d = {}; d[b.dataset.key] = id; d.id = id; if (ACT[b.dataset.ctx]) ACT[b.dataset.ctx](d); });
-    const first = m.querySelector('button'); if (first) first.focus();
-  });
+  const K_UNIDAD = 'tbody tr, .item, .kpi, .sol-file, .def-col, .def-bar';
+  const kTxt = el => String((el && (el.innerText || el.textContent)) || '').replace(/\s+/g, ' ').trim();
+  const kCorto = (t, n) => t.length > n ? t.slice(0, n - 1) + '…' : t;
+  const kEscribe = el => { const t = ((el && el.tagName) || '').toLowerCase(); return t === 'input' || t === 'select' || t === 'textarea' || !!(el && el.isContentEditable); };
+  const kVisible = el => !!(el && el.getClientRects().length);
+  const kConAccion = el => !!(el.dataset && el.dataset.act) && !el.classList.contains('modal-bg') && !el.disabled;
+  const kAcciones = u => [u, ...u.querySelectorAll('[data-act]')].filter(el => kConAccion(el) && (el === u || kVisible(el)));
+  const kTabla = (tabla, fila) => (fila ? [fila] : [...tabla.querySelectorAll('tr')]).map(r => [...r.children].map(c => kTxt(c)).join('\t')).join('\n');
+  let kMarca = null, kOrigen = null; const kMem = {};
+  function closeCtx() { const m = $('#ctxMenu'); if (m) m.remove(); if (kMarca) { kMarca.classList.remove('kmark'); kMarca = null; } }
+  function ctxItems(t) {
+    const nav = t.closest('#nav button[data-view]'); if (nav) return { u: nav, g: [[{ l: 'Abrir ' + kTxt(nav.querySelector('span') || nav), el: nav }]] };
+    const g = []; const u = t.closest(K_UNIDAD) || t.closest('[data-act]:not(.modal-bg)');
+    if (u) { const a = []; const vistos = {}; const propio = u.dataset.act && CTX[u.dataset.act] ? u.dataset.act : null;
+      if (propio) { const id = u.dataset.id; vistos[propio] = 1; CTX[propio](id).forEach(it => { vistos[it[1]] = 1; a.push({ l: it[0], run: () => { const d = {}; d[it[2] || 'id'] = id; d.id = id; if (ACT[it[1]]) ACT[it[1]](d); } }); }); }
+      kAcciones(u).forEach(el => { const k = el.dataset.act + '|' + JSON.stringify(el.dataset); if (vistos[k] || vistos[el.dataset.act] || a.length >= 12) return; vistos[k] = 1;
+        let l = el === u && el.matches(K_UNIDAD) ? (el.classList.contains('kpi') ? 'Ver detalle' : 'Abrir') : (kTxt(el) || el.title || el.getAttribute('aria-label') || ''); if (!l) return; const md = /^(\$[\d,.]+) desglose$/i.exec(l); if (md) l = 'Ver desglose de ' + md[1]; if (el !== u && el.tagName === 'A') l = 'Ir a ' + l; a.push({ l: kCorto(l, 46), el }); });
+      if (a.length) g.push(a);
+    } else { const amb = t.closest('.modal') || t.closest('#fichaRoot') || $('#view');
+      const a = [...amb.querySelectorAll('.btn[data-act]')].filter(el => kVisible(el) && kConAccion(el) && !el.closest(K_UNIDAD) && !el.closest('table') && kTxt(el)).slice(0, 6).map(el => ({ l: kCorto(kTxt(el), 46), el })); if (a.length) g.push(a); }
+    const c = []; const sel = String(window.getSelection ? window.getSelection() : '').trim(); if (sel) c.push({ l: 'Copiar selección', run: () => copiar(sel) });
+    const celda = t.closest('td, th'); const hoja = celda || (t.querySelector && !t.closest('button, .btn, #nav') && !t.querySelector('table, form, button, .item, .kpi, input, select, textarea') ? t : null); const txt = hoja ? kTxt(hoja) : '';
+    if (!sel && txt && txt.length <= 200) c.push({ l: 'Copiar «' + kCorto(txt, 28) + '»', run: () => copiar(txt) });
+    const fila = t.closest('tbody tr'), tabla = t.closest('table');
+    if (fila) c.push({ l: 'Copiar renglón', run: () => copiar(kTabla(null, fila)) });
+    if (tabla) c.push({ l: 'Copiar tabla (para pegar en Excel)', run: () => copiar(kTabla(tabla)) });
+    if (c.length) g.push(c);
+    return g.length ? { u, g } : null;
+  }
+  function abrirCtx(t, x, y) {
+    closeCtx(); if (kEscribe(t)) return false; const r = ctxItems(t); if (!r) return false; const lista = [];
+    const m = document.createElement('div'); m.id = 'ctxMenu'; m.className = 'glass ctx'; m.setAttribute('role', 'menu');
+    m.innerHTML = r.g.map(grupo => grupo.map(it => { lista.push(it); return '<button type="button" role="menuitem" data-i="' + (lista.length - 1) + '">' + esc(it.l) + '</button>'; }).join('')).join('<i class="sep"></i>');
+    document.body.appendChild(m); const w = m.offsetWidth, h = m.offsetHeight; m.style.left = Math.max(8, Math.min(x, window.innerWidth - w - 8)) + 'px'; m.style.top = Math.max(8, Math.min(y, window.innerHeight - h - 8)) + 'px';
+    kOrigen = document.activeElement; if (r.u && r.u.matches(K_UNIDAD)) { kMarca = r.u; r.u.classList.add('kmark'); }
+    m.addEventListener('click', ev => { const b = ev.target.closest('[data-i]'); if (!b) return; const it = lista[Number(b.dataset.i)]; closeCtx(); if (it.run) it.run(); else if (it.el && it.el.isConnected) it.el.click(); });
+    const first = m.querySelector('button'); if (first) first.focus({ preventScroll: true }); return true;
+  }
+  document.addEventListener('contextmenu', e => { if (e.target.closest && e.target.closest('#ctxMenu')) return e.preventDefault(); if (e.target.closest && abrirCtx(e.target, e.clientX, e.clientY)) e.preventDefault(); });
   document.addEventListener('click', e => { if (!e.target.closest('#ctxMenu')) closeCtx(); }, true);
-  // Teclado: Enter abre la fila o botón enfocado; ↑↓ recorren filas de la tabla; ←→ cambian de vista; Esc cierra
+  window.addEventListener('scroll', e => { if (!(e.target && e.target.closest && e.target.closest('#ctxMenu'))) closeCtx(); }, true); window.addEventListener('resize', closeCtx); window.addEventListener('blur', closeCtx);
+  const kAmbito = () => { const m = $('#modalRoot'); if (m.innerHTML) return m; const f = $('#fichaRoot'); if (S.ficha.length && f && f.innerHTML) return f; return $('#view'); };
+  const kFilas = amb => [...amb.querySelectorAll(K_UNIDAD)].filter(el => kVisible(el) && kAcciones(el).length);
+  function kActivar(u) { if (kConAccion(u)) return u.click(); const a = kAcciones(u); const el = a.find(x => x.tagName === 'A') || a.find(x => x.classList.contains('primary')) || a.find(x => x.classList.contains('btn')) || a[0]; if (el) el.click(); }
+  const kMismo = el => { try { return document.querySelector(Object.keys(el.dataset).map(k => '[data-' + k.replace(/[A-Z]/g, c => '-' + c.toLowerCase()) + '="' + String(el.dataset[k]).replace(/["\\]/g, '\\$&') + '"]').join('')); } catch (x) { return null; } };
   document.addEventListener('keydown', e => {
-    const tag = (e.target.tagName || '').toLowerCase(); const typing = tag === 'input' || tag === 'select' || tag === 'textarea';
-    if (e.key === 'Escape') { if ($('#ctxMenu')) return closeCtx(); if ($('#modalRoot').innerHTML) return closeModal(); if (S.ficha.length) return cerrarFicha(false); }
-    if (typing) return;
-    const row = e.target.closest ? e.target.closest('tr.click, .item, .kpi.click, [role=button]') : null;
-    if (e.key === 'Enter' && row) { e.preventDefault(); row.click(); return; }
-    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !$('#modalRoot').innerHTML && !S.ficha.length) {
-      const rows = row && row.tagName === 'TR' ? [...row.closest('tbody').querySelectorAll('tr.click')] : [...document.querySelectorAll('#view tr.click, #view .item, #view .kpi.click')];
-      if (!rows.length) return; e.preventDefault(); const i = rows.indexOf(row); const next = rows[Math.max(0, Math.min(rows.length - 1, (i < 0 ? (e.key === 'ArrowDown' ? -1 : rows.length) : i) + (e.key === 'ArrowDown' ? 1 : -1)))]; if (next) { next.focus(); next.scrollIntoView({ block: 'nearest' }); } return;
+    const t = e.target && e.target.closest ? e.target : document.body; const menu = $('#ctxMenu');
+    if (menu) { const bs = [...menu.querySelectorAll('button')]; const i = bs.indexOf(document.activeElement); const baja = e.key === 'ArrowDown', sube = e.key === 'ArrowUp';
+      if (e.key === 'Escape' || e.key === 'ArrowLeft' || e.key === 'Tab') { e.preventDefault(); e.stopPropagation(); closeCtx(); if (kOrigen && kOrigen.isConnected && kOrigen !== document.body) kOrigen.focus({ preventScroll: true }); }
+      else if (baja || sube || e.key === 'Home' || e.key === 'End') { e.preventDefault(); e.stopPropagation(); const n = e.key === 'Home' ? 0 : e.key === 'End' ? bs.length - 1 : i < 0 ? (baja ? 0 : bs.length - 1) : (i + (baja ? 1 : -1) + bs.length) % bs.length; if (bs[n]) bs[n].focus(); }
+      return; }
+    const enModal = !!$('#modalRoot').innerHTML;
+    if (e.key === 'Escape') { if (enModal) { e.stopPropagation(); return closeModal(); } if (S.ficha.length) { e.stopPropagation(); return cerrarFicha(false); } return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (kEscribe(t)) { if (e.key === 'Enter' && t.tagName === 'INPUT' && t.closest('#mForm') && !/^(checkbox|radio|file|button|submit)$/.test(t.type)) { const p = $('#modalRoot .actions .btn.primary'); if (p) { e.preventDefault(); t.dispatchEvent(new Event('change', { bubbles: true })); p.click(); } } return; }
+    const amb = kAmbito(); const u0 = t.closest(K_UNIDAD); const u = u0 && amb.contains(u0) ? u0 : null;
+    if (e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)) { const o = u || t.closest('[data-act]:not(.modal-bg)'); if (o) { const r = o.getBoundingClientRect(); if (abrirCtx(o, r.left + Math.min(r.width / 2, 180), r.top + Math.min(r.height, 30))) e.preventDefault(); } return; }
+    if (e.key === 'Enter') {
+      if (u && t === u) { e.preventDefault(); kActivar(u); return; }
+      if (t.closest('button, a[href], summary')) return;
+      if (t.dataset && t.dataset.act && t !== document.body && !t.classList.contains('modal-bg')) { e.preventDefault(); t.click(); return; }
+      if (enModal) { const p = $('#modalRoot .actions .btn.primary'); if (p) { e.preventDefault(); p.click(); } }
+      return; }
+    const baja = e.key === 'ArrowDown', sube = e.key === 'ArrowUp';
+    if (baja || sube || ((e.key === 'Home' || e.key === 'End') && u)) {
+      const filas = kFilas(amb); if (!filas.length) return; const clave = S.view + '|' + S.ficha.length + '|' + (enModal ? 1 : 0); const i = u ? filas.indexOf(u) : -1; let n;
+      if (e.key === 'Home') n = 0; else if (e.key === 'End') n = filas.length - 1; else if (i >= 0 && document.activeElement === u) n = Math.max(0, Math.min(filas.length - 1, i + (baja ? 1 : -1))); else if (kMem[clave] != null) n = Math.min(kMem[clave], filas.length - 1); else n = baja ? 0 : filas.length - 1;
+      e.preventDefault(); const f = filas[n]; if (!f.hasAttribute('tabindex')) f.tabIndex = -1; f.focus({ preventScroll: true }); f.scrollIntoView({ block: 'nearest' }); kMem[clave] = n; return; }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      if (enModal) return; const der = e.key === 'ArrowRight';
+      const grupo = t.closest('.seg, .tabs'); const bt = grupo && t.closest('button');
+      if (bt) { const bs = [...grupo.querySelectorAll('button')].filter(kVisible); const i = bs.indexOf(bt); if (i >= 0 && bs.length > 1) { e.preventDefault(); const nb = bs[(i + (der ? 1 : -1) + bs.length) % bs.length]; nb.click(); setTimeout(() => { const z = kMismo(nb); if (z) z.focus({ preventScroll: true }); }, 160); return; } }
+      if (S.ficha.length) { if (!der) { e.preventDefault(); cerrarFicha(false); } return; }
+      const views = NAV.filter(n => n.length === 2).map(n => n[0]); const i = views.indexOf(S.view); S.view = views[(i + (der ? 1 : -1) + views.length) % views.length]; e.preventDefault(); render(); const btn = document.querySelector('#nav button.on'); if (btn) { btn.focus({ preventScroll: true }); btn.scrollIntoView({ block: 'nearest' }); }
     }
-    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !$('#modalRoot').innerHTML && !S.ficha.length && !$('#ctxMenu')) {
-      const views = NAV.filter(n => n.length === 2).map(n => n[0]); const i = views.indexOf(S.view); const n = views[(i + (e.key === 'ArrowRight' ? 1 : -1) + views.length) % views.length]; S.view = n; render(); const btn = document.querySelector('#nav button.on'); if (btn) btn.focus();
-    }
-  });
+  }, true);
   // re-render conservando el foco del campo que se está editando
   // valores tal cual se teclean (sin recortar espacios ni convertir), para formularios en vivo
   function rawValues(form) { const v = {}; for (const el of form.elements) { if (!el.name) continue; v[el.name] = el.type === 'checkbox' ? el.checked : el.value; } return v; }
